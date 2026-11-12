@@ -3,6 +3,8 @@
 Seite: https://cansi798.github.io/Comcave_Geschaeftsprozesse/
 
 ## So funktioniert die Freischaltung
+Aktuell ist in `zeitplan.json` `"alles_sofort": true` gesetzt, damit ist alles sofort sichtbar. Mit `false` gilt der Zeitplan unten.
+
 Jeder Unterrichtstag hat zwei Stufen.
 
 | Stufe | Inhalt | Uhrzeit (Standard) |

@@ -1,10 +1,11 @@
 {
- "_hinweis": "Uhrzeiten deutsche Zeit. 'vormittag' = Praesentation PDF, Skript, Quiz und Video. 'nachmittag' = Uebungsquizze und Aufgabenhefte. Einzelne Tage koennen eigene Zeiten bekommen, z. B. \"vormittag\": \"11:30\".",
+ "_hinweis": "Uhrzeiten deutsche Zeit. alles_sofort true = alle Tage sofort sichtbar. Bei false gelten uhrzeit_vormittag (Praesentation PDF, Skript, Quiz, Video) und uhrzeit_nachmittag (Uebungsquizze, Aufgabenhefte). Einzelne Tage koennen eigene Zeiten bekommen, z. B. \"vormittag\": \"11:30\".",
  "kurs": {
   "titel": "Geschäftsprozesse · Kaufleute für Büromanagement (IHK)",
   "untertitel": "comcave · Veranstaltung 577381 · 12.11.2026 bis 16.12.2026 · Dozent Can Siebert"
  },
  "zugangscode": "KBM",
+ "alles_sofort": true,
  "uhrzeit_vormittag": "12:00",
  "uhrzeit_nachmittag": "12:45",
  "kursdateien_sofort": true,

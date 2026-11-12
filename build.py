@@ -77,6 +77,8 @@ def main():
         z2 = zeitpunkt(t["datum"], t.get("nachmittag") or cfg["uhrzeit_nachmittag"])
         frei1 = now >= z1 and bool(KEY)
         frei2 = now >= z2 and bool(KEY)
+        if cfg.get("alles_sofort"):
+            frei1 = frei2 = bool(KEY)
         dateien = inhalt[o]
         if frei1:
             entschluesseln(os.path.join(ROOT, "tresor", f"Tag{n}_1_Vormittag.tar.gz.enc"), os.path.join(MAT, o))
