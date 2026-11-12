@@ -1,0 +1,416 @@
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#003366">
+<title>Geschäftsprozesse 2026 · Waybuild Akademie</title>
+<style>
+:root{--navy:#003366;--blau:#0077A6;--hblau:#e7f3f8;--orange:#E8833A;--horange:#fdf1e7;--gruen:#1f8a4c;--hgruen:#e8f6ee;--rot:#c0392b;--hrot:#fdecea;--lila:#6f4bb2;--hlila:#f1ecfa;--grau:#5b6b78;--rand:#dde6ec;--bg:#f3f6f9;--oben:0px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:#1d2b3a;font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+a{color:var(--blau)}
+button,select,input{font:inherit}
+svg{width:22px;height:22px;flex:none}
+#tor{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.torbox{background:#fff;border:1px solid var(--rand);border-radius:18px;padding:28px 26px;max-width:400px;width:100%;box-shadow:0 10px 30px #00336614;text-align:center}
+.torbox img{height:54px}.torbox h1{font-size:20px;color:var(--navy);margin:14px 0 4px}.torbox p{color:var(--grau);margin:0 0 18px}
+.torbox input{width:100%;font-size:20px;padding:12px 14px;border:1.5px solid #b9cbd7;border-radius:12px;text-align:center;letter-spacing:3px;text-transform:uppercase}
+.torbox input:focus{outline:none;border-color:var(--blau);box-shadow:0 0 0 3px #0077a633}
+.torbox button{margin-top:12px;width:100%;font-size:17px;padding:12px;border:0;border-radius:12px;background:var(--blau);color:#fff;font-weight:600;cursor:pointer}
+#err{color:var(--rot);margin-top:10px;min-height:1.2em;font-size:14px}
+.app{display:none}
+.app.on{display:grid;grid-template-columns:290px minmax(0,1fr);min-height:100vh}
+.seite{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid var(--rand);padding:18px 14px 30px}
+.marke{display:flex;align-items:center;gap:10px;padding:0 6px 14px;border-bottom:1px solid var(--rand);margin-bottom:12px;text-decoration:none}
+.marke img{height:40px}.marke span{font-size:12.5px;color:var(--grau);line-height:1.3}
+.nav a,.nav summary{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;color:#1d2b3a;text-decoration:none;font-size:14.5px;cursor:pointer}
+.nav a:hover,.nav summary:hover{background:#f2f6f9}
+.nav a.aktiv{background:var(--hblau);color:var(--navy);font-weight:600}
+.nav a svg{color:var(--blau);width:19px;height:19px}
+.nav .gr{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:#8697a4;margin:16px 10px 4px;font-weight:700}
+.nav details{margin:2px 0}.nav summary{font-weight:600;color:var(--navy);list-style:none;font-size:14px}
+.nav summary::-webkit-details-marker{display:none}
+.nav summary::after{content:"";margin-left:auto;width:7px;height:7px;border-right:2px solid #8697a4;border-bottom:2px solid #8697a4;transform:rotate(-45deg);transition:transform .15s}
+.nav details[open] summary::after{transform:rotate(45deg)}
+.nav .tg{padding:6px 10px 6px 14px;font-size:13.5px;gap:8px}
+.nav .tg b{color:var(--blau);font-weight:700;min-width:22px}
+.nav .tg.heute b{color:var(--orange)}
+.nav .tg em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.haupt{padding:22px 34px 70px;max-width:1200px;width:100%}
+.topbar,.unten,.schleier{display:none}
+.bc{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px;color:var(--grau);margin-bottom:10px}
+.bc a{color:var(--grau);text-decoration:none}.bc a:hover{color:var(--blau);text-decoration:underline}
+.bc i{font-style:normal;color:#a9b6c0}
+.zurueck{display:inline-flex;align-items:center;gap:4px;padding:7px 14px 7px 9px;border:1px solid var(--rand);background:#fff;border-radius:999px;color:var(--navy);text-decoration:none;font-weight:600;font-size:14px;margin-bottom:14px}
+.zurueck:hover{border-color:var(--blau)}.zurueck svg{width:18px;height:18px}
+h1.st{font-size:26px;line-height:1.25;color:var(--navy);margin:6px 0 4px}
+.sub{color:var(--grau);margin:0 0 18px}
+.chip{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--hblau);color:var(--blau)}
+.chip.o{background:var(--orange);color:#fff}.chip.g{background:#eef1f4;color:#7b8a96}.chip.v{background:var(--hrot);color:var(--rot)}
+h2.ab{font-size:17px;color:var(--navy);margin:26px 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h2.ab svg{color:var(--blau)}
+h2.ab small{font-weight:500;color:var(--grau);font-size:13.5px}
+.kacheln{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.kachel{position:relative;display:flex;flex-direction:column;gap:6px;min-height:128px;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--rand);border-radius:16px;padding:16px 16px 14px;transition:box-shadow .15s,transform .15s,border-color .15s}
+a.kachel:hover{box-shadow:0 8px 22px #0033661c;transform:translateY(-2px);border-color:#c4d5e0}
+.kachel .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--hblau);color:var(--blau);margin-bottom:4px}
+.kachel .kt{font-size:17px;font-weight:700;color:var(--navy)}
+.kachel .kx{font-size:13.5px;color:var(--grau)}
+.kachel .bd{position:absolute;top:14px;right:14px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#eef1f4;color:#6b7b88}
+.kachel.f-gruen .ic{background:var(--hgruen);color:var(--gruen)}.kachel.f-lila .ic{background:var(--hlila);color:var(--lila)}
+.kachel.f-rot .ic{background:var(--hrot);color:var(--rot)}.kachel.f-orange .ic{background:var(--horange);color:var(--orange)}
+.kachel.zu{background:#f5f7f9;color:#8a97a2}.kachel.zu .ic{background:#e9edf1;color:#9aa7b1}.kachel.zu .kt{color:#8a97a2}
+.kachel.breit{grid-column:1/-1;flex-direction:row;align-items:center;min-height:0;gap:16px;background:linear-gradient(90deg,#fff7ef,#fff)}
+.kachel.breit .ic{margin:0;width:52px;height:52px}.kachel.breit .pf{margin-left:auto;color:var(--orange)}
+.kachel.breit.zu{background:#f5f7f9}
+.hero{background:linear-gradient(120deg,var(--navy),var(--blau));color:#fff;border-radius:20px;padding:22px 22px 20px;margin-bottom:8px}
+.hero .chip{background:#ffffff26;color:#fff}.hero h2{margin:8px 0 2px;font-size:22px;line-height:1.3}.hero p{margin:0 0 16px;opacity:.85}
+.hero .schnell{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.hero .schnell a,.hero .schnell span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:14px;background:#ffffff1f;color:#fff;text-decoration:none;font-weight:600;font-size:13.5px;text-align:center}
+.hero .schnell a:hover{background:#ffffff33}.hero .schnell span{opacity:.5}
+.hero .zum{display:inline-flex;align-items:center;gap:4px;margin-top:14px;color:#fff;font-weight:600;text-decoration:none}
+.tage{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tag{display:flex;flex-direction:column;gap:3px;text-decoration:none;color:inherit;background:#fff;border:1px solid var(--rand);border-left:5px solid var(--blau);border-radius:14px;padding:12px 14px;transition:box-shadow .15s,transform .15s}
+.tag:hover{box-shadow:0 6px 18px #0033661a;transform:translateY(-1px)}
+.tag .k{display:flex;align-items:center;gap:8px}.tag .k b{color:var(--blau);font-size:15px}.tag .k .chip{margin-left:auto}
+.tag .d{font-size:13px;color:var(--grau)}.tag .t{font-weight:600;line-height:1.35}
+.tag.heute{border-left-color:var(--orange);box-shadow:0 0 0 2px #E8833A55}.tag.heute .k b{color:var(--orange)}
+.tag.off{border-left-color:#c4ccd3;background:#fafbfc}.tag.off .t{color:#7b8a96}
+.blaettern{display:flex;justify-content:space-between;gap:12px;margin-top:28px}
+.blaettern a{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid var(--rand);background:#fff;border-radius:14px;text-decoration:none;color:var(--navy);min-width:0}
+.blaettern a:hover{border-color:var(--blau)}.blaettern a.r{justify-content:flex-end;text-align:right}
+.blaettern a span{display:flex;flex-direction:column;min-width:0}.blaettern small{color:var(--grau)}
+.blaettern b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.blaettern>span{flex:1}
+.hefte{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.heft{background:#fff;border:1px solid var(--rand);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.heft .kt{font-size:17px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:10px}
+.heft .kt .ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--horange);color:var(--orange)}
+.heft .kx{color:var(--grau);font-size:13.5px;margin-top:-4px}
+.knoepfe{display:flex;gap:8px;flex-wrap:wrap}
+.knopf{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;border-radius:12px;border:1px solid var(--blau);background:var(--blau);color:#fff;font-weight:600;text-decoration:none;cursor:pointer;font-size:14.5px}
+.knopf.hell{background:#fff;color:var(--blau)}.knopf:disabled{opacity:.45;cursor:default}
+.knopf.gross{padding:14px 22px;font-size:16px;width:100%}
+.player{background:#000;border-radius:16px;overflow:hidden;aspect-ratio:16/9;max-width:980px}
+.player video,.player iframe{width:100%;height:100%;border:0;display:block}
+.qkopf{position:sticky;top:var(--oben);z-index:5;background:#fffffff0;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--rand);border-radius:16px;padding:12px 14px;margin-bottom:14px}
+.qzeile{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}
+.modus{display:inline-flex;background:#eef2f5;border-radius:12px;padding:3px}
+.modus button{border:0;background:none;padding:8px 12px;border-radius:9px;font-weight:600;color:var(--grau);cursor:pointer;font-size:13.5px}
+.modus button.an{background:#fff;color:var(--navy);box-shadow:0 1px 4px #00336622}
+.fort{font-size:13.5px;color:var(--grau)}.fort b{color:var(--navy)}
+.balken{height:6px;background:#e6edf2;border-radius:9px;overflow:hidden;margin-top:10px}.balken div{height:100%;background:var(--blau);transition:width .2s}
+.uhr{font-weight:700;color:var(--rot)}
+.frage{background:#fff;border:1px solid var(--rand);border-radius:16px;padding:16px 16px 14px;margin-bottom:12px;scroll-margin-top:calc(var(--oben) + 120px)}
+.frage.ok{border-color:#9fd3b4}.frage.bad{border-color:#efb1aa}
+.fnr{font-size:12.5px;color:var(--grau);margin-bottom:4px}.ft{font-size:16.5px;font-weight:600;line-height:1.4}
+.hinweis{font-size:12.5px;color:#8a97a2;margin:4px 0 8px}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:12px;border:1.5px solid var(--rand);border-radius:12px;margin:8px 0;cursor:pointer;min-height:48px;transition:background .1s,border-color .1s}
+.opt:hover{border-color:#b9cbd7}
+.opt input{width:20px;height:20px;margin:1px 0 0;flex:none;accent-color:var(--blau)}
+.opt.gew{border-color:var(--blau);background:var(--hblau)}
+.opt.richtig{border-color:var(--gruen);background:var(--hgruen)}
+.opt.falsch{border-color:var(--rot);background:var(--hrot)}
+.opt.fehlt{border-color:var(--gruen);border-style:dashed}
+.opt .m{margin-left:auto;font-size:12px;font-weight:700;white-space:nowrap;padding-left:8px}
+.opt.richtig .m,.opt.fehlt .m{color:var(--gruen)}.opt.falsch .m{color:var(--rot)}
+.urteil{font-weight:700;margin:10px 0 4px}.urteil.ok{color:var(--gruen)}.urteil.bad{color:var(--rot)}
+.erkl{background:#f6f8fa;border-radius:10px;padding:10px 12px;font-size:14px}
+.ergebnis{background:#fff;border:2px solid var(--blau);border-radius:18px;padding:18px;margin-bottom:14px;text-align:center;scroll-margin-top:calc(var(--oben) + 110px)}
+.ergebnis .gz{font-size:30px;font-weight:800;color:var(--navy)}.ergebnis p{margin:4px 0 12px;color:var(--grau)}
+.ergebnis .knoepfe{justify-content:center}
+.nurfehler .frage.ok{display:none}
+.karte{background:#fff;border:1px solid var(--rand);border-radius:16px;padding:18px;margin-bottom:14px}
+.felder{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:14px}
+.felder label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--grau);font-weight:600}
+.felder select{padding:10px;border:1px solid #c7d5df;border-radius:10px;background:#fff;font-size:15px;color:#1d2b3a;width:100%}
+.laden{color:var(--grau);padding:30px 0;text-align:center}
+footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rand);font-size:12.5px;color:var(--grau)}
+@media (max-width:920px){
+  :root{--oben:56px}
+  .app.on{display:block}
+  .seite{position:fixed;left:0;top:0;bottom:0;height:auto;width:86%;max-width:330px;z-index:60;transform:translateX(-105%);transition:transform .2s;box-shadow:0 0 40px #0003;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+  .seite.offen{transform:none}
+  .schleier{display:block;position:fixed;inset:0;background:#00142a66;z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
+  .schleier.offen{opacity:1;pointer-events:auto}
+  .topbar{display:flex;position:sticky;top:0;z-index:40;height:56px;align-items:center;gap:6px;padding:0 6px;background:#fff;border-bottom:1px solid var(--rand)}
+  .topbar button{border:0;background:none;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--navy);cursor:pointer;flex:none}
+  .topbar button:active{background:#eef2f5}
+  .topbar .tt{flex:1;min-width:0;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:16px}
+  .topbar img{height:30px}
+  .unten{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:#fff;border-top:1px solid var(--rand);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+  .unten a,.unten button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border:0;background:none;color:#6b7b88;font-size:11px;font-weight:600;text-decoration:none;border-radius:10px;cursor:pointer}
+  .unten .aktiv{color:var(--blau)}
+  .haupt{padding:14px 14px calc(90px + env(safe-area-inset-bottom))}
+  .haupt .bc,.haupt .zurueck{display:none}
+  h1.st{font-size:22px}
+  .kacheln{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kachel{min-height:118px;padding:14px 12px 12px;border-radius:14px}
+  .kachel .kt{font-size:15.5px}.kachel .kx{font-size:12.5px}
+  .kachel .bd{top:12px;right:10px}
+  .hero{padding:18px 16px}.hero h2{font-size:19px}
+  .hero .schnell{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .tage,.hefte{grid-template-columns:1fr}
+  .blaettern{flex-direction:column}
+  .qkopf{border-radius:0;margin:-14px -14px 12px;border-left:0;border-right:0;border-top:0}
+  .modus{width:100%}.modus button{flex:1}
+  .ft{font-size:16px}
+}
+@media (max-width:380px){.hero .schnell{grid-template-columns:repeat(2,minmax(0,1fr))}.kacheln{grid-template-columns:1fr}}
+</style></head><body>
+<div id="tor"><form class="torbox" id="f"><img src="assets/logo.png" alt="Waybuild Akademie"><h1>Geschäftsprozesse 2026</h1><p>Bitte den Zugangscode aus dem Unterricht eingeben.</p>
+<input id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Zugangscode" aria-label="Zugangscode"><button>Öffnen</button><div id="err"></div></form></div>
+<div class="app" id="app">
+ <aside class="seite" id="seite"><a class="marke" href="#"><img src="assets/logo.png" alt="Waybuild Akademie"><span>Geschäftsprozesse 2026<br>Dozent Can Siebert</span></a><nav class="nav" id="nav"></nav></aside>
+ <div class="schleier" id="schleier"></div>
+ <div>
+  <header class="topbar"><button id="tbZurueck" aria-label="Zurück"></button><img id="tbLogo" src="assets/logo.png" alt=""><div class="tt" id="tbTitel"></div><button id="tbMenue" aria-label="Menü"></button></header>
+  <main class="haupt" id="haupt"></main>
+ </div>
+ <nav class="unten" id="unten"></nav>
+</div>
+<script>
+const DATEN="__DATEN__";
+let D=null,QUIZ=null,POOL=null,ZURUECK="";
+const $=(s,r)=>(r||document).querySelector(s);
+const E=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const ICO={
+ praes:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+ skript:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/>',
+ quiz:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/>',
+ video:'<circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z"/>',
+ sonne:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+ heft:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+ ziel:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+ buch:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 1 2-2h13"/>',
+ haus:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+ kal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ menue:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+ links:'<path d="M15 18l-6-6 6-6"/>',rechts:'<path d="M9 18l6-6-6-6"/>',
+ schloss:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>'
+};
+const I=n=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[n]+'</svg>';
+
+async function oeffnen(code){
+ const raw=Uint8Array.from(atob(DATEN),c=>c.charCodeAt(0));
+ const salt=raw.slice(8,16),ct=raw.slice(16);
+ const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveBits"]);
+ const bits=new Uint8Array(await crypto.subtle.deriveBits({name:"PBKDF2",salt:salt,iterations:100000,hash:"SHA-256"},base,384));
+ const key=await crypto.subtle.importKey("raw",bits.slice(0,32),"AES-CBC",false,["decrypt"]);
+ const pt=await crypto.subtle.decrypt({name:"AES-CBC",iv:bits.slice(32,48)},key,ct);
+ const d=JSON.parse(new TextDecoder("utf-8",{fatal:true}).decode(pt));
+ if(d.marker!=="gp2026") throw new Error("falsch");
+ D=d; try{localStorage.setItem("gp2026code",code)}catch(e){}
+ $("#tor").style.display="none"; $("#app").classList.add("on");
+ aufbauen(); route();
+}
+$("#f").addEventListener("submit",async e=>{e.preventDefault();const c=$("#c").value.trim().toUpperCase();
+ try{await oeffnen(c);$("#err").textContent=""}catch(x){$("#err").textContent="Der Zugangscode stimmt nicht."}});
+(async()=>{let c=null;try{c=localStorage.getItem("gp2026code")}catch(e){} if(c){try{await oeffnen(c)}catch(e){try{localStorage.removeItem("gp2026code")}catch(_){}}}})();
+
+function heuteISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function heuteTag(){const h=heuteISO();return D.reihenfolge.find(n=>D.tage[n].datum===h)||null}
+function naechsterTag(){const h=heuteISO();return D.reihenfolge.find(n=>D.tage[n].datum>h)||null}
+function istHeute(n){return D.tage[n].datum===heuteISO()}
+function menue(auf){$("#seite").classList.toggle("offen",auf);$("#schleier").classList.toggle("offen",auf)}
+function aufbauen(){
+ $("#tbMenue").innerHTML=I("menue");$("#tbZurueck").innerHTML=I("links");
+ $("#tbMenue").onclick=()=>menue(true);$("#schleier").onclick=()=>menue(false);
+ $("#tbZurueck").onclick=()=>{location.hash=ZURUECK||"#"};
+ $("#seite").addEventListener("click",e=>{if(e.target.closest("a"))menue(false)});
+ $("#unten").innerHTML='<a href="#" data-r="start">'+I("haus")+'Übersicht</a><a href="#heute" data-r="heute">'+I("kal")+'Heute</a><a href="#trainer" data-r="trainer">'+I("ziel")+'Trainer</a><button id="ubTage">'+I("liste")+'Alle Tage</button>';
+ $("#ubTage").onclick=()=>menue(true);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape")menue(false)});
+ window.addEventListener("hashchange",route);
+}
+function navZeichnen(akt,aktTag){
+ const ht=heuteTag();
+ let h='<a href="#" class="'+(akt==="start"?"aktiv":"")+'">'+I("haus")+'Übersicht</a>';
+ if(ht) h+='<a href="#tag'+ht+'" class="'+(akt==="tag"&&aktTag===ht?"aktiv":"")+'">'+I("kal")+'Heute · Tag '+ht+'</a>';
+ if(D.kurs) h+='<a href="#trainer" class="'+(akt==="trainer"?"aktiv":"")+'">'+I("ziel")+'Quiz-Trainer</a><a href="#klausur" class="'+(akt==="klausur"?"aktiv":"")+'">'+I("uhr")+'Probeklausur</a><a href="'+E(D.kurs.gesamtskript)+'" target="_blank" rel="noopener">'+I("buch")+'Gesamtskript (PDF)</a>';
+ h+='<div class="gr">Unterrichtstage</div>';
+ D.teile.forEach(t=>{const offen=t.tage.includes(aktTag||ht||"");
+  h+='<details'+(offen?" open":"")+'><summary>'+E(t.kurz)+' · '+E(t.lang)+'</summary>'+t.tage.map(n=>'<a href="#tag'+n+'" class="tg'+(aktTag===n?" aktiv":"")+(istHeute(n)?" heute":"")+'"><b>'+n+'</b><em>'+E(D.tage[n].titel)+'</em></a>').join("")+'</details>'});
+ $("#nav").innerHTML=h;
+ document.querySelectorAll("#unten [data-r]").forEach(a=>a.classList.toggle("aktiv",a.dataset.r===akt||(a.dataset.r==="heute"&&akt==="tag"&&aktTag&&aktTag===ht)));
+}
+function rahmen(o){
+ ZURUECK=o.zurueck?o.zurueck[1]:"";
+ $("#tbTitel").textContent=o.kurz||"";
+ $("#tbZurueck").style.display=o.zurueck?"flex":"none";
+ $("#tbLogo").style.display=o.zurueck?"none":"block";
+ navZeichnen(o.akt,o.tag);
+ let h="";
+ if(o.bc) h+='<div class="bc">'+o.bc.map((b,i)=>i<o.bc.length-1?'<a href="'+b[1]+'">'+E(b[0])+'</a><i>/</i>':'<span>'+E(b[0])+'</span>').join("")+'</div>';
+ if(o.zurueck) h+='<a class="zurueck" href="'+o.zurueck[1]+'">'+I("links")+E(o.zurueck[0])+'</a>';
+ return h;
+}
+function fuss(){return '<footer>Dozent Can Siebert · Waybuild · <a href="https://www.waybuild.de" target="_blank" rel="noopener">www.waybuild.de</a><br>© 2026 Waybuild. Alle Rechte vorbehalten. · Stand '+E(D.stand)+' Uhr</footer>'}
+function kachel(o){
+ const cls="kachel"+(o.farbe?" f-"+o.farbe:"")+(o.breit?" breit":"")+(o.zu?" zu":"");
+ const inner='<span class="ic">'+I(o.zu?"schloss":o.icon)+'</span><span><span class="kt">'+E(o.titel)+'</span><br><span class="kx">'+E(o.text)+'</span></span>'+(o.badge&&!o.breit?'<span class="bd">'+E(o.badge)+'</span>':"")+(o.breit&&!o.zu?'<span class="pf">'+I("rechts")+'</span>':"");
+ if(o.zu||!o.href) return '<div class="'+cls+'">'+inner+'</div>';
+ return '<a class="'+cls+'" href="'+E(o.href)+'"'+(o.extern?' target="_blank" rel="noopener"':"")+'>'+inner+'</a>';
+}
+function vormittagKacheln(n){
+ const d=D.tage[n],zu=!d.frei1,ab=d.ab1;
+ return kachel({href:d.praes,icon:"praes",titel:"Präsentation",text:zu?ab:"Folien des Tages",badge:"PDF",extern:1,zu:zu})
+  +kachel({href:d.skript,icon:"skript",titel:"Skript",text:zu?ab:"Hauptskript zum Nachlesen",badge:"PDF",extern:1,farbe:"gruen",zu:zu})
+  +kachel({href:"#tag"+n+"-quiz",icon:"quiz",titel:"Quiz",text:zu?ab:(d.quiz_n||40)+" Fragen mit Feedback",badge:"Online",farbe:"lila",zu:zu})
+  +(d.video?kachel({href:"#tag"+n+"-video",icon:"video",titel:"Video",text:"Video zum Tag ansehen",badge:"Video",farbe:"rot"})
+   :'<div class="kachel zu"><span class="ic">'+I("video")+'</span><span><span class="kt">Video</span><br><span class="kx">'+(zu?E(ab):"Video folgt")+'</span></span></div>');
+}
+function tagKachel(n){const d=D.tage[n],h=istHeute(n);
+ const chip=h?'<span class="chip o">Heute</span>':!d.frei1?'<span class="chip g">'+E(d.ab1)+'</span>':d.video?'<span class="chip v">Video</span>':"";
+ return '<a class="tag'+(h?" heute":"")+(d.frei1?"":" off")+'" href="#tag'+n+'"><span class="k"><b>Tag '+n+'</b>'+chip+'</span><span class="d">'+E(d.wochentag)+', '+E(d.datum_de)+'</span><span class="t">'+E(d.titel)+'</span></a>'}
+
+function route(){
+ if(!D) return;
+ if(QUIZ&&QUIZ.stop) QUIZ.stop(); QUIZ=null;
+ document.querySelectorAll("video").forEach(v=>v.pause());
+ menue(false);
+ const h=decodeURIComponent((location.hash||"").slice(1));
+ const H=$("#haupt");
+ if(h==="heute"){const t=heuteTag()||naechsterTag(); location.replace(t?"#tag"+t:"#"); return}
+ const m=h.match(/^tag(\d\d)(?:-(nachmittag|video|quiz|uebung1|uebung2))?$/);
+ if(m&&D.tage[m[1]]){const n=m[1],s=m[2]||"";
+  if(!s) H.innerHTML=seiteTag(n);
+  else if(s==="nachmittag") H.innerHTML=seiteNachmittag(n);
+  else if(s==="video") H.innerHTML=seiteVideo(n);
+  else seiteQuiz(H,n,s);
+ } else if(h==="trainer") seiteTrainer(H,false);
+ else if(h==="klausur") seiteTrainer(H,true);
+ else H.innerHTML=seiteStart();
+ window.scrollTo(0,0);
+}
+function seiteStart(){
+ let h=rahmen({kurz:"Geschäftsprozesse 2026",akt:"start"});
+ h+='<h1 class="st">Willkommen im Kurs Geschäftsprozesse</h1><p class="sub">'+E(D.untertitel)+'</p>';
+ const ht=heuteTag(),nt=ht||naechsterTag();
+ if(nt){const d=D.tage[nt],zu=!d.frei1;
+  const s=(href,ic,t,ok,ext)=>ok?'<a href="'+E(href)+'"'+(ext?' target="_blank" rel="noopener"':"")+'>'+I(ic)+t+'</a>':'<span>'+I(ic)+t+'</span>';
+  h+='<div class="hero"><span class="chip">'+(ht?"Heute":"Nächster Unterrichtstag")+' · Tag '+nt+'</span><h2>'+E(d.titel)+'</h2><p>'+E(d.wochentag)+', '+E(d.datum_de)+'</p><div class="schnell">'
+   +s(d.praes,"praes","Präsentation",!zu,1)+s(d.skript,"skript","Skript",!zu,1)+s("#tag"+nt+"-quiz","quiz","Quiz",!zu)+s("#tag"+nt+"-video","video","Video",!!d.video)+s("#tag"+nt+"-nachmittag","sonne","Nachmittag",d.frei2)
+   +'</div><a class="zum" href="#tag'+nt+'">Zum Tag '+nt+' '+I("rechts")+'</a></div>';}
+ if(D.kurs) h+='<h2 class="ab">'+I("ziel")+'Lernen und Wiederholen</h2><div class="kacheln">'
+  +kachel({href:"#trainer",icon:"ziel",titel:"Quiz-Trainer",text:"Fragen nach Tag oder Teil üben",farbe:"lila",badge:"Online"})
+  +kachel({href:"#klausur",icon:"uhr",titel:"Probeklausur",text:"30 Fragen, Auswertung am Ende",farbe:"orange",badge:"Online"})
+  +kachel({href:D.kurs.gesamtskript,icon:"buch",titel:"Gesamtskript",text:"Alle Skripte in einer Datei",farbe:"gruen",badge:"PDF",extern:1})+'</div>';
+ D.teile.forEach(t=>{h+='<h2 class="ab">'+E(t.kurz)+' <small>'+E(t.lang)+'</small></h2><div class="tage">'+t.tage.map(tagKachel).join("")+'</div>'});
+ return h+fuss();
+}
+function seiteTag(n){const d=D.tage[n];
+ let h=rahmen({kurz:"Tag "+n+" · "+d.titel,bc:[["Übersicht","#"],["Tag "+n,""]],zurueck:["Übersicht","#"],akt:"tag",tag:n});
+ h+='<span class="chip">'+E(d.teilkurz)+'</span>'+(istHeute(n)?' <span class="chip o">Heute</span>':"")+'<h1 class="st">Tag '+n+' · '+E(d.titel)+'</h1><p class="sub">'+E(d.wochentag)+', '+E(d.datum_de)+'</p>';
+ h+='<h2 class="ab">'+I("praes")+'Vormittag</h2><div class="kacheln">'+vormittagKacheln(n)+'</div>';
+ h+='<h2 class="ab">'+I("sonne")+'Nachmittag <small>freiwillig</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-nachmittag",icon:"sonne",titel:"Nachmittag",text:d.frei2?"2 Übungsquizze und 2 Aufgabenhefte mit Lösungen":"Übungsquizze und Aufgabenhefte "+d.ab2,farbe:"orange",breit:1,zu:!d.frei2})+'</div>';
+ const i=D.reihenfolge.indexOf(n),v=D.reihenfolge[i-1],w=D.reihenfolge[i+1];
+ h+='<div class="blaettern">'+(v?'<a href="#tag'+v+'">'+I("links")+'<span><small>Vorheriger Tag</small><b>Tag '+v+' · '+E(D.tage[v].titel)+'</b></span></a>':"<span></span>")+(w?'<a class="r" href="#tag'+w+'"><span><small>Nächster Tag</small><b>Tag '+w+' · '+E(D.tage[w].titel)+'</b></span>'+I("rechts")+'</a>':"<span></span>")+'</div>';
+ return h+fuss();
+}
+function seiteNachmittag(n){const d=D.tage[n];
+ let h=rahmen({kurz:"Tag "+n+" · Nachmittag",bc:[["Übersicht","#"],["Tag "+n,"#tag"+n],["Nachmittag",""]],zurueck:["Zurück zu Tag "+n,"#tag"+n],akt:"tag",tag:n});
+ h+='<span class="chip">Freiwillig</span><h1 class="st">Tag '+n+' · Nachmittag</h1><p class="sub">'+E(d.titel)+'</p>';
+ if(!d.frei2) return h+'<div class="kacheln">'+kachel({icon:"sonne",titel:"Noch gesperrt",text:"Freigabe "+d.ab2,zu:1,breit:1})+'</div>'+fuss();
+ h+='<h2 class="ab">'+I("quiz")+'Übungsquizze</h2><div class="kacheln">'+d.uebungen.map(u=>kachel({href:"#tag"+n+"-uebung"+u.nr,icon:"quiz",titel:"Übungsquiz "+u.nr,text:u.info+", "+u.anzahl+" Fragen",farbe:"lila",badge:"Online"})).join("")+'</div>';
+ h+='<h2 class="ab">'+I("heft")+'Aufgabenhefte</h2><div class="hefte">'+d.hefte.map(x=>'<div class="heft"><div class="kt"><span class="ic">'+I("heft")+'</span>Aufgabenheft '+x.nr+'</div><div class="kx">'+E(x.thema)+'</div><div class="knoepfe"><a class="knopf" href="'+E(x.aufgabe)+'" target="_blank" rel="noopener">Aufgaben öffnen</a>'+(x.loesung?'<a class="knopf hell" href="'+E(x.loesung)+'" target="_blank" rel="noopener">Lösung öffnen</a>':"")+'</div></div>').join("")+'</div>';
+ return h+fuss();
+}
+function seiteVideo(n){const d=D.tage[n];
+ let h=rahmen({kurz:"Tag "+n+" · Video",bc:[["Übersicht","#"],["Tag "+n,"#tag"+n],["Video",""]],zurueck:["Zurück zu Tag "+n,"#tag"+n],akt:"tag",tag:n});
+ h+='<h1 class="st">Tag '+n+' · Video</h1><p class="sub">'+E(d.titel)+'</p>';
+ const v=d.video;
+ if(!v) h+='<p>Das Video folgt.</p>';
+ else if(v.typ==="youtube") h+='<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+E(v.id)+'" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe></div>';
+ else if(v.typ==="datei") h+='<div class="player"><video controls preload="metadata" playsinline src="'+E(v.src)+'"></video></div>';
+ else h+='<p><a class="knopf" href="'+E(v.src)+'" target="_blank" rel="noopener">Video öffnen</a></p>';
+ return h+'<div class="knoepfe" style="margin-top:16px"><a class="knopf hell" href="#tag'+n+'">'+I("links")+'Zurück zu Tag '+n+'</a></div>'+fuss();
+}
+async function seiteQuiz(H,n,s){const d=D.tage[n];
+ const uebung=s.indexOf("uebung")===0,nr=uebung?s.slice(-1):"";
+ const zur=uebung?["Zurück zum Nachmittag","#tag"+n+"-nachmittag"]:["Zurück zu Tag "+n,"#tag"+n];
+ const name=uebung?"Übungsquiz "+nr:"Quiz";
+ const bc=[["Übersicht","#"],["Tag "+n,"#tag"+n]].concat(uebung?[["Nachmittag","#tag"+n+"-nachmittag"]]:[]).concat([[name,""]]);
+ let kopf=rahmen({kurz:"Tag "+n+" · "+name,bc:bc,zurueck:zur,akt:"tag",tag:n});
+ const frei=uebung?d.frei2:d.frei1;
+ const quelle=uebung?(d.uebungen||[]).find(u=>u.nr===nr):(d.quiz?{src:d.quiz}:null);
+ kopf+='<h1 class="st">Tag '+n+' · '+name+'</h1><p class="sub">'+E(d.titel)+'</p>';
+ if(!frei||!quelle){H.innerHTML=kopf+'<p>Dieses Quiz ist noch gesperrt.</p>'+fuss();return}
+ H.innerHTML=kopf+'<div id="qz"><div class="laden">Fragen werden geladen …</div></div><div class="knoepfe" style="margin-top:8px"><a class="knopf hell" href="'+zur[1]+'">'+I("links")+E(zur[0])+'</a></div>'+fuss();
+ try{const r=await fetch(quelle.src);const fr=await r.json(); if(location.hash.slice(1)!=="tag"+n+"-"+s) return;
+  QUIZ=quiz($("#qz"),fr,{modus:"sofort"});}catch(e){$("#qz").innerHTML='<p>Die Fragen konnten nicht geladen werden. Bitte Seite neu laden.</p>'}
+}
+async function seiteTrainer(H,klausur){
+ const name=klausur?"Probeklausur":"Quiz-Trainer",r0=klausur?"klausur":"trainer";
+ let h=rahmen({kurz:name,bc:[["Übersicht","#"],[name,""]],zurueck:["Übersicht","#"],akt:r0});
+ h+='<h1 class="st">'+name+'</h1><p class="sub">'+(klausur?"30 zufällige Fragen aus allen freigegebenen Tagen. Die Auswertung kommt am Ende, mit Note nach IHK-Schlüssel.":"Fragen gezielt nach Teil, Tag oder Quizart üben.")+'</p><div id="tr"><div class="laden">Fragen werden geladen …</div></div>'+fuss();
+ H.innerHTML=h;
+ if(!D.kurs){$("#tr").innerHTML="<p>Noch nicht verfügbar.</p>";return}
+ try{if(!POOL){const r=await fetch(D.kurs.pool);POOL=await r.json()}}catch(e){$("#tr").innerHTML='<p>Die Fragen konnten nicht geladen werden. Bitte Seite neu laden.</p>';return}
+ if(location.hash.slice(1)!==r0) return;
+ const T=$("#tr");
+ const teile=[...new Set(POOL.map(q=>q.teil))].sort(),tage=[...new Set(POOL.map(q=>q.tag))].sort();
+ const opt=(a,f)=>a.map(x=>'<option value="'+E(x)+'">'+E(f(x))+'</option>').join("");
+ let form='<div class="karte"><div class="felder">';
+ if(!klausur) form+='<label>Teil<select id="ft"><option value="">Alle Teile</option>'+opt(teile,x=>{const t=D.teile.find(t=>t.kurz==="Teil "+x);return t?t.kurz+" · "+t.lang:"Teil "+x})+'</select></label>'
+   +'<label>Tag<select id="fd"><option value="">Alle Tage</option>'+opt(tage,x=>"Tag "+x+(D.tage[x]?" · "+D.tage[x].titel:""))+'</select></label>'
+   +'<label>Quizart<select id="fs"><option value="">Alle</option><option>Tagesquiz</option><option>Übungsquiz 1</option><option>Übungsquiz 2</option></select></label>'
+   +'<label>Anzahl<select id="fn"><option>10</option><option selected>20</option><option>40</option><option value="0">Alle</option></select></label>'
+   +'<label>Feedback<select id="fm"><option value="sofort">Sofort nach jeder Frage</option><option value="ende">Am Ende</option></select></label>';
+ else form+='<label>Zeit<select id="fz"><option value="0">Ohne Zeitlimit</option><option value="30">30 Minuten</option><option value="45">45 Minuten</option><option value="60" selected>60 Minuten</option></select></label>';
+ form+='</div><button class="knopf gross" id="los">'+(klausur?"Probeklausur starten":"Training starten")+'</button><div class="fort" id="anz" style="margin-top:8px;text-align:center"></div></div><div id="qz"></div>';
+ T.innerHTML=form;
+ const filt=()=>klausur?POOL:POOL.filter(q=>(!$("#ft").value||q.teil===$("#ft").value)&&(!$("#fd").value||q.tag===$("#fd").value)&&(!$("#fs").value||q.src===$("#fs").value));
+ const upd=()=>{$("#anz").textContent=filt().length+" Fragen verfügbar"};
+ T.querySelectorAll("select").forEach(s=>s.addEventListener("change",upd));upd();
+ $("#los").onclick=()=>{let a=mischen(filt());const k=klausur?30:+$("#fn").value; if(k) a=a.slice(0,k);
+  if(!a.length){$("#anz").textContent="Keine Fragen für diese Auswahl.";return}
+  if(QUIZ&&QUIZ.stop) QUIZ.stop();
+  QUIZ=quiz($("#qz"),a,{modus:klausur?"ende":$("#fm").value,fest:klausur,minuten:klausur?+$("#fz").value:0,meta:true});
+  $("#qz").scrollIntoView({behavior:"smooth"});};
+}
+function mischen(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
+function note(p){return p>=92?"1 (sehr gut)":p>=81?"2 (gut)":p>=67?"3 (befriedigend)":p>=50?"4 (ausreichend)":p>=30?"5 (mangelhaft)":"6 (ungenügend)"}
+function quiz(el,fragen,o){
+ let modus=o.modus||"sofort",st=[],timer=null,ende=0,aus=false;
+ function neu(){clearInterval(timer);aus=false;el.classList.remove("nurfehler");
+  st=fragen.map(q=>({q:q,o:mischen(q.options.map((x,k)=>({t:x.t,c:!!x.c,k:k}))),sel:new Set(),fertig:false,ok:null}));
+  zeichnen(); if(o.minuten){ende=Date.now()+o.minuten*60000;timer=setInterval(tick,1000);tick()}}
+ function tick(){const s=Math.max(0,Math.round((ende-Date.now())/1000));const u=$(".uhr",el);if(u)u.textContent="Restzeit "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(!s){clearInterval(timer);auswerten()}}
+ function stand(){const b=st.filter(x=>x.sel.size).length,f=st.filter(x=>x.fertig);return {b:b,f:f.length,r:f.filter(x=>x.ok).length}}
+ function fHTML(i){const x=st[i],q=x.q;
+  let h='<div class="frage'+(x.fertig?(x.ok?" ok":" bad"):"")+'" id="q'+i+'"><div class="fnr">Frage '+(i+1)+' von '+st.length+(o.meta&&q.tag?' · Tag '+E(q.tag)+' · '+E(q.src):"")+'</div><div class="ft">'+E(q.q)+'</div><div class="hinweis">1 oder 2 Antworten sind richtig</div>';
+  x.o.forEach((a,k)=>{const g=x.sel.has(k);let c="opt",m="";
+   if(x.fertig){if(a.c&&g){c+=" richtig";m="Richtig"}else if(a.c){c+=" fehlt";m="Wäre richtig"}else if(g){c+=" falsch";m="Falsch"}}else if(g)c+=" gew";
+   h+='<label class="'+c+'"><input type="checkbox" data-i="'+i+'" data-k="'+k+'"'+(g?" checked":"")+(x.fertig?" disabled":"")+'><span>'+E(a.t)+'</span>'+(m?'<span class="m">'+m+'</span>':"")+'</label>'});
+  if(!x.fertig&&modus==="sofort") h+='<button class="knopf" data-p="'+i+'"'+(x.sel.size?"":" disabled")+'>Antwort prüfen</button>';
+  if(x.fertig) h+='<div class="urteil '+(x.ok?"ok":"bad")+'">'+(x.ok?"Richtig.":"Leider falsch.")+'</div>'+(q.expl?'<div class="erkl"><b>Erklärung.</b> '+E(q.expl)+'</div>':"");
+  return h+'</div>'}
+ function kHTML(){const s=stand();let h='<div class="qkopf"><div class="qzeile">';
+  if(!o.fest) h+='<div class="modus"><button data-m="sofort" class="'+(modus==="sofort"?"an":"")+'">Sofort-Feedback</button><button data-m="ende" class="'+(modus==="ende"?"an":"")+'">Auswertung am Ende</button></div>';
+  h+='<span class="fort"><b>'+s.b+'</b> von '+st.length+' beantwortet'+(s.f?' · <b>'+s.r+'</b> richtig':"")+'</span>'+(o.minuten?'<span class="uhr"></span>':"")+'</div><div class="balken"><div style="width:'+(100*s.b/st.length)+'%"></div></div></div>';return h}
+ function eHTML(){const s=stand();if(s.f<st.length) return "";const p=Math.round(1000*s.r/st.length)/10;
+  return '<div class="ergebnis" id="erg"><div class="gz">'+s.r+' von '+st.length+' richtig</div><p>'+p.toLocaleString("de-DE")+' % · Note nach IHK-Schlüssel '+note(p)+'<br><small>Es zählt nur eine vollständig richtige Antwort.</small></p><div class="knoepfe">'+(s.r<st.length?'<button class="knopf hell" data-a="fehler">'+(el.classList.contains("nurfehler")?"Alle Fragen zeigen":"Nur Fehler zeigen")+'</button>':"")+'<button class="knopf" data-a="neu">Neu starten</button></div></div>'}
+ function unten(){const s=stand();
+  if(s.f===st.length) return '<div class="knoepfe" style="justify-content:center;margin:16px 0"><button class="knopf" data-a="neu">Neu starten</button><button class="knopf hell" data-a="zumerg">Zum Ergebnis</button></div>';
+  if(modus==="ende") return '<div style="margin:16px 0"><button class="knopf gross" data-a="auswerten">Auswerten</button><div class="fort" style="text-align:center;margin-top:6px">'+(st.length-s.b?(st.length-s.b)+" Fragen sind noch offen":"Alle Fragen beantwortet")+'</div></div>';
+  return ""}
+ function zeichnen(){el.innerHTML=kHTML()+'<div class="ergplatz">'+eHTML()+'</div><div class="fragen">'+st.map((x,i)=>fHTML(i)).join("")+'</div><div class="untenplatz">'+unten()+'</div>'}
+ function teil(){el.querySelector(".qkopf").outerHTML=kHTML();$(".ergplatz",el).innerHTML=eHTML();$(".untenplatz",el).innerHTML=unten();if(o.minuten)tick()}
+ function frageNeu(i){const q=el.querySelector("#q"+i);if(q)q.outerHTML=fHTML(i)}
+ function zumErg(){setTimeout(()=>{const e=$("#erg",el);if(e)e.scrollIntoView({behavior:"smooth",block:"start"})},150)}
+ function pruefen(i){const x=st[i];x.fertig=true;x.ok=x.o.every(a=>a.c===x.sel.has(x.o.indexOf(a)));frageNeu(i);teil();if(stand().f===st.length){clearInterval(timer);zumErg()}}
+ function auswerten(){if(aus)return;aus=true;clearInterval(timer);st.forEach(x=>{if(!x.fertig){x.fertig=true;x.ok=x.o.every((a,k)=>a.c===x.sel.has(k))}});zeichnen();zumErg()}
+ el.onchange=e=>{const c=e.target;if(c.dataset.i==null)return;const i=+c.dataset.i,k=+c.dataset.k,x=st[i];if(x.fertig)return;if(c.checked)x.sel.add(k);else x.sel.delete(k);frageNeu(i);teil()};
+ el.onclick=e=>{const b=e.target.closest("button");if(!b||!el.contains(b))return;
+  if(b.dataset.p!=null){pruefen(+b.dataset.p);return}
+  if(b.dataset.m){modus=b.dataset.m;zeichnen();return}
+  const a=b.dataset.a;
+  if(a==="auswerten")auswerten();
+  else if(a==="neu"){neu();el.scrollIntoView({behavior:"smooth"})}
+  else if(a==="fehler"){el.classList.toggle("nurfehler");teil()}
+  else if(a==="zumerg")zumErg()};
+ neu();
+ return {stop:()=>clearInterval(timer)};
+}
+</script></body></html>
