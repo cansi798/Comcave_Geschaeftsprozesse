@@ -34,6 +34,8 @@ def video_fuer(tag, videos):
     link = (videos.get(tag) or "").strip()
     if link:
         return link, False
+    for p in sorted(glob.glob(os.path.join(ROOT, "tresor", "videos", f"Tag{tag}*.enc"))):
+        return p, "tresor"
     for p in sorted(glob.glob(os.path.join(ROOT, "videos", f"Tag{tag}*"))):
         if p.lower().endswith(VIDEO_EXT):
             return "videos/" + os.path.basename(p), True
@@ -105,7 +107,16 @@ def main():
         v = dateien["vormittag"]
         vid, datei = (video_fuer(n, videos) if frei1 else (None, False))
         if vid:
-            if datei:
+            if datei == "tresor":
+                name = os.path.basename(vid)[:-4]
+                os.makedirs(os.path.join(MAT, "videos"), exist_ok=True)
+                dec = subprocess.run(["openssl", "enc", "-d", "-aes-256-cbc", "-pbkdf2", "-iter", "200000",
+                                      "-pass", "env:MATERIAL_KEY", "-in", vid, "-out", os.path.join(MAT, "videos", name)])
+                if dec.returncode != 0:
+                    raise SystemExit(f"Video {name} konnte nicht entschluesselt werden.")
+                stand.append(f"{n}video:{os.path.getsize(vid)}")
+                vid = f"{P}/videos/{name}"
+            elif datei:
                 src = os.path.join(ROOT, vid)
                 os.makedirs(os.path.join(MAT, "videos"), exist_ok=True)
                 shutil.copy2(src, os.path.join(MAT, vid))
@@ -117,7 +128,7 @@ def main():
             vm = [kachel(f"{P}/{o}/{v[0]}", "Präsentation", "Folien des Tages als PDF", "k1"),
                   kachel(f"{P}/{o}/{v[1]}", "Skript", "Hauptskript zum Nachlesen", "k2"),
                   kachel(f"{P}/{o}/{v[2]}", "Quiz", "Tagesquiz online", "k3"),
-                  kachel(vid, "Video", "Video zum Tag ansehen", "k4") if vid else kachel(None, "Video", "Video folgt", "k4 folgt")]
+                  kachel(f"#tag{n}-video", "Video", "Video zum Tag ansehen", "k4") if vid else kachel(None, "Video", "Video folgt", "k4 folgt")]
         else:
             vm = [kachel(None, x, ab1, c) for x, c in (("Präsentation", "k1"), ("Skript", "k2"), ("Quiz", "k3"), ("Video", "k4"))]
         nm_kachel = (kachel(f"#tag{n}-nachmittag", "Nachmittag", "Freiwillige Übungsquizze und Aufgabenhefte", "k5 gross") if frei2
@@ -126,6 +137,18 @@ def main():
                 f'<p class="tu">{t["wochentag"]}, {datum_de} · {html.escape(t["teil"])}</p>')
         ansichten.append(f'<div class="ansicht" id="v-tag{n}">{kopf}<h3>Vormittag</h3><div class="kacheln">{"".join(vm)}</div>'
                          f'<div class="kacheln eins">{nm_kachel}</div></div>')
+
+        # Video-Ansicht
+        if frei1 and vid:
+            yt = re.search(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([\w-]{6,})", vid)
+            if yt:
+                player = f'<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/{yt.group(1)}" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe></div>'
+            elif vid.lower().split("?")[0].endswith(VIDEO_EXT):
+                player = f'<div class="player"><video controls preload="metadata" playsinline src="{html.escape(vid)}"></video></div>'
+            else:
+                player = f'<p>{a(vid, "Video in neuem Fenster öffnen")}</p>'
+            ansichten.append(f'<div class="ansicht" id="v-tag{n}-video"><p class="zur"><a href="#tag{n}">Zurück zu Tag {n}</a> · <a href="#">Alle Tage</a></p>'
+                             f'<h2 class="tk">Tag {n} · Video</h2><p class="tu">{html.escape(t["titel"])}</p>{player}</div>')
 
         # Nachmittag
         if frei2:
@@ -184,6 +207,7 @@ h2{{color:#003366;font-size:20px;margin:22px 0 8px}}
 .dh{{display:flex;justify-content:space-between;align-items:center}}.nr{{font-weight:700;color:#0077A6}}.heute .nr{{color:#E8833A}}
 .st{{font-size:12px;padding:2px 8px;border-radius:10px;background:#e6f2f7;color:#0077A6}}.off .st{{background:#eee;color:#888}}.heute .st{{background:#E8833A;color:#fff}}
 .dt{{display:block;color:#555;font-size:13.5px;margin-top:2px}}.ti{{display:block;font-weight:600;margin-top:4px}}
+.player{{max-width:960px;background:#000;border-radius:12px;overflow:hidden;aspect-ratio:16/9}}.player video,.player iframe{{width:100%;height:100%;border:0;display:block}}
 .ansicht{{display:none}}.ansicht.aktiv{{display:block}}
 .zur{{margin:8px 0 0;font-size:14px}}.tk{{margin:8px 0 2px;font-size:23px}}.tu{{margin:0 0 6px;color:#555}}
 h3{{color:#003366;font-size:17px;margin:18px 0 8px}}
@@ -222,7 +246,7 @@ function zeigen(){{
   const id=(location.hash||"").replace("#","");
   const ziel=document.getElementById(id?"v-"+id:"v-start")||document.getElementById("v-start");
   if(!ziel) return;
-  document.querySelectorAll(".ansicht").forEach(v=>v.classList.toggle("aktiv",v===ziel));
+  document.querySelectorAll(".ansicht").forEach(v=>{{v.classList.toggle("aktiv",v===ziel); if(v!==ziel) v.querySelectorAll("video").forEach(x=>x.pause());}});
   if(ziel.id==="v-start"){{const h=document.querySelector(".tag.heute"); if(h&&!id) h.scrollIntoView({{block:"center"}}); else window.scrollTo(0,0);}}
   else window.scrollTo(0,0);
 }}
