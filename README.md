@@ -10,9 +10,11 @@ Jeder Unterrichtstag hat zwei Stufen.
 | Vormittag | Präsentation als PDF, Skript, Quiz, Video des Tages | 12:00 Uhr |
 | Nachmittag, freiwillig | Übungsquiz 1 und 2, Aufgabenheft 1 und 2 mit Lösungen | 12:45 Uhr |
 
-Quiz-Trainer und Gesamtskript sind sofort sichtbar (Ordner `kurs`).
+Quiz-Trainer und Gesamtskript sind sofort sichtbar.
 
-Das Tagesmaterial liegt bis zur Freigabe verschlüsselt im Ordner `tresor`. Der Workflow `.github/workflows/freigabe.yml` läuft montags bis freitags alle 15 Minuten zwischen 07:00 und 19:00 Uhr, entschlüsselt alles Fällige mit dem Secret `MATERIAL_KEY` und veröffentlicht die Seite neu. GitHub startet geplante Läufe manchmal 5 bis 20 Minuten später.
+Die Seite fragt zuerst nach dem **Zugangscode** (Standard `KBM`, änderbar in `zeitplan.json` unter `zugangscode`). Ohne Code sieht man nur die Eingabemaske. Die Dateien liegen in einem Unterordner, dessen Name sich aus dem Secret ableitet.
+
+Das gesamte Material liegt bis zur Freigabe verschlüsselt im Ordner `tresor`. Der Workflow `.github/workflows/freigabe.yml` läuft montags bis freitags alle 15 Minuten zwischen 07:00 und 19:00 Uhr, entschlüsselt alles Fällige mit dem Secret `MATERIAL_KEY` und veröffentlicht die Seite neu. GitHub startet geplante Läufe manchmal 5 bis 20 Minuten später.
 
 ## Einmalige Einrichtung
 1. Settings, Secrets and variables, Actions, New repository secret. Name `MATERIAL_KEY`, Wert aus der lokalen Datei `_Schluessel_Website.txt`.
