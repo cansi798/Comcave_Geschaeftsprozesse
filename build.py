@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+"""Baut die Lernseite. Schaltet Material je Tag zur eingestellten Uhrzeit frei.
+Freigabe: Stufe Vormittag (Praesentation PDF, Skript, Quiz, Video) und Stufe Nachmittag
+(Uebungsquizze, Aufgabenhefte). Noch nicht freigegebenes Material liegt verschluesselt in tresor/.
+Testlauf mit fester Uhrzeit:  JETZT="2026-11-12 12:30" python3 build.py
+(c) 2026 Waybuild Akademie, Waybuild UG (haftungsbeschraenkt)"""
+import os, json, shutil, subprocess, datetime, html, hashlib, glob, re
+from zoneinfo import ZoneInfo
+
+TZ = ZoneInfo("Europe/Berlin")
+ROOT = os.path.dirname(os.path.abspath(__file__))
+SITE = os.path.join(ROOT, "_site")
+KEY = os.environ.get("MATERIAL_KEY", "")
+VIDEO_EXT = (".mp4", ".webm", ".mov", ".m4v")
+
+def jetzt():
+    j = os.environ.get("JETZT")
+    if j:
+        return datetime.datetime.strptime(j, "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+    return datetime.datetime.now(TZ)
+
+def zeitpunkt(datum, uhr):
+    return datetime.datetime.strptime(f"{datum} {uhr}", "%Y-%m-%d %H:%M").replace(tzinfo=TZ)
+
+def entschluesseln(datei, ziel):
+    os.makedirs(ziel, exist_ok=True)
+    dec = subprocess.run(["openssl", "enc", "-d", "-aes-256-cbc", "-pbkdf2", "-iter", "200000",
+                          "-pass", "env:MATERIAL_KEY", "-in", datei], capture_output=True)
+    if dec.returncode != 0:
+        raise SystemExit(f"Entschluesseln fehlgeschlagen ({os.path.basename(datei)}). Ist das Secret MATERIAL_KEY richtig gesetzt?")
+    subprocess.run(["tar", "xzf", "-", "-C", ziel], input=dec.stdout, check=True)
+
+def video_fuer(tag, videos):
+    link = (videos.get(tag) or "").strip()
+    if link:
+        return link, False
+    for p in sorted(glob.glob(os.path.join(ROOT, "videos", f"Tag{tag}*"))):
+        if p.lower().endswith(VIDEO_EXT):
+            return "videos/" + os.path.basename(p), True
+    return None, False
+
+def a(href, text):
+    return f'<a href="{html.escape(href)}" target="_blank" rel="noopener">{html.escape(text)}</a>'
+
+def main():
+    cfg = json.load(open(os.path.join(ROOT, "zeitplan.json"), encoding="utf-8"))
+    inhalt = json.load(open(os.path.join(ROOT, "tresor", "inhalt.json"), encoding="utf-8"))
+    videos = json.load(open(os.path.join(ROOT, "videos.json"), encoding="utf-8"))
+    now = jetzt()
+    shutil.rmtree(SITE, ignore_errors=True)
+    os.makedirs(SITE)
+    shutil.copytree(os.path.join(ROOT, "assets"), os.path.join(SITE, "assets"))
+    open(os.path.join(SITE, ".nojekyll"), "w").close()
+
+    stand = []
+    if cfg.get("kursdateien_sofort", True):
+        shutil.copytree(os.path.join(ROOT, "kurs"), os.path.join(SITE, "kurs"))
+        stand.append("kurs")
+
+    sektionen, karten = [], {}
+    for t in cfg["tage"]:
+        n, o = t["tag"], t["ordner"]
+        z1 = zeitpunkt(t["datum"], t.get("vormittag") or cfg["uhrzeit_vormittag"])
+        z2 = zeitpunkt(t["datum"], t.get("nachmittag") or cfg["uhrzeit_nachmittag"])
+        frei1 = now >= z1 and bool(KEY)
+        frei2 = now >= z2 and bool(KEY)
+        dateien = inhalt[o]
+        if frei1:
+            entschluesseln(os.path.join(ROOT, "tresor", f"Tag{n}_1_Vormittag.tar.gz.enc"), os.path.join(SITE, o))
+            stand.append(f"{n}v")
+        if frei2:
+            entschluesseln(os.path.join(ROOT, "tresor", f"Tag{n}_2_Nachmittag.tar.gz.enc"), os.path.join(SITE, o))
+            stand.append(f"{n}n")
+        heute = now.date().isoformat() == t["datum"]
+        datum_de = datetime.date.fromisoformat(t["datum"]).strftime("%d.%m.%Y")
+        cls = "day" + ("" if frei1 else " off") + (" heute" if heute else "")
+        h = [f'<div class="{cls}" id="tag{n}"><div class="dh"><span class="nr">Tag {n}{" · Heute" if heute else ""}</span>'
+             f'<span class="dt">{t["wochentag"]}, {datum_de}</span></div><div class="ti">{html.escape(t["titel"])}</div>']
+        if frei1:
+            v = dateien["vormittag"]
+            links = [a(f"{o}/{v[0]}", "Präsentation (PDF)"), a(f"{o}/{v[1]}", "Skript (PDF)"), a(f"{o}/{v[2]}", "Quiz")]
+            h.append('<div class="ln"><b class="vm">Vormittag</b> ' + " · ".join(links) + "</div>")
+            vid, datei = video_fuer(n, videos)
+            if vid:
+                if datei:
+                    src = os.path.join(ROOT, vid)
+                    os.makedirs(os.path.join(SITE, "videos"), exist_ok=True)
+                    shutil.copy2(src, os.path.join(SITE, vid))
+                    stand.append(f"{n}video:{os.path.getsize(src)}")
+                else:
+                    stand.append(f"{n}video:{vid}")
+                h.append(f'<div class="vid on">{a(vid, "▶ Video zum Tag ansehen")}</div>')
+            else:
+                h.append('<div class="vid">Video folgt</div>')
+        else:
+            h.append(f'<div class="wait">Präsentation, Skript, Quiz und Video ab {datum_de}, {z1:%H:%M} Uhr</div>')
+        if frei2:
+            labels = []
+            for f in dateien["nachmittag"]:
+                b = os.path.basename(f)
+                m = re.search(r"Uebungsquiz_(\d)", b)
+                if m:
+                    labels.append(a(f"{o}/{f}", f"Übungsquiz {m.group(1)}"))
+                else:
+                    m = re.search(r"Aufgabenheft_(\d)", b)
+                    labels.append(a(f"{o}/{f}", ("Lösung " if "Loesung" in b else "Aufgabenheft ") + m.group(1)))
+            h.append('<div class="fr"><b>Nachmittag, freiwillig</b> ' + " · ".join(labels) + "</div>")
+        elif frei1:
+            h.append(f'<div class="wait">Übungsquizze und Aufgabenhefte ab {z2:%H:%M} Uhr</div>')
+        h.append("</div>")
+        if t["teil"] not in karten:
+            sektionen.append(t["teil"]); karten[t["teil"]] = []
+        karten[t["teil"]].append("".join(h))
+
+    kurs = ""
+    if cfg.get("kursdateien_sofort", True):
+        kurs = ('<br><b>Kursdateien</b> ' + a("kurs/03_Quiz-Trainer_alle_Fragen_und_Probeklausur.html", "Quiz-Trainer mit Probeklausur")
+                + " · " + a("kurs/04_Gesamtskript_alle_Tage.pdf", "Gesamtskript aller Tage"))
+    body = "".join(f'<section><h2>{html.escape(s)}</h2><div class="grid">{"".join(karten[s])}</div></section>' for s in sektionen)
+    seite = TEMPLATE.format(titel=html.escape(cfg["kurs"]["titel"]), untertitel=html.escape(cfg["kurs"]["untertitel"]),
+                            kurs=kurs, body=body, stand=f"{now:%d.%m.%Y, %H:%M}")
+    open(os.path.join(SITE, "index.html"), "w", encoding="utf-8").write(seite)
+    fingerprint = hashlib.sha256((seite.split("<!--stand-->")[0] + "|".join(stand)).encode()).hexdigest()
+    open(os.path.join(SITE, "stand.txt"), "w").write(fingerprint + "\n")
+    print("Freigegeben:", ", ".join(stand) or "nichts", "| Fingerprint", fingerprint[:12])
+    if not KEY:
+        print("WARNUNG: Secret MATERIAL_KEY fehlt, es wird kein Tagesmaterial freigeschaltet.")
+
+TEMPLATE = """<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geschäftsprozesse 2026 · Waybuild Akademie</title><style>
+body{{font-family:Inter,Arial,sans-serif;margin:0;background:#f4f7f9;color:#1d2b3a}}
+header{{background:#fff;border-bottom:3px solid #0077A6;padding:16px 26px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}}
+header img{{height:52px}}header h1{{margin:0;color:#003366;font-size:26px}}header p{{margin:4px 0 0;color:#555}}
+main{{max-width:1200px;margin:0 auto;padding:16px}}
+.kurs{{background:#fff;border:1px solid #d5e1e9;border-radius:12px;padding:12px 18px;margin:10px 0;line-height:1.7}}
+h2{{color:#003366;font-size:20px;margin:22px 0 8px}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}}
+.day{{background:#fff;border:1px solid #d5e1e9;border-left:6px solid #0077A6;border-radius:10px;padding:10px 14px}}
+.day.off{{border-left-color:#bbb;color:#777;background:#fafbfc}}.day.heute{{border-left-color:#E8833A;box-shadow:0 0 0 2px #E8833A33}}
+.dh{{display:flex;justify-content:space-between}}.nr{{font-weight:700;color:#0077A6}}.heute .nr{{color:#E8833A}}.dt{{color:#555;font-size:14px}}
+.ti{{font-weight:600;margin:4px 0 6px}}.ln,.fr{{font-size:14px;line-height:1.7}}.fr{{color:#555;margin-top:4px}}.fr b{{color:#E8833A}}.vm{{color:#003366}}
+.vid{{margin-top:6px;font-size:14px;color:#999}}.vid.on a{{font-weight:700}}.wait{{font-size:13.5px;color:#888;margin-top:4px}}
+a{{color:#0077A6}}footer{{max-width:1200px;margin:20px auto;padding:12px 16px;font-size:12.5px;color:#555;border-top:1px solid #d5e1e9}}
+</style></head><body>
+<header><img src="assets/logo.png" alt="Waybuild Akademie"><div><h1>{titel}</h1><p>{untertitel}</p></div></header>
+<main><div class="kurs">Hier finden Sie zu jedem Unterrichtstag das Material. Vormittags kommen Präsentation, Skript, Quiz und das Video des Tages dazu, nachmittags die freiwilligen Übungsquizze und Aufgabenhefte mit Lösungen.{kurs}</div>{body}</main>
+<footer>Waybuild UG (haftungsbeschränkt), Kuno-Liesenberg-Kehre 32a, 22844 Norderstedt · <a href="https://www.waybuild.de">www.waybuild.de</a><br>© 2026 Waybuild Akademie, Waybuild UG (haftungsbeschränkt). Alle Rechte vorbehalten.<!--stand--> · Stand {stand} Uhr</footer>
+<script>document.querySelector('.heute')&&document.querySelector('.heute').scrollIntoView({{block:'center'}});</script>
+</body></html>"""
+
+if __name__ == "__main__":
+    main()

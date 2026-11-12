@@ -1,0 +1,204 @@
+{
+ "_hinweis": "Uhrzeiten deutsche Zeit. 'vormittag' = Praesentation PDF, Skript, Quiz und Video. 'nachmittag' = Uebungsquizze und Aufgabenhefte. Einzelne Tage koennen eigene Zeiten bekommen, z. B. \"vormittag\": \"11:30\".",
+ "kurs": {
+  "titel": "Geschäftsprozesse · Kaufleute für Büromanagement (IHK)",
+  "untertitel": "comcave · Veranstaltung 577381 · 12.11.2026 bis 16.12.2026 · Dozent Can Siebert"
+ },
+ "uhrzeit_vormittag": "12:00",
+ "uhrzeit_nachmittag": "12:45",
+ "kursdateien_sofort": true,
+ "tage": [
+  {
+   "tag": "01",
+   "datum": "2026-11-12",
+   "wochentag": "Donnerstag",
+   "titel": "Informationsmanagement und betriebliche Kommunikationssysteme",
+   "teil": "Teil A · Anwendung und Gestaltung von Informationsmanagement",
+   "ordner": "Tag01_12-11_Kommunikation"
+  },
+  {
+   "tag": "02",
+   "datum": "2026-11-13",
+   "wochentag": "Freitag",
+   "titel": "Betriebssystem, Dokumentenmanagement und Onlineanwendungen",
+   "teil": "Teil A · Anwendung und Gestaltung von Informationsmanagement",
+   "ordner": "Tag02_13-11_Betriebssystem_DMS"
+  },
+  {
+   "tag": "03",
+   "datum": "2026-11-16",
+   "wochentag": "Montag",
+   "titel": "Informationen beschaffen, prüfen und aufbereiten",
+   "teil": "Teil A · Anwendung und Gestaltung von Informationsmanagement",
+   "ordner": "Tag03_16-11_Recherche"
+  },
+  {
+   "tag": "04",
+   "datum": "2026-11-17",
+   "wochentag": "Dienstag",
+   "titel": "IT-Risiken, Datenschutz und Datensicherung",
+   "teil": "Teil A · Anwendung und Gestaltung von Informationsmanagement",
+   "ordner": "Tag04_17-11_Datenschutz"
+  },
+  {
+   "tag": "05",
+   "datum": "2026-11-19",
+   "wochentag": "Donnerstag",
+   "titel": "Büromaterial verwalten, Posteingang und Postausgang bearbeiten",
+   "teil": "Teil B · Bürowirtschaftliche Abläufe, Koordinations- und Organisationsaufgaben",
+   "ordner": "Tag05_19-11_Material_Post"
+  },
+  {
+   "tag": "06",
+   "datum": "2026-11-20",
+   "wochentag": "Freitag",
+   "titel": "Dokumente verwalten, Aufbewahrungsfristen und Abläufe verbessern",
+   "teil": "Teil B · Bürowirtschaftliche Abläufe, Koordinations- und Organisationsaufgaben",
+   "ordner": "Tag06_20-11_Ablage_Fristen"
+  },
+  {
+   "tag": "07",
+   "datum": "2026-11-23",
+   "wochentag": "Montag",
+   "titel": "Termine, Sitzungen und Zusammenarbeit",
+   "teil": "Teil B · Bürowirtschaftliche Abläufe, Koordinations- und Organisationsaufgaben",
+   "ordner": "Tag07_23-11_Termine"
+  },
+  {
+   "tag": "08",
+   "datum": "2026-11-24",
+   "wochentag": "Dienstag",
+   "titel": "Dienstreisen und Projekte",
+   "teil": "Teil B · Bürowirtschaftliche Abläufe, Koordinations- und Organisationsaufgaben",
+   "ordner": "Tag08_24-11_Reise_Projekt"
+  },
+  {
+   "tag": "09",
+   "datum": "2026-11-25",
+   "wochentag": "Mittwoch",
+   "titel": "Kommunikation und Teamarbeit",
+   "teil": "Teil C · Gestaltung von Zusammenarbeit und Kommunikation",
+   "ordner": "Tag09_25-11_Kommunikation_Team"
+  },
+  {
+   "tag": "10",
+   "datum": "2026-11-26",
+   "wochentag": "Donnerstag",
+   "titel": "Gesprächsführung, Fragetechniken und Feedback",
+   "teil": "Teil C · Gestaltung von Zusammenarbeit und Kommunikation",
+   "ordner": "Tag10_26-11_Gespraeche"
+  },
+  {
+   "tag": "11",
+   "datum": "2026-11-27",
+   "wochentag": "Freitag",
+   "titel": "Vielfalt, Störungen und Konflikte",
+   "teil": "Teil C · Gestaltung von Zusammenarbeit und Kommunikation",
+   "ordner": "Tag11_27-11_Konflikte"
+  },
+  {
+   "tag": "12",
+   "datum": "2026-11-30",
+   "wochentag": "Montag",
+   "titel": "Kundenorientierung, Service und Beratung",
+   "teil": "Teil D · Kundenbeziehungen",
+   "ordner": "Tag12_30-11_Kundenservice"
+  },
+  {
+   "tag": "13",
+   "datum": "2026-12-01",
+   "wochentag": "Dienstag",
+   "titel": "Kundendaten und Kundeninformation",
+   "teil": "Teil D · Kundenbeziehungen",
+   "ordner": "Tag13_01-12_Kundendaten"
+  },
+  {
+   "tag": "14",
+   "datum": "2026-12-02",
+   "wochentag": "Mittwoch",
+   "titel": "Kundenanfrage, Angebot und Kaufvertrag",
+   "teil": "Teil E · Auftragsbearbeitung",
+   "ordner": "Tag14_02-12_Angebot"
+  },
+  {
+   "tag": "15",
+   "datum": "2026-12-03",
+   "wochentag": "Donnerstag",
+   "titel": "Kundenaufträge annehmen und Inhalte des Kaufvertrags",
+   "teil": "Teil E · Auftragsbearbeitung",
+   "ordner": "Tag15_03-12_Auftrag"
+  },
+  {
+   "tag": "16",
+   "datum": "2026-12-04",
+   "wochentag": "Freitag",
+   "titel": "Auftragsabwicklung",
+   "teil": "Teil E · Auftragsbearbeitung",
+   "ordner": "Tag16_04-12_Abwicklung"
+  },
+  {
+   "tag": "17",
+   "datum": "2026-12-07",
+   "wochentag": "Montag",
+   "titel": "Rechnungen erstellen und Zahlungen überwachen",
+   "teil": "Teil E · Auftragsbearbeitung",
+   "ordner": "Tag17_07-12_Rechnung"
+  },
+  {
+   "tag": "18",
+   "datum": "2026-12-08",
+   "wochentag": "Dienstag",
+   "titel": "Kalkulation im Handel",
+   "teil": "Teil E · Auftragsbearbeitung",
+   "ordner": "Tag18_08-12_Kalkulation"
+  },
+  {
+   "tag": "19",
+   "datum": "2026-12-09",
+   "wochentag": "Mittwoch",
+   "titel": "Beschwerden, Reklamationen und Mängelrechte",
+   "teil": "Teil E · Auftragsbearbeitung",
+   "ordner": "Tag19_09-12_Reklamation"
+  },
+  {
+   "tag": "20",
+   "datum": "2026-12-10",
+   "wochentag": "Donnerstag",
+   "titel": "Bedarf ermitteln und Bezugsquellen finden",
+   "teil": "Teil F · Beschaffung von Material und externen Dienstleistungen",
+   "ordner": "Tag20_10-12_Bedarf"
+  },
+  {
+   "tag": "21",
+   "datum": "2026-12-11",
+   "wochentag": "Freitag",
+   "titel": "Angebotsvergleich",
+   "teil": "Teil F · Beschaffung von Material und externen Dienstleistungen",
+   "ordner": "Tag21_11-12_Angebotsvergleich"
+  },
+  {
+   "tag": "22",
+   "datum": "2026-12-14",
+   "wochentag": "Montag",
+   "titel": "Bestellung. Bestellzeitpunkt, optimale Bestellmenge und Bestellung durchführen",
+   "teil": "Teil F · Beschaffung von Material und externen Dienstleistungen",
+   "ordner": "Tag22_14-12_Bestellung"
+  },
+  {
+   "tag": "23",
+   "datum": "2026-12-15",
+   "wochentag": "Dienstag",
+   "titel": "Liefertermine, Lieferungsverzug und Wareneingang",
+   "teil": "Teil F · Beschaffung von Material und externen Dienstleistungen",
+   "ordner": "Tag23_15-12_Wareneingang"
+  },
+  {
+   "tag": "24",
+   "datum": "2026-12-16",
+   "wochentag": "Mittwoch",
+   "titel": "Gesamtwiederholung und Klausur",
+   "teil": "Teil K · Klausur",
+   "ordner": "Tag24_16-12_Klausur"
+  }
+ ]
+}

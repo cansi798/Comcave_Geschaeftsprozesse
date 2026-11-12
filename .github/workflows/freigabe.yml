@@ -1,0 +1,55 @@
+name: Lernseite freischalten und veroeffentlichen
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    # alle 15 Minuten, Mo bis Fr, 07:00 bis 18:59 Uhr deutsche Winterzeit
+    - cron: "*/15 6-17 * * 1-5"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    outputs:
+      neu: ${{ steps.vergleich.outputs.neu }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Seite bauen und faellige Inhalte entschluesseln
+        env:
+          MATERIAL_KEY: ${{ secrets.MATERIAL_KEY }}
+        run: python3 build.py
+      - name: Pruefen, ob sich etwas geaendert hat
+        id: vergleich
+        run: |
+          live=$(curl -fsSL "https://cansi798.github.io/Comcave_Geschaeftsprozesse/stand.txt?t=$(date +%s)" || echo "keiner")
+          neu=$(cat _site/stand.txt)
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$live" != "$neu" ]; then
+            echo "neu=true" >> "$GITHUB_OUTPUT"; echo "Neue Fassung wird veroeffentlicht."
+          else
+            echo "neu=false" >> "$GITHUB_OUTPUT"; echo "Keine Aenderung, nichts zu tun."
+          fi
+      - if: steps.vergleich.outputs.neu == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  veroeffentlichen:
+    needs: bauen
+    if: needs.bauen.outputs.neu == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
