@@ -3,7 +3,7 @@
 Freigabe: Stufe Vormittag (Praesentation PDF, Skript, Quiz, Video) und Stufe Nachmittag
 (Uebungsquizze, Aufgabenhefte). Noch nicht freigegebenes Material liegt verschluesselt in tresor/.
 Testlauf mit fester Uhrzeit:  JETZT="2026-11-12 12:30" python3 build.py
-(c) 2026 Waybuild Akademie, Waybuild UG (haftungsbeschraenkt)"""
+(c) 2026 Waybuild"""
 import os, json, shutil, subprocess, datetime, html, hashlib, glob, re, base64
 from zoneinfo import ZoneInfo
 
@@ -157,7 +157,7 @@ a{{color:#0077A6}}footer{{max-width:1200px;margin:20px auto;padding:12px 16px;fo
 <main><div id="tor" class="kurs tor"><b>Zugangscode</b><p>Bitte den Zugangscode aus dem Unterricht eingeben.</p>
 <form id="f"><input id="c" autocomplete="off" autocapitalize="characters" placeholder="Zugangscode" aria-label="Zugangscode"> <button>Öffnen</button></form><div id="err"></div></div>
 <div id="inhalt"></div></main>
-<footer>Waybuild UG (haftungsbeschränkt), Kuno-Liesenberg-Kehre 32a, 22844 Norderstedt · <a href="https://www.waybuild.de">www.waybuild.de</a><br>© 2026 Waybuild Akademie, Waybuild UG (haftungsbeschränkt). Alle Rechte vorbehalten.<!--stand--> · Stand {stand} Uhr</footer>
+<footer>Dozent Can Siebert · Waybuild · <a href="https://www.waybuild.de">www.waybuild.de</a><br>© 2026 Waybuild. Alle Rechte vorbehalten.<!--stand--> · Stand {stand} Uhr</footer>
 <script>
 const DATEN="{daten}";
 async function oeffnen(code){{

@@ -27,4 +27,4 @@ In `zeitplan.json` die Werte `uhrzeit_vormittag` und `uhrzeit_nachmittag` änder
 ## Video ergänzen
 Siehe `videos/LIESMICH.md`.
 
-© 2026 Waybuild Akademie, Waybuild UG (haftungsbeschränkt). Alle Rechte vorbehalten. · www.waybuild.de
+© 2026 Waybuild · www.waybuild.de
