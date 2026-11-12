@@ -35,6 +35,16 @@ svg{width:22px;height:22px;flex:none}
 .nav .tg.heute b{color:var(--orange)}
 .nav .tg em{font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .haupt{padding:22px 34px 70px;max-width:1200px;width:100%}
+.seite .marke{flex-direction:column;align-items:flex-start;gap:8px}
+.app.zu-seite{--oben:62px}
+.einklapp{position:absolute;top:18px;right:12px;border:1px solid var(--rand);background:#fff;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--navy);cursor:pointer}
+.einklapp:hover,.ausklapp:hover{border-color:var(--blau);color:var(--blau)}
+.einklapp svg,.ausklapp svg{width:18px;height:18px}
+.ausklapp{display:none;position:fixed;top:14px;left:14px;z-index:30;align-items:center;gap:8px;border:1px solid var(--rand);background:#fff;border-radius:12px;padding:8px 14px 8px 10px;color:var(--navy);font-weight:600;cursor:pointer;box-shadow:0 4px 14px #0033661a}
+.app.on.zu-seite{grid-template-columns:minmax(0,1fr)}
+.app.zu-seite .seite{display:none}
+.app.zu-seite .ausklapp{display:flex}
+.app.zu-seite .haupt{max-width:1500px;margin:0 auto;padding-top:68px}
 .topbar,.unten,.schleier{display:none}
 .bc{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px;color:var(--grau);margin-bottom:10px}
 .bc a{color:var(--grau);text-decoration:none}.bc a:hover{color:var(--blau);text-decoration:underline}
@@ -129,6 +139,9 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rand);font-si
   .app.on{display:block}
   .seite{position:fixed;left:0;top:0;bottom:0;height:auto;width:86%;max-width:330px;z-index:60;transform:translateX(-105%);transition:transform .2s;box-shadow:0 0 40px #0003;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
   .seite.offen{transform:none}
+  .einklapp,.app.zu-seite .ausklapp{display:none}
+  .app.zu-seite .seite{display:block}
+  .app.zu-seite .haupt{padding-top:14px}
   .schleier{display:block;position:fixed;inset:0;background:#00142a66;z-index:55;opacity:0;pointer-events:none;transition:opacity .2s}
   .schleier.offen{opacity:1;pointer-events:auto}
   .topbar{display:flex;position:sticky;top:0;z-index:40;height:56px;align-items:center;gap:6px;padding:0 6px;background:#fff;border-bottom:1px solid var(--rand)}
@@ -159,7 +172,8 @@ footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--rand);font-si
 <div id="tor"><form class="torbox" id="f"><img src="assets/logo.png" alt="Waybuild Akademie"><h1>Geschäftsprozesse 2026</h1><p>Bitte den Zugangscode aus dem Unterricht eingeben.</p>
 <input id="c" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Zugangscode" aria-label="Zugangscode"><button>Öffnen</button><div id="err"></div></form></div>
 <div class="app" id="app">
- <aside class="seite" id="seite"><a class="marke" href="#"><img src="assets/logo.png" alt="Waybuild Akademie"><span>Geschäftsprozesse 2026<br>Dozent Can Siebert</span></a><nav class="nav" id="nav"></nav></aside>
+ <button class="ausklapp" id="ausklapp" title="Navigation einblenden"></button>
+ <aside class="seite" id="seite"><button class="einklapp" id="einklapp" title="Navigation ausblenden" aria-label="Navigation ausblenden"></button><a class="marke" href="#"><img src="assets/logo.png" alt="Waybuild Akademie"><span>Geschäftsprozesse 2026<br>Dozent Can Siebert</span></a><nav class="nav" id="nav"></nav></aside>
  <div class="schleier" id="schleier"></div>
  <div>
   <header class="topbar"><button id="tbZurueck" aria-label="Zurück"></button><img id="tbLogo" src="assets/logo.png" alt=""><div class="tt" id="tbTitel"></div><button id="tbMenue" aria-label="Menü"></button></header>
@@ -187,7 +201,9 @@ const ICO={
  links:'<path d="M15 18l-6-6 6-6"/>',rechts:'<path d="M9 18l6-6-6-6"/>',
  schloss:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
  uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
- liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>'
+ liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
+ leiste:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 10l-2 2 2 2"/>',
+ leisteauf:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 10l2 2-2 2"/>'
 };
 const I=n=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[n]+'</svg>';
 
@@ -220,6 +236,10 @@ function aufbauen(){
  $("#seite").addEventListener("click",e=>{if(e.target.closest("a"))menue(false)});
  $("#unten").innerHTML='<a href="#" data-r="start">'+I("haus")+'Übersicht</a><a href="#heute" data-r="heute">'+I("kal")+'Heute</a><a href="#trainer" data-r="trainer">'+I("ziel")+'Trainer</a><button id="ubTage">'+I("liste")+'Alle Tage</button>';
  $("#ubTage").onclick=()=>menue(true);
+ $("#einklapp").innerHTML=I("leiste");$("#ausklapp").innerHTML=I("leisteauf")+"Navigation";
+ const leiste=zu=>{$("#app").classList.toggle("zu-seite",zu);try{localStorage.setItem("gp2026leiste",zu?"zu":"auf")}catch(e){}};
+ $("#einklapp").onclick=()=>leiste(true);$("#ausklapp").onclick=()=>leiste(false);
+ try{if(localStorage.getItem("gp2026leiste")==="zu")$("#app").classList.add("zu-seite")}catch(e){}
  document.addEventListener("keydown",e=>{if(e.key==="Escape")menue(false)});
  window.addEventListener("hashchange",route);
 }
