@@ -62,7 +62,15 @@ def main():
         entschluesseln(os.path.join(ROOT, "tresor", "Kursdateien.tar.gz.enc"), os.path.join(MAT, "kurs"))
         stand.append("kurs")
 
-    sektionen, karten = [], {}
+    def kachel(href, titel, text, cls=""):
+        if href:
+            ziel = '' if href.startswith("#") else ' target="_blank" rel="noopener"'
+            return (f'<a class="kachel {cls}" href="{html.escape(href)}"{ziel}><span class="kt">{html.escape(titel)}</span>'
+                    f'<span class="kx">{html.escape(text)}</span></a>')
+        return (f'<div class="kachel zu {cls}"><span class="kt">{html.escape(titel)}</span>'
+                f'<span class="kx">{html.escape(text)}</span></div>')
+
+    sektionen, uebersicht, ansichten = [], {}, []
     for t in cfg["tage"]:
         n, o = t["tag"], t["ordner"]
         z1 = zeitpunkt(t["datum"], t.get("vormittag") or cfg["uhrzeit_vormittag"])
@@ -78,51 +86,74 @@ def main():
             stand.append(f"{n}n")
         heute = now.date().isoformat() == t["datum"]
         datum_de = datetime.date.fromisoformat(t["datum"]).strftime("%d.%m.%Y")
-        cls = "day" + ("" if frei1 else " off") + (" heute" if heute else "")
-        h = [f'<div class="{cls}" id="tag{n}"><div class="dh"><span class="nr">Tag {n}{" · Heute" if heute else ""}</span>'
-             f'<span class="dt">{t["wochentag"]}, {datum_de}</span></div><div class="ti">{html.escape(t["titel"])}</div>']
-        if frei1:
-            v = dateien["vormittag"]
-            links = [a(f"{P}/{o}/{v[0]}", "Präsentation (PDF)"), a(f"{P}/{o}/{v[1]}", "Skript (PDF)"), a(f"{P}/{o}/{v[2]}", "Quiz")]
-            h.append('<div class="ln"><b class="vm">Vormittag</b> ' + " · ".join(links) + "</div>")
-            vid, datei = video_fuer(n, videos)
-            if vid:
-                if datei:
-                    src = os.path.join(ROOT, vid)
-                    os.makedirs(os.path.join(MAT, "videos"), exist_ok=True)
-                    shutil.copy2(src, os.path.join(MAT, vid))
-                    vid = f"{P}/{vid}"
-                    stand.append(f"{n}video:{os.path.getsize(src)}")
-                else:
-                    stand.append(f"{n}video:{vid}")
-                h.append(f'<div class="vid on">{a(vid, "▶ Video zum Tag ansehen")}</div>')
+        ab1 = f"ab {z1:%H:%M} Uhr" if heute else f"ab {datum_de}, {z1:%H:%M} Uhr"
+        ab2 = f"ab {z2:%H:%M} Uhr" if heute else f"ab {datum_de}, {z2:%H:%M} Uhr"
+
+        # Uebersichtskachel
+        status = "Heute" if heute else ("Freigegeben" if frei1 else ab1)
+        cls = "tag" + ("" if frei1 else " off") + (" heute" if heute else "")
+        uebersicht.setdefault(t["teil"], [])
+        if t["teil"] not in sektionen:
+            sektionen.append(t["teil"])
+        uebersicht[t["teil"]].append(
+            f'<a class="{cls}" href="#tag{n}"><span class="dh"><span class="nr">Tag {n}</span><span class="st">{html.escape(status)}</span></span>'
+            f'<span class="dt">{t["wochentag"]}, {datum_de}</span><span class="ti">{html.escape(t["titel"])}</span></a>')
+
+        # Vormittag
+        v = dateien["vormittag"]
+        vid, datei = (video_fuer(n, videos) if frei1 else (None, False))
+        if vid:
+            if datei:
+                src = os.path.join(ROOT, vid)
+                os.makedirs(os.path.join(MAT, "videos"), exist_ok=True)
+                shutil.copy2(src, os.path.join(MAT, vid))
+                vid = f"{P}/{vid}"
+                stand.append(f"{n}video:{os.path.getsize(src)}")
             else:
-                h.append('<div class="vid">Video folgt</div>')
+                stand.append(f"{n}video:{vid}")
+        if frei1:
+            vm = [kachel(f"{P}/{o}/{v[0]}", "Präsentation", "Folien des Tages als PDF", "k1"),
+                  kachel(f"{P}/{o}/{v[1]}", "Skript", "Hauptskript zum Nachlesen", "k2"),
+                  kachel(f"{P}/{o}/{v[2]}", "Quiz", "Tagesquiz online", "k3"),
+                  kachel(vid, "Video", "Video zum Tag ansehen", "k4") if vid else kachel(None, "Video", "Video folgt", "k4 folgt")]
         else:
-            h.append(f'<div class="wait">Präsentation, Skript, Quiz und Video ab {datum_de}, {z1:%H:%M} Uhr</div>')
+            vm = [kachel(None, x, ab1, c) for x, c in (("Präsentation", "k1"), ("Skript", "k2"), ("Quiz", "k3"), ("Video", "k4"))]
+        nm_kachel = (kachel(f"#tag{n}-nachmittag", "Nachmittag", "Freiwillige Übungsquizze und Aufgabenhefte", "k5 gross") if frei2
+                     else kachel(None, "Nachmittag", f"Freiwillige Übungsquizze und Aufgabenhefte {ab2}", "k5 gross"))
+        kopf = (f'<p class="zur"><a href="#">Alle Tage</a></p><h2 class="tk">Tag {n} · {html.escape(t["titel"])}</h2>'
+                f'<p class="tu">{t["wochentag"]}, {datum_de} · {html.escape(t["teil"])}</p>')
+        ansichten.append(f'<div class="ansicht" id="v-tag{n}">{kopf}<h3>Vormittag</h3><div class="kacheln">{"".join(vm)}</div>'
+                         f'<div class="kacheln eins">{nm_kachel}</div></div>')
+
+        # Nachmittag
         if frei2:
-            labels = []
+            nm = []
             for f in dateien["nachmittag"]:
                 b = os.path.basename(f)
-                m = re.search(r"Uebungsquiz_(\d)", b)
+                m = re.search(r"Uebungsquiz_(\d)_(\w+?)_ONLINE", b)
                 if m:
-                    labels.append(a(f"{P}/{o}/{f}", f"Übungsquiz {m.group(1)}"))
+                    nm.append(kachel(f"{P}/{o}/{f}", f"Übungsquiz {m.group(1)}", "Grundlagen, 60 Fragen" if m.group(2) == "Grundlagen" else "Anwendung, 60 Fragen", "k3"))
+                    continue
+                m = re.search(r"Aufgabenheft_(\d)_([A-Za-z]+?)(_Loesung)?\.pdf", b)
+                thema = {"Begriffe": "Begriffe und Verständnis", "Faelle": "Fälle"}.get(m.group(2), m.group(2))
+                if m.group(3):
+                    nm.append(kachel(f"{P}/{o}/{f}", f"Lösung {m.group(1)}", f"Musterlösung zu Aufgabenheft {m.group(1)}", "k6"))
                 else:
-                    m = re.search(r"Aufgabenheft_(\d)", b)
-                    labels.append(a(f"{P}/{o}/{f}", ("Lösung " if "Loesung" in b else "Aufgabenheft ") + m.group(1)))
-            h.append('<div class="fr"><b>Nachmittag, freiwillig</b> ' + " · ".join(labels) + "</div>")
-        elif frei1:
-            h.append(f'<div class="wait">Übungsquizze und Aufgabenhefte ab {z2:%H:%M} Uhr</div>')
-        h.append("</div>")
-        if t["teil"] not in karten:
-            sektionen.append(t["teil"]); karten[t["teil"]] = []
-        karten[t["teil"]].append("".join(h))
+                    nm.append(kachel(f"{P}/{o}/{f}", f"Aufgabenheft {m.group(1)}", thema, "k5"))
+            ansichten.append(f'<div class="ansicht" id="v-tag{n}-nachmittag"><p class="zur"><a href="#tag{n}">Zurück zu Tag {n}</a> · <a href="#">Alle Tage</a></p>'
+                             f'<h2 class="tk">Tag {n} · Nachmittag, freiwillig</h2><p class="tu">{html.escape(t["titel"])}</p>'
+                             f'<div class="kacheln">{"".join(nm)}</div></div>')
 
     kurs = ""
     if cfg.get("kursdateien_sofort", True) and KEY:
-        kurs = ('<br><b>Kursdateien</b> ' + a(f"{P}/kurs/03_Quiz-Trainer_alle_Fragen_und_Probeklausur.html", "Quiz-Trainer mit Probeklausur")
-                + " · " + a(f"{P}/kurs/04_Gesamtskript_alle_Tage.pdf", "Gesamtskript aller Tage"))
-    inhalt_html = '<div class="kurs">Hier finden Sie zu jedem Unterrichtstag das Material. Vormittags kommen Präsentation, Skript, Quiz und das Video des Tages dazu, nachmittags die freiwilligen Übungsquizze und Aufgabenhefte mit Lösungen.' + kurs + '</div>' + "".join(f'<section><h2>{html.escape(s)}</h2><div class="grid">{"".join(karten[s])}</div></section>' for s in sektionen)
+        kurs = ('<h3>Kursdateien</h3><div class="kacheln">'
+                + kachel(f"{P}/kurs/03_Quiz-Trainer_alle_Fragen_und_Probeklausur.html", "Quiz-Trainer", "Alle Fragen und Probeklausur", "k3")
+                + kachel(f"{P}/kurs/04_Gesamtskript_alle_Tage.pdf", "Gesamtskript", "Skripte aller Tage", "k2") + "</div>")
+    start = ('<div class="ansicht" id="v-start"><div class="kurs">Tag anklicken, um Präsentation, Skript, Quiz und Video zu öffnen. '
+             'Nachmittags kommen die freiwilligen Übungsquizze und Aufgabenhefte dazu.</div>' + kurs
+             + "".join(f'<section><h2>{html.escape(s)}</h2><div class="grid">{"".join(uebersicht[s])}</div></section>' for s in sektionen)
+             + "</div>")
+    inhalt_html = "<!--gp2026-->" + start + "".join(ansichten)
     code = str(cfg.get("zugangscode", "KBM")).strip()
     enc = subprocess.run(["openssl", "enc", "-aes-256-cbc", "-pbkdf2", "-iter", "100000", "-md", "sha256", "-salt",
                           "-pass", "env:ZUGANGSCODE"], input=inhalt_html.encode("utf-8"), capture_output=True, check=True,
@@ -144,12 +175,23 @@ header img{{height:52px}}header h1{{margin:0;color:#003366;font-size:26px}}heade
 main{{max-width:1200px;margin:0 auto;padding:16px}}
 .kurs{{background:#fff;border:1px solid #d5e1e9;border-radius:12px;padding:12px 18px;margin:10px 0;line-height:1.7}}
 h2{{color:#003366;font-size:20px;margin:22px 0 8px}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}}
-.day{{background:#fff;border:1px solid #d5e1e9;border-left:6px solid #0077A6;border-radius:10px;padding:10px 14px}}
-.day.off{{border-left-color:#bbb;color:#777;background:#fafbfc}}.day.heute{{border-left-color:#E8833A;box-shadow:0 0 0 2px #E8833A33}}
-.dh{{display:flex;justify-content:space-between}}.nr{{font-weight:700;color:#0077A6}}.heute .nr{{color:#E8833A}}.dt{{color:#555;font-size:14px}}
-.ti{{font-weight:600;margin:4px 0 6px}}.ln,.fr{{font-size:14px;line-height:1.7}}.fr{{color:#555;margin-top:4px}}.fr b{{color:#E8833A}}.vm{{color:#003366}}
-.vid{{margin-top:6px;font-size:14px;color:#999}}.vid.on a{{font-weight:700}}.wait{{font-size:13.5px;color:#888;margin-top:4px}}
+.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}}
+.tag{{display:block;text-decoration:none;color:inherit;background:#fff;border:1px solid #d5e1e9;border-left:6px solid #0077A6;border-radius:10px;padding:10px 14px;transition:box-shadow .15s,transform .15s}}
+.tag:hover{{box-shadow:0 4px 14px #00336622;transform:translateY(-1px)}}
+.tag.off{{border-left-color:#bbb;color:#777;background:#fafbfc}}.tag.heute{{border-left-color:#E8833A;box-shadow:0 0 0 2px #E8833A55}}
+.dh{{display:flex;justify-content:space-between;align-items:center}}.nr{{font-weight:700;color:#0077A6}}.heute .nr{{color:#E8833A}}
+.st{{font-size:12px;padding:2px 8px;border-radius:10px;background:#e6f2f7;color:#0077A6}}.off .st{{background:#eee;color:#888}}.heute .st{{background:#E8833A;color:#fff}}
+.dt{{display:block;color:#555;font-size:13.5px;margin-top:2px}}.ti{{display:block;font-weight:600;margin-top:4px}}
+.ansicht{{display:none}}.ansicht.aktiv{{display:block}}
+.zur{{margin:8px 0 0;font-size:14px}}.tk{{margin:8px 0 2px;font-size:23px}}.tu{{margin:0 0 6px;color:#555}}
+h3{{color:#003366;font-size:17px;margin:18px 0 8px}}
+.kacheln{{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}}.kacheln.eins{{margin-top:14px;grid-template-columns:1fr}}
+.kachel{{display:flex;flex-direction:column;gap:6px;min-height:96px;justify-content:center;text-decoration:none;color:#1d2b3a;background:#fff;border:1px solid #d5e1e9;border-top:6px solid #0077A6;border-radius:12px;padding:16px 18px;transition:box-shadow .15s,transform .15s}}
+a.kachel:hover{{box-shadow:0 6px 18px #00336626;transform:translateY(-2px)}}
+.kachel .kt{{font-size:19px;font-weight:700;color:#003366}}.kachel .kx{{font-size:14px;color:#555}}
+.k2{{border-top-color:#2E8B57}}.k3{{border-top-color:#7A4FB5}}.k4{{border-top-color:#C0392B}}.k5{{border-top-color:#E8833A}}.k6{{border-top-color:#8A9BA8}}
+.k5.gross{{background:#fff8f2;min-height:80px}}
+.kachel.zu{{background:#f3f5f7;border-top-color:#c4ccd3;color:#888}}.kachel.zu .kt{{color:#8a96a0}}.kachel.zu .kx::before{{content:"Gesperrt · "}}.kachel.folgt .kx::before{{content:""}}
 .tor p{{margin:4px 0 10px;color:#555}}.tor input{{font-size:17px;padding:8px 10px;border:1px solid #9fb6c6;border-radius:8px;width:200px;text-transform:uppercase}}.tor button{{font-size:16px;padding:8px 16px;border:0;border-radius:8px;background:#0077A6;color:#fff;cursor:pointer}}#err{{color:#b3261e;margin-top:8px;font-size:14px}}
 a{{color:#0077A6}}footer{{max-width:1200px;margin:20px auto;padding:12px 16px;font-size:12.5px;color:#555;border-top:1px solid #d5e1e9}}
 </style></head><body>
@@ -168,12 +210,21 @@ async function oeffnen(code){{
   const key=await crypto.subtle.importKey("raw",bits.slice(0,32),"AES-CBC",false,["decrypt"]);
   const pt=await crypto.subtle.decrypt({{name:"AES-CBC",iv:bits.slice(32,48)}},key,ct);
   const html=new TextDecoder("utf-8",{{fatal:true}}).decode(pt);
-  if(html.indexOf('<div class="kurs">')!==0) throw new Error("falsch");
+  if(html.indexOf('<!--gp2026-->')!==0) throw new Error("falsch");
   document.getElementById("inhalt").innerHTML=html;
   document.getElementById("tor").style.display="none";
   try{{localStorage.setItem("gp2026code",code)}}catch(e){{}}
-  const h=document.querySelector(".heute"); if(h) h.scrollIntoView({{block:"center"}});
+  zeigen();
 }}
+function zeigen(){{
+  const id=(location.hash||"").replace("#","");
+  const ziel=document.getElementById(id?"v-"+id:"v-start")||document.getElementById("v-start");
+  if(!ziel) return;
+  document.querySelectorAll(".ansicht").forEach(v=>v.classList.toggle("aktiv",v===ziel));
+  if(ziel.id==="v-start"){{const h=document.querySelector(".tag.heute"); if(h&&!id) h.scrollIntoView({{block:"center"}}); else window.scrollTo(0,0);}}
+  else window.scrollTo(0,0);
+}}
+window.addEventListener("hashchange",zeigen);
 document.getElementById("f").addEventListener("submit",async e=>{{
   e.preventDefault(); const code=document.getElementById("c").value.trim().toUpperCase();
   try{{await oeffnen(code); document.getElementById("err").textContent=""}}catch(x){{document.getElementById("err").textContent="Der Zugangscode stimmt nicht."}}
