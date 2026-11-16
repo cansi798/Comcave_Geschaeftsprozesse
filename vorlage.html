@@ -254,6 +254,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-si
 @keyframes dreh{0%{transform:rotateX(90deg)}100%{transform:none}}
 .wmeld{min-height:22px;margin:-4px 0 8px;text-align:center;font-weight:650;font-size:14px;color:var(--rot);opacity:0;transition:opacity .2s}.wmeld.an{opacity:1}
 .wfeld>.knopf.hell{display:flex;margin:0 auto 12px}
+.wpruef{margin:0 0 14px;background:var(--gruen);border-color:var(--gruen);font-size:17px}.wpruef:hover:not(:disabled){background:#176b3a;border-color:#176b3a}.wpruef:disabled{background:#eef2f5;border-color:#dde6ec;color:#7b8a96;opacity:1}.wpruef svg{width:20px;height:20px}
 .wlegende{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:14px;font-size:12.5px;color:var(--grau)}
 .wlegende span{display:flex;align-items:center;gap:6px}.wlegende i.wf{width:16px;height:16px;border-radius:4px;animation:none;border:0}
 @media (min-width:1500px){.kacheln{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -614,12 +615,13 @@ async function seiteWordle(H,n){
   g+='</div>';
   const ok=ende&&zeilen.length&&zeilen[zeilen.length-1].join("")===akt.w;
   $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"wordle",S.wordle)+'<div class="knoepfe">'+(!n?'<button class="knopf '+(tagesmodus?"":"hell")+'" id="wtag">Wort des Tages</button>':"")+'<button class="knopf '+(tagesmodus?"hell":"")+'" id="wneu">Neues Wort</button></div></div>'
-   +'<div class="wfeld"><p class="wlang">'+L+' Buchstaben · '+VERS+' Versuche'+(n?"":" · Tag "+akt.tag)+'</p>'+g+'<div id="wmeld" class="wmeld"></div>'
+   +'<div class="wfeld"><p class="wlang">'+L+' Buchstaben · '+VERS+' Versuche'+(n?"":" · Tag "+akt.tag)+'</p>'+g+'<div id="wmeld" class="wmeld"></div>'+(ende?"":'<button class="knopf gross wpruef" id="wpruef"'+([...eingabe].length<L?" disabled":"")+'>'+I("quiz")+([...eingabe].length<L?"Noch "+(L-[...eingabe].length)+" Buchstaben":"Wort prüfen")+'</button>')
    +(ende?'<div class="spende '+(ok?"ok":"bad")+'"><b>'+(ok?"Geschafft in "+zeilen.length+" Versuchen!":"Leider nicht geschafft.")+'</b> Das Wort ist <b>'+E(akt.w)+'</b>.<div class="erkl" style="margin-top:8px">'+E(akt.e)+'</div><div class="knoepfe" style="margin-top:10px"><button class="knopf" id="weiter">Neues Wort</button></div></div>'
      :(zeilen.length>=2||hinweis?'<div class="hinw"><b>Hinweis</b>'+E(maskieren(akt.e,akt.w))+'</div>':'<button class="knopf hell" id="whinw">Hinweis zeigen</button>')+tastatur(true))
    +'<div class="wlegende"><span><i class="wf g"></i>richtig an dieser Stelle</span><span><i class="wf y"></i>kommt vor, andere Stelle</span><span><i class="wf a"></i>kommt nicht vor</span></div></div>';
   document.querySelectorAll("#sp .tk").forEach(b=>{const k=b.dataset.k,f=farbe[k];if(f)b.classList.add(f===3?"gut":f===2?"halb":"weg");b.onclick=()=>tippen(k)});
   const hb=$("#whinw");if(hb)hb.onclick=()=>{hinweis=true;zeichne()};
+  const pb=$("#wpruef");if(pb)pb.onclick=()=>tippen("ENTER");
   const wt=$("#wtag");if(wt)wt.onclick=()=>start(true);$("#wneu").onclick=()=>start(false);
   const w=$("#weiter");if(w){w.onclick=()=>start(false)}
   $("#twahl").onchange=e=>{location.hash=e.target.value?"#wordle-"+e.target.value:"#wordle"};
