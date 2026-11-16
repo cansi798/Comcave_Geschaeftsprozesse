@@ -257,11 +257,13 @@ def main():
     sp = os.path.join(ROOT, "tresor", "Spiele.json.enc")
     if KEY and os.path.exists(sp):
         sd = json.loads(openssl_dec(sp).decode("utf-8"))
-        h = {n: v for n, v in sd.get("hangman", {}).items() if n in frei and frei[n][0]}
-        w = {n: v for n, v in sd.get("wordle", {}).items() if n in frei and frei[n][0]}
+        # Die Seite blendet Fachbegriffe erst an ihrem Unterrichtstag ein (Datum im Browser)
+        sicht = {n for n in frei if frei[n][0]}
+        h = {n: v for n, v in sd.get("hangman", {}).items() if n in sicht}
+        w = {n: v for n, v in sd.get("wordle", {}).items() if n in sicht}
         if h or w:
             schreibe_json({"hangman": h, "wordle": w}, os.path.join(MAT, "kurs", "spiele.json"))
-            spiele = {"src": f"{P}/kurs/spiele.json", "begriffe": sum(map(len, h.values())), "woerter": sum(map(len, w.values()))}
+            spiele = {"src": f"{P}/kurs/spiele.json", "tage": sorted(set(h) | set(w)), "begriffe": sum(map(len, h.values())), "woerter": sum(map(len, w.values()))}
             stand.append(f"spiele:{spiele['begriffe']}/{spiele['woerter']}")
 
     if begruendungen():

@@ -257,11 +257,15 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-si
 .wpruef{margin:0 0 14px;background:var(--gruen);border-color:var(--gruen);font-size:17px}.wpruef:hover:not(:disabled){background:#176b3a;border-color:#176b3a}.wpruef:disabled{background:#eef2f5;border-color:#dde6ec;color:#7b8a96;opacity:1}.wpruef svg{width:20px;height:20px}
 .wlegende{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:14px;font-size:12.5px;color:var(--grau)}
 .wlegende span{display:flex;align-items:center;gap:6px}.wlegende i.wf{width:16px;height:16px;border-radius:4px;animation:none;border:0}
-.wfbox{scroll-margin-top:calc(var(--oben) + 8px);max-width:900px;background:#fff;border:1px solid var(--rand);border-radius:22px;padding:14px;box-shadow:var(--sch1)}
+.wfbox{scroll-margin-top:calc(var(--oben) + 8px);max-width:1100px;background:#fff;border:1px solid var(--rand);border-radius:22px;padding:14px;box-shadow:var(--sch1)}
 .wfhud{display:flex;gap:18px;align-items:center;font-size:14px;color:var(--grau);padding:2px 4px 10px}.wfhud b{color:var(--navy);font-size:17px}
 #fleben{margin-left:auto;color:var(--rot);font-size:20px;letter-spacing:2px}#fleben i{font-style:normal;color:#dde4ea}
 .wfdef{background:#f2f8fb;border-left:4px solid var(--lila);border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.45;margin-bottom:10px;min-height:66px}
+.wflegende{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 4px 0;font-size:12.5px;color:var(--grau)}.wflegende span{display:flex;align-items:center;gap:6px}.wflegende i{width:20px;height:20px;border-radius:50%;color:#fff;font-style:normal;font-size:12px;display:flex;align-items:center;justify-content:center}
 .wfdef b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--lila);margin-bottom:2px}
+.wfmun{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px}.wfmun>span{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--grau);margin-right:4px}
+.wfm{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--rand);background:#fff;border-radius:999px;padding:5px 11px 5px 7px;font-size:13px;font-weight:650;color:var(--navy);cursor:pointer;transition:all .15s}
+.wfm b{font-size:17px;line-height:1}.wfm:hover{border-color:var(--lila);transform:translateY(-1px)}.wfm.an{border-color:var(--lila);background:var(--hlila);box-shadow:0 0 0 3px #6f4bb222}
 .wfbuehne{position:relative;border-radius:16px;overflow:hidden;touch-action:none;user-select:none}
 #fc{display:block;width:100%;cursor:crosshair}
 .wfover{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,31,56,.72);backdrop-filter:blur(3px);padding:14px;overflow:auto}
@@ -274,7 +278,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-si
 .wfsteuer{display:none;gap:8px;margin-top:10px}.wfsteuer .knopf{flex:1;padding:14px}.wfsteuer #ffeuer{flex:2;background:var(--lila);border-color:var(--lila)}
 .wfhilfe{font-size:12.5px;color:var(--grau);margin:10px 4px 0}
 @media (hover:none),(max-width:920px){.wfsteuer{display:flex}}
-@media (max-width:920px){.wfbox{padding:10px;border-radius:18px}.wfdef{font-size:14px;min-height:80px}}
+@media (max-width:920px){.wfm{font-size:0;padding:6px 8px;gap:0}.wfm b{font-size:19px}.wfbox{padding:10px;border-radius:18px}.wfdef{font-size:14px;min-height:80px}}
 @media (min-width:1500px){.kacheln{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:920px){
   :root{--oben:58px;--r:16px}
@@ -474,9 +478,9 @@ function route(){
  else if(h==="klausur") seiteTrainer(H,true);
  else if(h==="lek") seiteTrainer(H,false,true);
  else if(h==="spiele") H.innerHTML=seiteSpiele();
- else if(/^hangman(-\d\d)?$/.test(h)) seiteHangman(H,h.slice(8));
- else if(/^wordle(-\d\d)?$/.test(h)) seiteWordle(H,h.slice(7));
- else if(/^fighter(-\d\d)?$/.test(h)) seiteFighter(H,h.slice(8));
+ else if(/^hangman(-\d\d|-alle)?$/.test(h)) seiteHangman(H,h.slice(8));
+ else if(/^wordle(-\d\d|-alle)?$/.test(h)) seiteWordle(H,h.slice(7));
+ else if(/^fighter(-\d\d|-alle)?$/.test(h)) seiteFighter(H,h.slice(8));
  else H.innerHTML=seiteStart();
  window.scrollTo(0,0);
 }
@@ -495,7 +499,7 @@ function seiteStart(){
   +kachel({href:D.kurs.gesamtskript,icon:"buch",titel:"Gesamtskript",text:"Alle Skripte in einer Datei",farbe:"gruen",badge:"PDF",extern:1})
   +(D.kurs.lek?kachel({href:"#lek",icon:"ziel",titel:"LEK-Vorbereitung",text:D.kurs.lek_n+" Prüfungsfragen zu Tag 01 bis 18",farbe:"rot",badge:"Online"}):"")+'</div>';
  if(D.spiele) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben</h2><div class="kacheln">'
-  +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit "+D.spiele.begriffe+" Fachbegriffen",farbe:"gruen",badge:"Spiel"})
+  +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Fachbegriffen des Tages",farbe:"gruen",badge:"Spiel"})
   +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle, ein Fachwort in 6 Versuchen",farbe:"orange",badge:"Spiel"})
   +kachel({href:"#fighter",icon:"rakete",titel:"Word-Fighter",text:"Den passenden Begriff abschießen",farbe:"lila",badge:"Spiel"})+'</div>';
  D.teile.forEach(t=>{h+='<h2 class="ab">'+E(t.kurz)+' <small>'+E(t.lang)+'</small></h2><div class="tage">'+t.tage.map(tagKachel).join("")+'</div>'});
@@ -506,7 +510,7 @@ function seiteTag(n){const d=D.tage[n];
  h+='<span class="chip">'+E(d.teilkurz)+'</span>'+(istHeute(n)?' <span class="chip o">Heute</span>':"")+'<h1 class="st">Tag '+n+' · '+E(d.titel)+'</h1><p class="sub">'+E(d.wochentag)+', '+E(d.datum_de)+'</p>';
  if(d.morgen||d.morgen_ab) h+='<h2 class="ab">'+I("sonne")+'Morgenstart <small>Wiederholung</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-morgen",icon:"quiz",titel:"Morgenstart",text:d.morgen?d.morgen.info+", "+d.morgen.anzahl+" Fragen":"Wiederholungsquiz "+d.morgen_ab,farbe:"orange",breit:1,zu:!d.morgen})+'</div>';
  h+='<h2 class="ab">'+I("praes")+'Vormittag</h2><div class="kacheln">'+vormittagKacheln(n)+'</div>';
- if(D.spiele&&d.frei1) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben <small>Fachbegriffe des Tages</small></h2><div class="kacheln">'+kachel({href:"#hangman-"+n,icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Begriffen von Tag "+n,farbe:"gruen",badge:"Spiel"})+kachel({href:"#wordle-"+n,icon:"raster",titel:"Fachwort raten",text:"Wordle mit Fachwörtern von Tag "+n,farbe:"orange",badge:"Spiel"})+kachel({href:"#fighter-"+n,icon:"rakete",titel:"Word-Fighter",text:"Begriffe von Tag "+n+" abschießen",farbe:"lila",badge:"Spiel"})+'</div>';
+ if(D.spiele&&(D.spiele.tage||[]).includes(n)&&spielSichtbar(n)) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben <small>Fachbegriffe des Tages</small></h2><div class="kacheln">'+kachel({href:"#hangman-"+n,icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Begriffen von Tag "+n,farbe:"gruen",badge:"Spiel"})+kachel({href:"#wordle-"+n,icon:"raster",titel:"Fachwort raten",text:"Wordle mit Fachwörtern von Tag "+n,farbe:"orange",badge:"Spiel"})+kachel({href:"#fighter-"+n,icon:"rakete",titel:"Word-Fighter",text:"Begriffe von Tag "+n+" abschießen",farbe:"lila",badge:"Spiel"})+'</div>';
  h+='<h2 class="ab">'+I("sonne")+'Nachmittag <small>freiwillig</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-nachmittag",icon:"sonne",titel:"Nachmittag",text:d.frei2?"2 Übungsquizze und 2 Aufgabenhefte mit Lösungen":"Übungsquizze und Aufgabenhefte "+d.ab2,farbe:"orange",breit:1,zu:!d.frei2})+'</div>';
  const i=D.reihenfolge.indexOf(n),v=D.reihenfolge[i-1],w=D.reihenfolge[i+1];
  h+='<div class="blaettern">'+(v?'<a href="#tag'+v+'">'+I("links")+'<span><small>Vorheriger Tag</small><b>Tag '+v+' · '+E(D.tage[v].titel)+'</b></span></a>':"<span></span>")+(w?'<a class="r" href="#tag'+w+'"><span><small>Nächster Tag</small><b>Tag '+w+' · '+E(D.tage[w].titel)+'</b></span>'+I("rechts")+'</a>':"<span></span>")+'</div>';
@@ -554,19 +558,23 @@ async function seiteQuiz(H,n,s){const d=D.tage[n];
 }
 
 let SPIELE=null;
-async function spieleLaden(){if(!SPIELE){const r=await fetch(D.spiele.src);SPIELE=await r.json()}return SPIELE}
+function spielSichtbar(n){return !!(D.tage[n]&&D.tage[n].datum<=heuteISO())}
+async function spieleLaden(){if(!SPIELE){const r=await fetch(D.spiele.src);SPIELE=await r.json()}
+ const f=o=>Object.fromEntries(Object.entries(o||{}).filter(([n])=>spielSichtbar(n)));return {hangman:f(SPIELE.hangman),wordle:f(SPIELE.wordle)}}
 function spStand(k,v){let o={};try{o=JSON.parse(localStorage.getItem("gp2026spiele")||"{}")}catch(e){}if(v===undefined)return o[k];o[k]=v;try{localStorage.setItem("gp2026spiele",JSON.stringify(o))}catch(e){}}
 const GROSS=c=>c==="ß"?"ß":c.toLocaleUpperCase("de-DE");
 const TASTEN=["QWERTZUIOPÜ","ASDFGHJKLÖÄ","YXCVBNMß"];
 function tastatur(extra){return '<div class="tast">'+TASTEN.map((r,i)=>'<div class="tr">'+(i===2&&extra?'<button class="tk breit" data-k="ENTER" aria-label="Prüfen">OK</button>':"")+[...r].map(c=>'<button class="tk" data-k="'+c+'">'+c+'</button>').join("")+(i===2&&extra?'<button class="tk breit" data-k="DEL" aria-label="Löschen">⌫</button>':"")+'</div>').join("")+'</div>'}
+function spielTag(n,daten){if(n==="alle")return "";if(n)return daten[n]?n:"";const h=heuteISO(),t=D.reihenfolge.filter(x=>D.tage[x].datum<=h&&daten[x]&&daten[x].length);return t.length?t[t.length-1]:""}
+function spielLeer(H,titel){H.innerHTML=spielKopf(titel,"Noch keine Fachbegriffe freigeschaltet","")+'<p>Die Fachbegriffe erscheinen jeweils an ihrem Unterrichtstag.</p>'+fuss()}
 function tagWahl(n,ziel,daten){const tage=D.reihenfolge.filter(t=>daten[t]&&daten[t].length);
- return '<label class="tagwahl">Tag <select id="twahl"><option value="">Alle Tage</option>'+tage.map(t=>'<option value="'+t+'"'+(t===n?" selected":"")+'>Tag '+t+' · '+E(D.tage[t].titel)+'</option>').join("")+'</select></label>'}
+ return '<label class="tagwahl">Tag <select id="twahl"><option value="alle">Alle bisherigen Tage</option>'+tage.map(t=>'<option value="'+t+'"'+(t===n?" selected":"")+'>Tag '+t+' · '+E(D.tage[t].titel)+'</option>').join("")+'</select></label>'}
 function spielKopf(titel,unter,n){return rahmen({kurz:titel,bc:[["Übersicht","#"],["Lernspiele","#spiele"],[titel,""]],zurueck:n?["Zurück zu Tag "+n,"#tag"+n]:["Lernspiele","#spiele"],akt:"spiele"})+'<span class="chip">Lernspiel</span><h1 class="st">'+titel+'</h1><p class="sub">'+unter+'</p>'}
 function seiteSpiele(){
  let h=rahmen({kurz:"Lernspiele",bc:[["Übersicht","#"],["Lernspiele",""]],zurueck:["Übersicht","#"],akt:"spiele"});
  h+='<span class="chip">Freiwillig</span><h1 class="st">Lernspiele</h1><p class="sub">Fachbegriffe spielerisch wiederholen, allein oder gegen die Uhr in der Pause.</p><div class="kacheln">'
-  +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen. Die Erklärung ist der Hinweis, errate den Fachbegriff Buchstabe für Buchstabe.",farbe:"gruen",badge:D.spiele.begriffe+" Begriffe"})
-  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle. Errate ein Fachwort in 6 Versuchen, die Farben zeigen, welche Buchstaben stimmen.",farbe:"orange",badge:D.spiele.woerter+" Wörter"})
+  +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen. Die Erklärung ist der Hinweis, errate den Fachbegriff Buchstabe für Buchstabe.",farbe:"gruen",badge:"Spiel"})
+  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle. Errate ein Fachwort in 6 Versuchen, die Farben zeigen, welche Buchstaben stimmen.",farbe:"orange",badge:"Spiel"})
   +kachel({href:"#fighter",icon:"rakete",titel:"Word-Fighter",text:"Oben steht eine Erklärung, unten fliegt dein Raumschiff. Schieß den passenden Fachbegriff ab, bevor er unten ankommt.",farbe:"lila",badge:"Arcade"})+'</div>';
  const st=spStand("hm")||{g:0,v:0},sw=spStand("wl")||{g:0,v:0,serie:0};
  h+='<h2 class="ab">'+I("ziel")+'Dein Stand <small>nur auf diesem Gerät</small></h2><div class="spstat"><div><b>'+st.g+'</b><span>Begriffe erraten</span></div><div><b>'+st.v+'</b><span>Begriffe gespielt</span></div><div><b>'+sw.g+'</b><span>Fachwörter gelöst</span></div><div><b>'+(sw.serie||0)+'</b><span>Fachwörter in Folge</span></div><div><b>'+((spStand("wf")||{}).best||0)+'</b><span>Word-Fighter Rekord</span></div></div>';
@@ -575,8 +583,10 @@ function seiteSpiele(){
 function maskieren(text,begriff){let t=String(text);const teile=[begriff].concat(begriff.split(/[\s\-]+/).filter(w=>w.length>=4));
  teile.forEach(w=>{const re=new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[a-zäöüß]*","gi");t=t.replace(re,"…")});return t}
 async function seiteHangman(H,n){
- H.innerHTML=spielKopf("Begriffe raten",n?"Fachbegriffe von Tag "+n+" · "+E(D.tage[n].titel):"Fachbegriffe aus allen freigegebenen Tagen",n)+'<div id="sp"><div class="laden">Wird geladen …</div></div>'+fuss();
- let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ H.innerHTML='<div class="laden">Wird geladen …</div>';
+ let S;try{S=await spieleLaden()}catch(e){H.innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ n=spielTag(n,S.hangman);if(!Object.keys(S.hangman).length){spielLeer(H,"Begriffe raten");return}
+ H.innerHTML=spielKopf("Begriffe raten",n?"Fachbegriffe von Tag "+n+" · "+E(D.tage[n].titel):"Fachbegriffe aus allen bisherigen Tagen",n)+'<div id="sp"></div>'+fuss();
  const MAX=8;let liste=[],pos=0,akt=null,geraten=new Set(),fehler=0,ende=false,runde={g:0,s:0};
  function neu(){const tage=n?[n]:Object.keys(S.hangman);liste=mischen(tage.flatMap(t=>S.hangman[t].map(x=>Object.assign({tag:t},x))));pos=0;runde={g:0,s:0};start()}
  function start(){if(pos>=liste.length)pos=0;akt=liste[pos++];geraten=new Set();fehler=0;ende=false;zeichne()}
@@ -599,7 +609,7 @@ async function seiteHangman(H,n){
    +'</div></div>';
   document.querySelectorAll("#sp .tk").forEach(b=>{const k=b.dataset.k;if(geraten.has(k)){b.disabled=true;b.classList.add([...akt.b].some(c=>GROSS(c)===k)?"gut":"weg")}b.onclick=()=>tippen(k)});
   const w=$("#weiter");if(w){w.onclick=start;w.focus()}
-  $("#twahl").onchange=e=>{location.hash=e.target.value?"#hangman-"+e.target.value:"#hangman"};
+  $("#twahl").onchange=e=>{location.hash="#hangman-"+e.target.value};
  }
  const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.target.tagName==="SELECT"){if(e.key.length===1||e.key==="Enter"||e.key==="Backspace"){if(e.key==="Enter")return;e.target.blur()}else return}
   if(ende&&e.key==="Enter"){start();e.preventDefault();return}const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
@@ -607,8 +617,11 @@ async function seiteHangman(H,n){
  neu();
 }
 async function seiteWordle(H,n){
- H.innerHTML=spielKopf(n?"Fachwort raten":"Fachwort des Tages",n?"Fachwörter von Tag "+n+" · "+E(D.tage[n].titel):"Jeden Tag ein neues Fachwort aus dem Kurs, danach beliebig weiterüben",n)+'<div id="sp"><div class="laden">Wird geladen …</div></div>'+fuss();
- let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ const roh=n;H.innerHTML='<div class="laden">Wird geladen …</div>';
+ let S;try{S=await spieleLaden()}catch(e){H.innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ n=spielTag(n,S.wordle);if(!Object.keys(S.wordle).length){spielLeer(H,"Fachwort raten");return}
+ const tagesW=!roh;
+ H.innerHTML=spielKopf(tagesW?"Fachwort des Tages":"Fachwort raten",n?"Fachwörter von Tag "+n+" · "+E(D.tage[n].titel):"Fachwörter aus allen bisherigen Tagen",roh&&roh!=="alle"?n:"")+'<div id="sp"></div>'+fuss();
  const alle=(n?[n]:Object.keys(S.wordle).sort()).flatMap(t=>(S.wordle[t]||[]).map(x=>Object.assign({tag:t},x)));
  if(!alle.length){$("#sp").innerHTML="<p>Für diesen Tag gibt es keine passenden Fachwörter.</p>";return}
  const VERS=6;let akt,zeilen,eingabe,ende,tagesmodus,hinweis,neuZ=-1,neuB=-1;
@@ -636,7 +649,7 @@ async function seiteWordle(H,n){
    g+='<div class="wz'+(z===zeilen.length&&!ende?" akt":"")+(z===neuZ?" neu":"")+'">';for(let i=0;i<L;i++)g+='<span class="wf'+(r?" "+r[i]:"")+(bu[i]&&!r?" voll":"")+(!r&&i===neuB&&z===zeilen.length?" pop":"")+'" style="--i:'+i+'">'+E(bu[i]||"")+'</span>';g+='</div>'}
   g+='</div>';
   const ok=ende&&zeilen.length&&zeilen[zeilen.length-1].join("")===akt.w;
-  $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"wordle",S.wordle)+'<div class="knoepfe">'+(!n?'<button class="knopf '+(tagesmodus?"":"hell")+'" id="wtag">Wort des Tages</button>':"")+'<button class="knopf '+(tagesmodus?"hell":"")+'" id="wneu">Neues Wort</button></div></div>'
+  $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"wordle",S.wordle)+'<div class="knoepfe">'+(tagesW?'<button class="knopf '+(tagesmodus?"":"hell")+'" id="wtag">Wort des Tages</button>':"")+'<button class="knopf '+(tagesmodus?"hell":"")+'" id="wneu">Neues Wort</button></div></div>'
    +'<div class="wfeld"><p class="wlang">'+L+' Buchstaben · '+VERS+' Versuche'+(n?"":" · Tag "+akt.tag)+'</p>'+g+'<div id="wmeld" class="wmeld"></div>'+(ende?"":'<button class="knopf gross wpruef" id="wpruef"'+([...eingabe].length<L?" disabled":"")+'>'+I("quiz")+([...eingabe].length<L?"Noch "+(L-[...eingabe].length)+" Buchstaben":"Wort prüfen")+'</button>')
    +(ende?'<div class="spende '+(ok?"ok":"bad")+'"><b>'+(ok?"Geschafft in "+zeilen.length+" Versuchen!":"Leider nicht geschafft.")+'</b> Das Wort ist <b>'+E(akt.w)+'</b>.<div class="erkl" style="margin-top:8px">'+E(akt.e)+'</div><div class="knoepfe" style="margin-top:10px"><button class="knopf" id="weiter">Neues Wort</button></div></div>'
      :(zeilen.length>=2||hinweis?'<div class="hinw"><b>Hinweis</b>'+E(maskieren(akt.e,akt.w))+'</div>':'<button class="knopf hell" id="whinw">Hinweis zeigen</button>')+tastatur(true))
@@ -646,91 +659,146 @@ async function seiteWordle(H,n){
   const pb=$("#wpruef");if(pb)pb.onclick=()=>tippen("ENTER");
   const wt=$("#wtag");if(wt)wt.onclick=()=>start(true);$("#wneu").onclick=()=>start(false);
   const w=$("#weiter");if(w){w.onclick=()=>start(false)}
-  $("#twahl").onchange=e=>{location.hash=e.target.value?"#wordle-"+e.target.value:"#wordle"};
+  $("#twahl").onchange=e=>{location.hash="#wordle-"+e.target.value};
  }
  const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.ctrlKey||e.metaKey||e.altKey)return;if(e.target.tagName==="SELECT"){if(e.key.length===1||e.key==="Backspace")e.target.blur();else return}
   if(e.key==="Enter"){if(ende)start(false);else tippen("ENTER");e.preventDefault();return}
   if(e.key==="Backspace"){tippen("DEL");e.preventDefault();return}
   const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
  document.addEventListener("keydown",taste);QUIZ={stop:()=>document.removeEventListener("keydown",taste)};
- start(!n);
+ start(tagesW);
 }
 
+const MUNITION=[{n:"Laser",z:"✦",e:"",f:"#9fe8ff"},{n:"Einhorn",z:"🦄",e:"🦄",f:"#ff9de6",regen:1},{n:"Büroklammer",z:"📎",e:"📎",f:"#cfd8dc"},{n:"Kaffee",z:"☕",e:"☕",f:"#d7a46a"},{n:"Pizza",z:"🍕",e:"🍕",f:"#ffb347"},{n:"Brezel",z:"🥨",e:"🥨",f:"#e0a060"},{n:"Gummiente",z:"🐤",e:"🐤",f:"#ffe066"},{n:"Konfetti",z:"🎉",e:"🎉",f:"#ff6bcb",regen:1}];
 async function seiteFighter(H,n){
- H.innerHTML=spielKopf("Word-Fighter",n?"Begriffe von Tag "+n+" · "+E(D.tage[n].titel):"Begriffe aus allen freigegebenen Tagen",n)+'<div id="sp"><div class="laden">Wird geladen …</div></div>'+fuss();
- let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ H.innerHTML='<div class="laden">Wird geladen …</div>';
+ let S;try{S=await spieleLaden()}catch(e){H.innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ n=spielTag(n,S.hangman);if(!Object.keys(S.hangman).length){spielLeer(H,"Word-Fighter");return}
+ H.innerHTML=spielKopf("Word-Fighter",n?"Begriffe von Tag "+n+" · "+E(D.tage[n].titel):"Begriffe aus allen bisherigen Tagen",n)+'<div id="sp"></div>'+fuss();
  const pool=(n?[n]:Object.keys(S.hangman)).flatMap(t=>S.hangman[t].map(x=>Object.assign({tag:t},x)));
  $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"fighter",S.hangman)+'<span class="sprunde">Rekord <b id="frek">'+((spStand("wf")||{}).best||0)+'</b> Punkte</span></div>'
-  +'<div class="wfbox"><div class="wfhud"><span>Punkte <b id="fpkt">0</b></span><span>Level <b id="flvl">1</b></span><span id="fleben"></span></div>'
-  +'<div class="wfdef" id="fdef">Drücke Start</div><div class="wfbuehne"><canvas id="fc"></canvas><div class="wfover" id="fover"></div></div>'
+  +'<div class="wfbox"><div class="wfmun" id="fmun"><span>Munition</span>'+MUNITION.map((m,i)=>'<button class="wfm" data-i="'+i+'" title="'+m.n+'"><b>'+m.z+'</b>'+m.n+'</button>').join("")+'</div><div class="wfdef" id="fdef">Drücke Start</div><div class="wfbuehne"><canvas id="fc"></canvas><div class="wfover" id="fover"></div></div>'
   +'<div class="wfsteuer"><button class="knopf hell" id="fli" aria-label="Links">'+I("links")+'</button><button class="knopf" id="ffeuer">Feuer</button><button class="knopf hell" id="fre" aria-label="Rechts">'+I("rechts")+'</button></div>'
-  +'<p class="wfhilfe">Tippe oder klicke auf einen Begriff, um ihn abzuschießen. Am PC geht es auch mit den Pfeiltasten und der Leertaste.</p></div>';
- $("#twahl").onchange=e=>{location.hash=e.target.value?"#fighter-"+e.target.value:"#fighter"};
- const cv=$("#fc"),cx=cv.getContext("2d");let Wd=0,Hd=0,dpr=1;
- function groesse(){const b=cv.parentElement.getBoundingClientRect();dpr=window.devicePixelRatio||1;Wd=b.width;Hd=Math.max(300,Math.min(560,window.innerHeight-(Wd<700?400:330)));cv.style.height=Hd+"px";cv.width=Wd*dpr;cv.height=Hd*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
+  +'<div class="wflegende"><span><i style="background:#e05a5a">♥</i>Extra Leben</span><span><i style="background:#e0a800">★</i>50 Bonuspunkte</span><span><i style="background:#0a8fc4">◷</i>Zeitlupe</span><span><i style="background:#6f4bb2">⁂</i>Dreifachschuss</span><span><i style="background:#1f8a4c">◈</i>Schutzschild</span><span><i style="background:#7b8794">●</i>Asteroid, ausweichen oder zerschießen</span></div>'
+  +'<p class="wfhilfe">Klicke oder tippe ins Spielfeld, um einen Schuss in diese Richtung abzufeuern. Am PC folgt das Raumschiff der Maus, alternativ Pfeiltasten und Leertaste. P pausiert.</p></div>';
+ $("#twahl").onchange=e=>{location.hash="#fighter-"+e.target.value};
+ let mun=Math.min(MUNITION.length-1,Math.max(0,+(spStand("wfmun")||0)));
+ const munZeigen=()=>document.querySelectorAll("#fmun .wfm").forEach(b=>b.classList.toggle("an",+b.dataset.i===mun));munZeigen();
+ document.querySelectorAll("#fmun .wfm").forEach(b=>b.onclick=()=>{mun=+b.dataset.i;spStand("wfmun",mun);munZeigen();b.blur()});
+ const cv=$("#fc"),cx=cv.getContext("2d");let Wd=0,Hd=0;
+ function groesse(){const b=cv.parentElement.getBoundingClientRect(),dpr=window.devicePixelRatio||1;Wd=b.width;Hd=Wd<700?Math.max(380,Math.min(640,window.innerHeight-270)):Math.max(460,Math.min(720,window.innerHeight-170));cv.style.height=Hd+"px";cv.width=Wd*dpr;cv.height=Hd*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
  groesse();
- const sterne=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),v:.2+Math.random()*.8,r:Math.random()*1.4+.3}));
- let lauf=false,raf=0,t0=0,pkt=0,lvl=1,leben=3,treffer=0,schiff={x:.5},woerter=[],schuesse=[],funken=[],ziel=null,verpasst=[],tasten={},stopp=false,meld=null;
- const FARBEN=["#0a8fc4","#6f4bb2","#E8833A","#1f8a4c","#c84b3c"];
- function hud(){$("#fpkt").textContent=pkt;$("#flvl").textContent=lvl;$("#fleben").innerHTML="♥".repeat(leben)+'<i>'+"♥".repeat(3-leben)+'</i>'}
+ const F="Inter,Segoe UI,system-ui,sans-serif",FARBEN=["#0a8fc4","#6f4bb2","#E8833A","#1f8a4c","#c84b3c"];
+ const ITEMS={leben:{f:"#e05a5a",z:"♥"},stern:{f:"#e0a800",z:"★"},zeit:{f:"#0a8fc4",z:"◷"},drei:{f:"#6f4bb2",z:"⁂"},schild:{f:"#1f8a4c",z:"◈"}};
+ const sterne=Array.from({length:90},()=>({x:Math.random(),y:Math.random(),v:.15+Math.random()*.9,r:Math.random()*1.5+.3}));
+ let lauf=false,pause=false,raf=0,t0=0,pkt=0,lvl=1,leben=3,treffer=0,combo=0,bestCombo=0,schiff={x:.5,ziel:null},woerter=[],kugeln=[],dinge=[],funken=[],texte=[],ziel=null,verpasst=[],tasten={},cool=0,itemUhr=4,banner=null,eff={zeit:0,drei:0,schild:0},wellenStart=0;
+ const MAXL=5,schiffY=()=>Hd-42,linie=()=>Hd-78;
  function welle(){ziel=pool[Math.floor(Math.random()*pool.length)];
-  const andere=mischen(pool.filter(x=>x.b!==ziel.b)).slice(0,Math.min(3,pool.length-1));
-  const alle=mischen([ziel].concat(andere));cx.font="700 15px Inter,Segoe UI,system-ui,sans-serif";
-  const spalte=Wd/alle.length,reihe=mischen(alle.map((_,i)=>i));
-  woerter=alle.map((x,i)=>{const w=Math.min(Wd-16,cx.measureText(x.b).width+26);let xm=spalte*i+spalte/2;xm=Math.max(w/2+8,Math.min(Wd-w/2-8,xm));
-   return {d:x,x:xm,y:-26-reihe[i]*48-Math.random()*10,w:w,h:34,v:(30+lvl*8)*(.85+Math.random()*.3),f:FARBEN[i%FARBEN.length],tot:false,rot:0}});
-  $("#fdef").innerHTML='<b>Welcher Begriff passt?</b>'+E(maskieren(ziel.e,ziel.b))}
- function start(){try{$(".wfbox").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}pkt=0;lvl=1;leben=3;treffer=0;verpasst=[];schuesse=[];funken=[];stopp=false;$("#fover").innerHTML="";$("#fover").classList.remove("an");hud();welle();lauf=true;t0=performance.now();raf=requestAnimationFrame(schleife)}
- function ende(){lauf=false;cancelAnimationFrame(raf);const st=spStand("wf")||{best:0,spiele:0};st.spiele=(st.spiele||0)+1;const neu=pkt>(st.best||0);if(neu)st.best=pkt;spStand("wf",st);$("#frek").textContent=st.best;
+  const anz=Math.min(pool.length,lvl>=6?5:4),andere=mischen(pool.filter(x=>x.b!==ziel.b)).slice(0,anz-1),alle=mischen([ziel].concat(andere));
+  cx.font="700 15px "+F;const spalte=Wd/alle.length,reihe=mischen(alle.map((_,i)=>i));
+  woerter=alle.map((x,i)=>{const w=Math.min(Wd-16,cx.measureText(x.b).width+28);let xm=spalte*i+spalte/2;xm=Math.max(w/2+8,Math.min(Wd-w/2-8,xm));
+   return {d:x,x:xm,y:20-reihe[i]*52-Math.random()*12,w:w,h:36,v:(14+lvl*3.2)*(Hd/600)*(.85+Math.random()*.3),f:FARBEN[i%FARBEN.length],tot:false,rot:0,dx:(Math.random()-.5)*(lvl>=4?24:0)}});
+  wellenStart=performance.now();$("#fdef").innerHTML='<b>Welcher Begriff passt? · Level '+lvl+'</b>'+E(maskieren(ziel.e,ziel.b))}
+ function start(){try{$(".wfbox").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}
+  pkt=0;lvl=1;leben=3;treffer=0;combo=0;bestCombo=0;verpasst=[];kugeln=[];dinge=[];funken=[];texte=[];eff={zeit:0,drei:0,schild:0};itemUhr=4;banner={t:"Level 1",u:"Los geht's!",z:1.6};pause=false;
+  $("#fover").innerHTML="";$("#fover").classList.remove("an");welle();lauf=true;t0=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(schleife)}
+ function ende(){lauf=false;const st=spStand("wf")||{best:0,spiele:0};st.spiele=(st.spiele||0)+1;const neu=pkt>(st.best||0);if(neu)st.best=pkt;spStand("wf",st);$("#frek").textContent=st.best;
   const fehl=verpasst.filter((x,i,a)=>a.findIndex(y=>y.b===x.b)===i);
-  $("#fover").innerHTML='<div class="wfkarte"><h3>'+(neu&&pkt?"Neuer Rekord!":"Spiel vorbei")+'</h3><p class="wfgross">'+pkt+' Punkte</p><p>'+treffer+(treffer===1?' Begriff':' Begriffe')+' richtig abgeschossen, Level '+lvl+'</p>'
+  $("#fover").innerHTML='<div class="wfkarte"><h3>'+(neu&&pkt?"Neuer Rekord!":"Spiel vorbei")+'</h3><p class="wfgross">'+pkt+' Punkte</p><p>Level '+lvl+' · '+treffer+(treffer===1?' Begriff':' Begriffe')+' richtig · beste Serie '+bestCombo+'</p>'
    +(fehl.length?'<div class="wfnach"><b>Diese Begriffe solltest du wiederholen</b>'+fehl.map(x=>'<div><strong>'+E(x.b)+'</strong> '+E(x.e)+'</div>').join("")+'</div>':"")
    +'<button class="knopf gross" id="fneu">Nochmal spielen</button></div>';$("#fover").classList.add("an");$("#fneu").onclick=start}
- function meldung(t,ok){meld={t:t,ok:ok,z:1.6}}
- function explosion(x,y,f){for(let i=0;i<26;i++){const a=Math.random()*Math.PI*2,v=60+Math.random()*180;funken.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:.7+Math.random()*.4,f:f})}}
- function trifft(w){if(!lauf||w.tot)return;const sx=schiff.x*Wd,sy=Hd-34;schuesse.push({x1:sx,y1:sy,x2:w.x,y2:w.y,l:.18});
-  if(w.d.b===ziel.b){w.tot=true;treffer++;pkt+=10*lvl;explosion(w.x,w.y,w.f);meldung("Richtig! "+w.d.b,true);if(treffer%5===0)lvl++;hud();setTimeout(()=>{if(lauf)welle()},450)}
-  else{w.rot=.6;leben--;verpasst.push(ziel);meldung("Falsch. Das war "+w.d.b,false);hud();if(leben<=0)setTimeout(ende,500)}}
- function geradeHoch(){const sx=schiff.x*Wd;let best=null;woerter.forEach(w=>{if(!w.tot&&Math.abs(w.x-sx)<w.w/2+6&&w.y>0&&(!best||w.y>best.y))best=w});
-  if(best)trifft(best);else schuesse.push({x1:sx,y1:Hd-34,x2:sx,y2:0,l:.15})}
- function schleife(t){const dt=Math.min(.05,(t-t0)/1000);t0=t;
-  if(tasten.l)schiff.x=Math.max(.04,schiff.x-dt*.9);if(tasten.r)schiff.x=Math.min(.96,schiff.x+dt*.9);
-  woerter.forEach(w=>{if(!w.tot){w.y+=w.v*dt;if(w.rot>0)w.rot-=dt}});
-  const z=woerter.find(w=>w.d.b===ziel.b&&!w.tot);
-  if(z&&z.y>Hd-60){z.tot=true;leben--;verpasst.push(ziel);meldung("Verpasst. Gesucht war "+ziel.b,false);hud();if(leben<=0){setTimeout(ende,300)}else setTimeout(()=>{if(lauf)welle()},500)}
-  woerter.forEach(w=>{if(!w.tot&&w.d.b!==ziel.b&&w.y>Hd-60)w.y=-40});
-  funken.forEach(f=>{f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=120*dt;f.l-=dt});funken=funken.filter(f=>f.l>0);
-  schuesse.forEach(s=>s.l-=dt);schuesse=schuesse.filter(s=>s.l>0);if(meld){meld.z-=dt;if(meld.z<=0)meld=null}
-  zeichnen(dt);if(lauf||funken.length)raf=requestAnimationFrame(schleife)}
+ function schwebtext(t,x,y,f,g){texte.push({t:t,x:x,y:y,f:f,z:1.2,g:g||16})}
+ function explosion(x,y,f,n){for(let i=0;i<(n||26);i++){const a=Math.random()*Math.PI*2,v=60+Math.random()*200;funken.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:.6+Math.random()*.5,f:f})}}
+ function lebenWeg(grund){if(eff.schild>0){eff.schild=0;schwebtext("Schild hat dich geschützt",Wd/2,linie()-20,"#7ee2a8");return false}
+  leben--;combo=0;schwebtext(grund,Wd/2,linie()-20,"#ffb3a8",17);if(leben<=0){setTimeout(ende,600)}return true}
+ function schuss(zx,zy){if(!lauf||pause||cool>0)return;cool=.16;const sx=schiff.x*Wd,sy=schiffY()-20;let a=Math.atan2(zy-sy,zx-sx);if(a>-0.15)a=-0.15;if(a<-Math.PI+0.15)a=-Math.PI+0.15;
+  const winkel=eff.drei>0?[a-.14,a,a+.14]:[a];winkel.forEach(w=>kugeln.push({x:sx,y:sy,vx:Math.cos(w)*760,vy:Math.sin(w)*760}))}
+ function richtigerTreffer(w){w.tot=true;treffer++;combo++;bestCombo=Math.max(bestCombo,combo);
+  const schnell=Math.max(0,Math.round(30*(1-(w.y/linie())))),serie=combo>1?combo*5:0,p=10*lvl+schnell+serie;pkt+=p;
+  explosion(w.x,w.y,w.f,34);schwebtext("+"+p+(serie?" · Serie x"+combo:""),w.x,w.y,"#7ee2a8",18);
+  if(treffer%5===0){lvl++;const bonus=25*lvl;pkt+=bonus;banner={t:"Level "+lvl+"!",u:"+"+bonus+" Bonuspunkte"+(lvl===4?" · Begriffe schweben jetzt seitlich":lvl===6?" · jetzt 5 Begriffe":""),z:2}}
+  setTimeout(()=>{if(lauf)welle()},500)}
+ function falscherTreffer(w){w.rot=.7;verpasst.push(ziel);lebenWeg("Falsch. Das war "+w.d.b)}
+ function item(){const r=Math.random(),arten=lvl<2?["stern","zeit","asteroid","asteroid"]:["leben","stern","zeit","drei","schild","asteroid","asteroid","asteroid"];
+  const art=arten[Math.floor(Math.random()*arten.length)];
+  if(art==="asteroid")dinge.push({art:art,x:30+Math.random()*(Wd-60),y:-30,vx:(Math.random()-.5)*40,vy:(40+lvl*8)*(Hd/600),r:16+Math.random()*10,hp:2,dreh:Math.random()*6,pts:Array.from({length:9},()=>.75+Math.random()*.35)});
+  else{const links=Math.random()<.5;dinge.push({art:art,x:links?-20:Wd+20,y:90+Math.random()*(linie()-200),vx:(links?1:-1)*(70+Math.random()*40),vy:0,r:17,hp:1,t:0})}}
+ function einsammeln(d){explosion(d.x,d.y,ITEMS[d.art].f,20);
+  if(d.art==="leben"){leben=Math.min(MAXL,leben+1);schwebtext("+1 Leben",d.x,d.y,"#ffb3a8")}
+  else if(d.art==="stern"){pkt+=50;schwebtext("+50 Bonus",d.x,d.y,"#ffe08a")}
+  else if(d.art==="zeit"){eff.zeit=7;schwebtext("Zeitlupe",d.x,d.y,"#9fdcff")}
+  else if(d.art==="drei"){eff.drei=9;schwebtext("Dreifachschuss",d.x,d.y,"#d2c2ff")}
+  else if(d.art==="schild"){eff.schild=12;schwebtext("Schutzschild",d.x,d.y,"#7ee2a8")}}
+ function schleife(t){const roh=Math.min(.05,(t-t0)/1000);t0=t;if(pause){zeichnen(0);raf=requestAnimationFrame(schleife);return}
+  const dt=roh*(eff.zeit>0?.45:1);cool-=roh;["zeit","drei","schild"].forEach(k=>{if(eff[k]>0)eff[k]=Math.max(0,eff[k]-roh)});
+  if(lauf){if(tasten.l){schiff.x-=roh*.9;schiff.ziel=null}if(tasten.r){schiff.x+=roh*.9;schiff.ziel=null}
+   if(schiff.ziel!=null){const d=schiff.ziel-schiff.x;schiff.x+=Math.sign(d)*Math.min(Math.abs(d),roh*1.4)}schiff.x=Math.max(.04,Math.min(.96,schiff.x));
+   woerter.forEach(w=>{if(w.tot)return;w.y+=w.v*dt;w.x+=w.dx*dt;if(w.x<w.w/2+6||w.x>Wd-w.w/2-6)w.dx*=-1;if(w.rot>0)w.rot-=roh});
+   const z=woerter.find(w=>w.d.b===ziel.b&&!w.tot);
+   if(z&&z.y+z.h/2>linie()){z.tot=true;verpasst.push(ziel);explosion(z.x,linie(),"#c84b3c",16);const weg=lebenWeg("Verpasst. Gesucht war "+ziel.b);if(leben>0)setTimeout(()=>{if(lauf)welle()},600)}
+   woerter.forEach(w=>{if(!w.tot&&w.d.b!==ziel.b&&w.y+w.h/2>linie())w.y=-30});
+   itemUhr-=dt;if(itemUhr<=0){item();itemUhr=Math.max(2.5,6-lvl*.35)+Math.random()*2.5}
+   dinge.forEach(d=>{d.x+=d.vx*dt;d.y+=d.vy*dt;if(d.dreh!=null)d.dreh+=dt;if(d.t!=null)d.t+=dt;
+    if(d.art==="asteroid"&&!d.weg&&Math.abs(d.x-schiff.x*Wd)<d.r+16&&Math.abs(d.y-schiffY())<d.r+14){d.weg=true;explosion(d.x,d.y,"#9aa5ae",24);lebenWeg("Vom Asteroiden getroffen")}});
+   dinge=dinge.filter(d=>!d.weg&&d.y<Hd+40&&d.x>-60&&d.x<Wd+60);
+   kugeln.forEach(k=>{k.x+=k.vx*roh;k.y+=k.vy*roh;
+    for(const d of dinge){if(!d.weg&&Math.hypot(k.x-d.x,k.y-d.y)<d.r+4){k.weg=true;if(d.art==="asteroid"){d.hp--;explosion(k.x,k.y,"#9aa5ae",6);if(d.hp<=0){d.weg=true;pkt+=5;explosion(d.x,d.y,"#9aa5ae",22);schwebtext("+5",d.x,d.y,"#dfe6ec")}}else{d.weg=true;einsammeln(d)}break}}
+    if(k.weg)return;
+    for(const w of woerter){if(!w.tot&&Math.abs(k.x-w.x)<=w.w/2&&Math.abs(k.y-w.y)<=w.h/2){k.weg=true;if(w.d.b===ziel.b)richtigerTreffer(w);else if(w.rot<=0)falscherTreffer(w);break}}});
+   kugeln=kugeln.filter(k=>!k.weg&&k.y>-10&&k.x>-10&&k.x<Wd+10)}
+  funken.forEach(f=>{f.x+=f.vx*roh;f.y+=f.vy*roh;f.vy+=140*roh;f.l-=roh});funken=funken.filter(f=>f.l>0);
+  texte.forEach(x=>{x.y-=30*roh;x.z-=roh});texte=texte.filter(x=>x.z>0);if(banner){banner.z-=roh;if(banner.z<=0)banner=null}
+  zeichnen(roh);if(lauf||funken.length)raf=requestAnimationFrame(schleife)}
  function rrect(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
- function zeichnen(dt){const g=cx.createLinearGradient(0,0,0,Hd);g.addColorStop(0,"#071f38");g.addColorStop(1,"#0b3a63");cx.fillStyle=g;cx.fillRect(0,0,Wd,Hd);
-  sterne.forEach(s=>{s.y+=s.v*(dt||0)*.08;if(s.y>1)s.y=0;cx.fillStyle="rgba(255,255,255,"+(.3+s.r/3)+")";cx.fillRect(s.x*Wd,s.y*Hd,s.r,s.r)});
-  cx.fillStyle="rgba(232,131,58,.18)";cx.fillRect(0,Hd-60,Wd,2);
-  cx.font="700 15px Inter,Segoe UI,system-ui,sans-serif";cx.textAlign="center";cx.textBaseline="middle";
+ function herz(x,y,s,f){cx.fillStyle=f;cx.beginPath();cx.moveTo(x,y+s*.35);cx.bezierCurveTo(x,y,x-s*.5,y,x-s*.5,y+s*.35);cx.bezierCurveTo(x-s*.5,y+s*.65,x,y+s*.85,x,y+s);cx.bezierCurveTo(x,y+s*.85,x+s*.5,y+s*.65,x+s*.5,y+s*.35);cx.bezierCurveTo(x+s*.5,y,x,y,x,y+s*.35);cx.fill()}
+ function zeichnen(dt){const g=cx.createLinearGradient(0,0,0,Hd);g.addColorStop(0,eff.zeit>0?"#06273f":"#071f38");g.addColorStop(1,"#0b3a63");cx.fillStyle=g;cx.fillRect(0,0,Wd,Hd);
+  sterne.forEach(s=>{s.y+=s.v*(dt||0)*.06*(eff.zeit>0?.4:1);if(s.y>1)s.y=0;cx.fillStyle="rgba(255,255,255,"+(.25+s.r/3)+")";cx.fillRect(s.x*Wd,s.y*Hd,s.r,s.r)});
+  cx.strokeStyle="rgba(232,131,58,.55)";cx.setLineDash([8,8]);cx.lineWidth=2;cx.beginPath();cx.moveTo(0,linie());cx.lineTo(Wd,linie());cx.stroke();cx.setLineDash([]);
+  cx.textAlign="center";cx.textBaseline="middle";
+  dinge.forEach(d=>{if(d.art==="asteroid"){cx.save();cx.translate(d.x,d.y);cx.rotate(d.dreh);cx.fillStyle=d.hp<2?"#5d6872":"#7b8794";cx.beginPath();d.pts.forEach((p,i)=>{const a=i/d.pts.length*Math.PI*2;cx.lineTo(Math.cos(a)*d.r*p,Math.sin(a)*d.r*p)});cx.closePath();cx.fill();cx.fillStyle="rgba(0,0,0,.18)";cx.beginPath();cx.arc(d.r*.25,-d.r*.2,d.r*.25,0,7);cx.fill();cx.restore()}
+   else{const it=ITEMS[d.art],pul=1+Math.sin((d.t||0)*6)*.08;cx.fillStyle=it.f;cx.globalAlpha=.25;cx.beginPath();cx.arc(d.x,d.y,d.r*1.6*pul,0,7);cx.fill();cx.globalAlpha=1;cx.beginPath();cx.arc(d.x,d.y,d.r*pul,0,7);cx.fill();cx.strokeStyle="#fff";cx.lineWidth=2;cx.stroke();cx.fillStyle="#fff";cx.font="700 18px "+F;cx.fillText(it.z,d.x,d.y+1)}});
+  cx.font="700 15px "+F;
   woerter.forEach(w=>{if(w.tot)return;rrect(w.x-w.w/2,w.y-w.h/2,w.w,w.h,12);cx.fillStyle=w.rot>0?"#c84b3c":"#ffffff";cx.fill();cx.lineWidth=3;cx.strokeStyle=w.rot>0?"#ffb3a8":w.f;cx.stroke();cx.fillStyle=w.rot>0?"#fff":"#0b2e4f";cx.fillText(w.d.b,w.x,w.y+1)});
-  schuesse.forEach(s=>{cx.strokeStyle="rgba(120,230,255,"+Math.min(1,s.l*6)+")";cx.lineWidth=3;cx.beginPath();cx.moveTo(s.x1,s.y1);cx.lineTo(s.x2,s.y2);cx.stroke()});
-  funken.forEach(f=>{cx.fillStyle=f.f;cx.globalAlpha=Math.max(0,f.l);cx.fillRect(f.x-2,f.y-2,4,4);cx.globalAlpha=1});
-  const sx=schiff.x*Wd,sy=Hd-28;cx.fillStyle="#E8833A";cx.beginPath();cx.moveTo(sx,sy-22);cx.lineTo(sx+18,sy+14);cx.lineTo(sx,sy+6);cx.lineTo(sx-18,sy+14);cx.closePath();cx.fill();
-  cx.fillStyle="#fff";cx.beginPath();cx.arc(sx,sy-4,4,0,Math.PI*2);cx.fill();
-  cx.fillStyle="rgba(120,230,255,.7)";cx.fillRect(sx-3,sy+8,6,4+Math.random()*6);
-  if(meld){cx.font="700 16px Inter,Segoe UI,system-ui,sans-serif";cx.globalAlpha=Math.min(1,meld.z*2);cx.fillStyle=meld.ok?"#7ee2a8":"#ffb3a8";cx.fillText(meld.t,Wd/2,Hd-80);cx.globalAlpha=1}}
- function zeigerPos(e){const b=cv.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top}}
- cv.addEventListener("pointerdown",e=>{if(!lauf)return;const p=zeigerPos(e);schiff.x=Math.max(.04,Math.min(.96,p.x/Wd));
-  const w=woerter.find(w=>!w.tot&&Math.abs(p.x-w.x)<=w.w/2+8&&Math.abs(p.y-w.y)<=w.h/2+10);if(w)trifft(w);else geradeHoch();e.preventDefault()});
+  const M=MUNITION[mun];
+  kugeln.forEach(k=>{if(M.regen){const rb=["#ff5e5e","#ffb347","#ffe066","#7ee2a8","#6ec6ff","#c39bff"];rb.forEach((c,i)=>{cx.strokeStyle=c;cx.globalAlpha=.55;cx.lineWidth=2;cx.beginPath();cx.moveTo(k.x+(i-2.5)*2,k.y);cx.lineTo(k.x-k.vx*.035+(i-2.5)*2,k.y-k.vy*.035);cx.stroke()});cx.globalAlpha=1}
+   else{cx.strokeStyle=M.f;cx.globalAlpha=.45;cx.lineWidth=3;cx.beginPath();cx.moveTo(k.x,k.y);cx.lineTo(k.x-k.vx*.025,k.y-k.vy*.025);cx.stroke();cx.globalAlpha=1}
+   if(M.e){cx.save();cx.translate(k.x,k.y);cx.rotate(Math.atan2(k.vy,k.vx)+Math.PI/2+(k.dreh||0));cx.font="22px Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif";cx.fillText(M.e,0,0);cx.restore();k.dreh=(k.dreh||0)+.15}
+   else{cx.fillStyle=M.f;cx.beginPath();cx.arc(k.x,k.y,3.5,0,7);cx.fill()}});
+  funken.forEach(f=>{cx.fillStyle=f.f;cx.globalAlpha=Math.max(0,Math.min(1,f.l));cx.fillRect(f.x-2,f.y-2,4,4);cx.globalAlpha=1});
+  const sx=schiff.x*Wd,sy=schiffY();
+  if(eff.schild>0){cx.strokeStyle="rgba(126,226,168,"+(.5+Math.sin(performance.now()/120)*.2)+")";cx.lineWidth=3;cx.beginPath();cx.arc(sx,sy,30,0,7);cx.stroke()}
+  cx.fillStyle="#E8833A";cx.beginPath();cx.moveTo(sx,sy-24);cx.lineTo(sx+20,sy+16);cx.lineTo(sx,sy+7);cx.lineTo(sx-20,sy+16);cx.closePath();cx.fill();
+  cx.fillStyle="#fff";cx.beginPath();cx.arc(sx,sy-5,4.5,0,7);cx.fill();cx.fillStyle="rgba(120,230,255,.75)";cx.fillRect(sx-3,sy+9,6,5+Math.random()*7);
+  // HUD
+  cx.textAlign="left";cx.font="700 14px "+F;cx.fillStyle="rgba(255,255,255,.75)";cx.fillText("PUNKTE",12,18);cx.fillText("LEVEL",Wd<420?96:120,18);
+  cx.font="800 22px "+F;cx.fillStyle="#fff";cx.fillText(pkt,12,40);cx.fillText(lvl,Wd<420?96:120,40);
+  if(combo>1){cx.font="700 14px "+F;cx.fillStyle="#ffe08a";cx.fillText("Serie x"+combo,Wd<420?140:170,40)}
+  for(let i=0;i<MAXL;i++){if(i>=Math.max(3,leben))break;herz(Wd-20-i*24,10,18,i<leben?"#ff6b6b":"rgba(255,255,255,.18)")}
+  let ey=54;[["zeit","Zeitlupe","#0a8fc4",7],["drei","Dreifachschuss","#6f4bb2",9],["schild","Schild","#1f8a4c",12]].forEach(e=>{if(eff[e[0]]>0){cx.fillStyle="rgba(255,255,255,.15)";rrect(Wd-132,ey,120,16,8);cx.fill();cx.fillStyle=e[2];rrect(Wd-132,ey,120*eff[e[0]]/e[3],16,8);cx.fill();cx.fillStyle="#fff";cx.font="700 11px "+F;cx.textAlign="center";cx.fillText(e[1],Wd-72,ey+8.5);cx.textAlign="left";ey+=20}});
+  cx.textAlign="center";
+  texte.forEach(x=>{cx.globalAlpha=Math.min(1,x.z*1.5);cx.font="800 "+x.g+"px "+F;cx.fillStyle=x.f;cx.fillText(x.t,Math.max(90,Math.min(Wd-90,x.x)),x.y);cx.globalAlpha=1});
+  if(banner){cx.globalAlpha=Math.min(1,banner.z*1.4);cx.fillStyle="rgba(0,0,0,.35)";rrect(Wd/2-160,Hd*.38-38,320,78,16);cx.fill();cx.font="800 30px "+F;cx.fillStyle="#ffe08a";cx.fillText(banner.t,Wd/2,Hd*.38-8);cx.font="600 14px "+F;cx.fillStyle="#fff";cx.fillText(banner.u,Wd/2,Hd*.38+20);cx.globalAlpha=1}
+  if(pause&&lauf){cx.fillStyle="rgba(0,0,0,.45)";cx.fillRect(0,0,Wd,Hd);cx.font="800 28px "+F;cx.fillStyle="#fff";cx.fillText("Pause",Wd/2,Hd/2-10);cx.font="600 14px "+F;cx.fillText("Tippe oder drücke P zum Weiterspielen",Wd/2,Hd/2+20)}}
+ function pos(e){const b=cv.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top}}
+ cv.addEventListener("pointerdown",e=>{if(!lauf)return;if(pause){pause=false;e.preventDefault();return}const p=pos(e);schiff.ziel=Math.max(.04,Math.min(.96,p.x/Wd));schuss(p.x,p.y);e.preventDefault()});
+ cv.addEventListener("pointermove",e=>{if(!lauf||e.pointerType!=="mouse")return;schiff.ziel=Math.max(.04,Math.min(.96,pos(e).x/Wd))});
  const halten=(id,k)=>{const b=$(id);b.addEventListener("pointerdown",e=>{tasten[k]=true;e.preventDefault()});["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>tasten[k]=false))};
- halten("#fli","l");halten("#fre","r");$("#ffeuer").onclick=()=>{if(lauf)geradeHoch();else if(!$("#fover").classList.contains("an")||$("#fneu"))start()};
- const taste=e=>{if(!document.body.contains(cv)){aufraeumen();return}if(e.target.tagName==="SELECT")return;
-  if(e.key==="ArrowLeft"||e.key==="a"){tasten.l=e.type==="keydown";e.preventDefault()}
-  else if(e.key==="ArrowRight"||e.key==="d"){tasten.r=e.type==="keydown";e.preventDefault()}
-  else if(e.key===" "&&e.type==="keydown"){if(lauf)geradeHoch();else start();e.preventDefault()}
-  else if(e.key==="Enter"&&e.type==="keydown"&&!lauf){start();e.preventDefault()}};
+ halten("#fli","l");halten("#fre","r");
+ $("#ffeuer").addEventListener("pointerdown",e=>{e.preventDefault();if(!lauf){if($("#fneu"))start();return}if(pause){pause=false;return}schuss(schiff.x*Wd,0)});
+ const taste=e=>{if(!document.body.contains(cv)){aufraeumen();return}if(e.target.tagName==="SELECT")return;const unten=e.type==="keydown";
+  if(e.key==="ArrowLeft"||e.key==="a"){tasten.l=unten;e.preventDefault()}
+  else if(e.key==="ArrowRight"||e.key==="d"){tasten.r=unten;e.preventDefault()}
+  else if(e.key===" "&&unten){if(lauf){if(pause)pause=false;else schuss(schiff.x*Wd,0)}else if($("#fneu"))start();e.preventDefault()}
+  else if((e.key==="p"||e.key==="P")&&unten&&lauf){pause=!pause}
+  else if(e.key==="Enter"&&unten&&!lauf&&$("#fneu")){start();e.preventDefault()}};
  const rs=()=>{groesse();if(!lauf)zeichnen(0)};
- function aufraeumen(){lauf=false;cancelAnimationFrame(raf);document.removeEventListener("keydown",taste);document.removeEventListener("keyup",taste);window.removeEventListener("resize",rs)}
- document.addEventListener("keydown",taste);document.addEventListener("keyup",taste);window.addEventListener("resize",rs);
+ const vis=()=>{if(document.hidden&&lauf)pause=true};
+ function aufraeumen(){lauf=false;cancelAnimationFrame(raf);document.removeEventListener("keydown",taste);document.removeEventListener("keyup",taste);window.removeEventListener("resize",rs);document.removeEventListener("visibilitychange",vis)}
+ document.addEventListener("keydown",taste);document.addEventListener("keyup",taste);window.addEventListener("resize",rs);document.addEventListener("visibilitychange",vis);
  QUIZ={stop:aufraeumen};
  if(pool.length<2){$("#fdef").textContent="Für diese Auswahl gibt es zu wenige Begriffe.";return}
- zeichnen(0);hud();
- $("#fover").innerHTML='<div class="wfkarte"><h3>Word-Fighter</h3><p>Oben steht eine Erklärung. Schieß den passenden Fachbegriff ab, bevor er die orange Linie erreicht. Falsche Treffer kosten ein Leben.</p><p>Du hast 3 Leben. Alle 5 Treffer steigt das Level und die Begriffe fallen schneller.</p><button class="knopf gross" id="fneu">Start</button></div>';$("#fover").classList.add("an");$("#fneu").onclick=start;
+ zeichnen(0);
+ $("#fover").innerHTML='<div class="wfkarte"><h3>Word-Fighter</h3><p>Oben steht eine Erklärung. Schieß den passenden Fachbegriff ab, bevor er die gestrichelte Linie erreicht. Ein falscher Treffer kostet ein Leben.</p><p>Schieß auf die runden Gegenstände für Extra Leben, Bonuspunkte, Zeitlupe, Dreifachschuss und Schutzschild. Weich den Asteroiden aus.</p><p>Schnelle Treffer und Serien bringen Bonuspunkte. Alle 5 Treffer steigt das Level.</p><button class="knopf gross" id="fneu">Start</button></div>';$("#fover").classList.add("an");$("#fneu").onclick=start;
 }
 let LEKPOOL=null;
 async function seiteTrainer(H,klausur,lek){
