@@ -73,7 +73,7 @@ a.kachel:hover{box-shadow:0 8px 22px #0033661c;transform:translateY(-2px);border
 .kachel.breit.zu{background:#f5f7f9}
 .hero{background:linear-gradient(120deg,var(--navy),var(--blau));color:#fff;border-radius:20px;padding:22px 22px 20px;margin-bottom:8px}
 .hero .chip{background:#ffffff26;color:#fff}.hero h2{margin:8px 0 2px;font-size:22px;line-height:1.3}.hero p{margin:0 0 16px;opacity:.85}
-.hero .schnell{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.hero .schnell{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
 .hero .schnell a,.hero .schnell span{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:14px;background:#ffffff1f;color:#fff;text-decoration:none;font-weight:600;font-size:13.5px;text-align:center}
 .hero .schnell a:hover{background:#ffffff33}.hero .schnell span{opacity:.5}
 .hero .zum{display:inline-flex;align-items:center;gap:4px;margin-top:14px;color:#fff;font-weight:600;text-decoration:none}
@@ -101,6 +101,9 @@ a.kachel:hover{box-shadow:0 8px 22px #0033661c;transform:translateY(-2px);border
 .knopf.gross{padding:14px 22px;font-size:16px;width:100%}
 .player{background:#000;border-radius:16px;overflow:hidden;aspect-ratio:16/9;max-width:980px}
 .player video,.player iframe{width:100%;height:100%;border:0;display:block}
+video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:1.05em;line-height:1.4}
+.utzeile{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;max-width:980px}
+.utzeile .kx{color:var(--grau);font-size:13.5px}
 .qkopf{position:sticky;top:var(--oben);z-index:5;background:#fffffff0;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--rand);border-radius:16px;padding:12px 14px;margin-bottom:14px}
 .qzeile{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}
 .modus{display:inline-flex;background:#eef2f5;border-radius:12px;padding:3px}
@@ -123,6 +126,8 @@ a.kachel:hover{box-shadow:0 8px 22px #0033661c;transform:translateY(-2px);border
 .opt .m{margin-left:auto;font-size:12px;font-weight:700;white-space:nowrap;padding-left:8px}
 .opt.richtig .m,.opt.fehlt .m{color:var(--gruen)}.opt.falsch .m{color:var(--rot)}
 .urteil{font-weight:700;margin:10px 0 4px}.urteil.ok{color:var(--gruen)}.urteil.bad{color:var(--rot)}
+.sit{background:#f3f8fb;border-left:4px solid var(--blau);border-radius:10px;padding:10px 12px;margin:6px 0 8px;font-size:14.5px;line-height:1.45}
+.gz2{background:#fffaf0;border:1px solid #eedcb5;border-radius:10px;padding:8px 12px;margin:6px 0 8px;font-size:13.5px;line-height:1.5;white-space:pre-line}.gz2 b{color:#8a5a00}
 .erkl{background:#f6f8fa;border-radius:10px;padding:10px 12px;font-size:14px}
 .ergebnis{background:#fff;border:2px solid var(--blau);border-radius:18px;padding:18px;margin-bottom:14px;text-align:center;scroll-margin-top:calc(var(--oben) + 110px)}
 .ergebnis .gz{font-size:30px;font-weight:800;color:var(--navy)}.ergebnis p{margin:4px 0 12px;color:var(--grau)}
@@ -292,14 +297,15 @@ function route(){
  const h=decodeURIComponent((location.hash||"").slice(1));
  const H=$("#haupt");
  if(h==="heute"){const t=heuteTag()||naechsterTag(); location.replace(t?"#tag"+t:"#"); return}
- const m=h.match(/^tag(\d\d)(?:-(nachmittag|video|quiz|uebung1|uebung2))?$/);
+ const m=h.match(/^tag(\d\d)(?:-(nachmittag|video|quiz|uebung1|uebung2|morgen))?$/);
  if(m&&D.tage[m[1]]){const n=m[1],s=m[2]||"";
   if(!s) H.innerHTML=seiteTag(n);
   else if(s==="nachmittag") H.innerHTML=seiteNachmittag(n);
-  else if(s==="video") H.innerHTML=seiteVideo(n);
+  else if(s==="video"){H.innerHTML=seiteVideo(n);untertitel()}
   else seiteQuiz(H,n,s);
  } else if(h==="trainer") seiteTrainer(H,false);
  else if(h==="klausur") seiteTrainer(H,true);
+ else if(h==="lek") seiteTrainer(H,false,true);
  else H.innerHTML=seiteStart();
  window.scrollTo(0,0);
 }
@@ -310,18 +316,20 @@ function seiteStart(){
  if(nt){const d=D.tage[nt],zu=!d.frei1;
   const s=(href,ic,t,ok,ext)=>ok?'<a href="'+E(href)+'"'+(ext?' target="_blank" rel="noopener"':"")+'>'+I(ic)+t+'</a>':'<span>'+I(ic)+t+'</span>';
   h+='<div class="hero"><span class="chip">'+(ht?"Heute":"Nächster Unterrichtstag")+' · Tag '+nt+'</span><h2>'+E(d.titel)+'</h2><p>'+E(d.wochentag)+', '+E(d.datum_de)+'</p><div class="schnell">'
-   +s(d.praes,"praes","Präsentation",!zu,1)+s(d.skript,"skript","Skript",!zu,1)+s("#tag"+nt+"-quiz","quiz","Quiz",!zu)+s("#tag"+nt+"-video","video","Video",!!d.video)+s("#tag"+nt+"-nachmittag","sonne","Nachmittag",d.frei2)
+   +s("#tag"+nt+"-morgen","sonne","Morgenstart",!!d.morgen)+s(d.praes,"praes","Präsentation",!zu,1)+s(d.skript,"skript","Skript",!zu,1)+s("#tag"+nt+"-quiz","quiz","Quiz",!zu)+s("#tag"+nt+"-video","video","Video",!!d.video)+s("#tag"+nt+"-nachmittag","sonne","Nachmittag",d.frei2)
    +'</div><a class="zum" href="#tag'+nt+'">Zum Tag '+nt+' '+I("rechts")+'</a></div>';}
  if(D.kurs) h+='<h2 class="ab">'+I("ziel")+'Lernen und Wiederholen</h2><div class="kacheln">'
   +kachel({href:"#trainer",icon:"ziel",titel:"Quiz-Trainer",text:"Fragen nach Tag oder Teil üben",farbe:"lila",badge:"Online"})
   +kachel({href:"#klausur",icon:"uhr",titel:"Probeklausur",text:"30 Fragen, Auswertung am Ende",farbe:"orange",badge:"Online"})
-  +kachel({href:D.kurs.gesamtskript,icon:"buch",titel:"Gesamtskript",text:"Alle Skripte in einer Datei",farbe:"gruen",badge:"PDF",extern:1})+'</div>';
+  +kachel({href:D.kurs.gesamtskript,icon:"buch",titel:"Gesamtskript",text:"Alle Skripte in einer Datei",farbe:"gruen",badge:"PDF",extern:1})
+  +(D.kurs.lek?kachel({href:"#lek",icon:"ziel",titel:"LEK-Vorbereitung",text:D.kurs.lek_n+" Prüfungsfragen zu Tag 01 bis 18",farbe:"rot",badge:"Online"}):"")+'</div>';
  D.teile.forEach(t=>{h+='<h2 class="ab">'+E(t.kurz)+' <small>'+E(t.lang)+'</small></h2><div class="tage">'+t.tage.map(tagKachel).join("")+'</div>'});
  return h+fuss();
 }
 function seiteTag(n){const d=D.tage[n];
  let h=rahmen({kurz:"Tag "+n+" · "+d.titel,bc:[["Übersicht","#"],["Tag "+n,""]],zurueck:["Übersicht","#"],akt:"tag",tag:n});
  h+='<span class="chip">'+E(d.teilkurz)+'</span>'+(istHeute(n)?' <span class="chip o">Heute</span>':"")+'<h1 class="st">Tag '+n+' · '+E(d.titel)+'</h1><p class="sub">'+E(d.wochentag)+', '+E(d.datum_de)+'</p>';
+ if(d.morgen||d.morgen_ab) h+='<h2 class="ab">'+I("sonne")+'Morgenstart <small>Wiederholung</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-morgen",icon:"quiz",titel:"Morgenstart",text:d.morgen?d.morgen.info+", "+d.morgen.anzahl+" Fragen":"Wiederholungsquiz "+d.morgen_ab,farbe:"orange",breit:1,zu:!d.morgen})+'</div>';
  h+='<h2 class="ab">'+I("praes")+'Vormittag</h2><div class="kacheln">'+vormittagKacheln(n)+'</div>';
  h+='<h2 class="ab">'+I("sonne")+'Nachmittag <small>freiwillig</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-nachmittag",icon:"sonne",titel:"Nachmittag",text:d.frei2?"2 Übungsquizze und 2 Aufgabenhefte mit Lösungen":"Übungsquizze und Aufgabenhefte "+d.ab2,farbe:"orange",breit:1,zu:!d.frei2})+'</div>';
  const i=D.reihenfolge.indexOf(n),v=D.reihenfolge[i-1],w=D.reihenfolge[i+1];
@@ -336,51 +344,61 @@ function seiteNachmittag(n){const d=D.tage[n];
  h+='<h2 class="ab">'+I("heft")+'Aufgabenhefte</h2><div class="hefte">'+d.hefte.map(x=>'<div class="heft"><div class="kt"><span class="ic">'+I("heft")+'</span>Aufgabenheft '+x.nr+'</div><div class="kx">'+E(x.thema)+'</div><div class="knoepfe"><a class="knopf" href="'+E(x.aufgabe)+'" target="_blank" rel="noopener">Aufgaben öffnen</a>'+(x.loesung?'<a class="knopf hell" href="'+E(x.loesung)+'" target="_blank" rel="noopener">Lösung öffnen</a>':"")+'</div></div>').join("")+'</div>';
  return h+fuss();
 }
+function untertitel(){const v=$("#haupt video"),b=$("#utknopf");if(!v||!v.textTracks||!v.textTracks.length)return;
+ let an=true;try{an=localStorage.getItem("gp2026ut")!=="aus"}catch(e){}
+ const setz=a=>{for(const t of v.textTracks)t.mode=a?"showing":"hidden";if(b){b.textContent=a?"Untertitel ausblenden":"Untertitel einblenden";b.setAttribute("aria-pressed",a?"true":"false")}};
+ setz(an);const tr=v.querySelector("track");if(tr)tr.addEventListener("load",()=>setz(an));
+ v.textTracks.addEventListener("change",()=>{const a=[...v.textTracks].some(t=>t.mode==="showing");an=a;try{localStorage.setItem("gp2026ut",a?"an":"aus")}catch(e){}if(b){b.textContent=a?"Untertitel ausblenden":"Untertitel einblenden";b.setAttribute("aria-pressed",a?"true":"false")}});
+ if(b)b.onclick=()=>{an=!an;try{localStorage.setItem("gp2026ut",an?"an":"aus")}catch(e){}setz(an)};
+}
 function seiteVideo(n){const d=D.tage[n];
  let h=rahmen({kurz:"Tag "+n+" · Video",bc:[["Übersicht","#"],["Tag "+n,"#tag"+n],["Video",""]],zurueck:["Zurück zu Tag "+n,"#tag"+n],akt:"tag",tag:n});
  h+='<h1 class="st">Tag '+n+' · Video</h1><p class="sub">'+E(d.titel)+'</p>';
  const v=d.video;
  if(!v) h+='<p>Das Video folgt.</p>';
- else if(v.typ==="youtube") h+='<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+E(v.id)+'" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe></div>';
- else if(v.typ==="datei") h+='<div class="player"><video controls preload="metadata" playsinline src="'+E(v.src)+'"></video></div>';
+ else if(v.typ==="youtube") h+='<div class="player"><iframe src="https://www.youtube-nocookie.com/embed/'+E(v.id)+'?cc_load_policy=1&cc_lang_pref=de&hl=de" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture"></iframe></div>';
+ else if(v.typ==="datei") h+='<div class="player"><video controls preload="metadata" playsinline src="'+E(v.src)+'">'+(v.ut?'<track kind="subtitles" srclang="de" label="Deutsch" default src="'+E(v.ut)+'">':'')+'</video></div>'
+   +(v.ut?'<div class="utzeile"><button class="knopf hell" id="utknopf" type="button" aria-pressed="true">Untertitel ausblenden</button><span class="kx">Deutsche Untertitel, automatisch erstellt</span></div>':'');
  else h+='<p><a class="knopf" href="'+E(v.src)+'" target="_blank" rel="noopener">Video öffnen</a></p>';
  return h+'<div class="knoepfe" style="margin-top:16px"><a class="knopf hell" href="#tag'+n+'">'+I("links")+'Zurück zu Tag '+n+'</a></div>'+fuss();
 }
 async function seiteQuiz(H,n,s){const d=D.tage[n];
- const uebung=s.indexOf("uebung")===0,nr=uebung?s.slice(-1):"";
+ const uebung=s.indexOf("uebung")===0,nr=uebung?s.slice(-1):"",morgen=s==="morgen";
  const zur=uebung?["Zurück zum Nachmittag","#tag"+n+"-nachmittag"]:["Zurück zu Tag "+n,"#tag"+n];
- const name=uebung?"Übungsquiz "+nr:"Quiz";
+ const name=uebung?"Übungsquiz "+nr:morgen?"Morgenstart":"Quiz";
  const bc=[["Übersicht","#"],["Tag "+n,"#tag"+n]].concat(uebung?[["Nachmittag","#tag"+n+"-nachmittag"]]:[]).concat([[name,""]]);
  let kopf=rahmen({kurz:"Tag "+n+" · "+name,bc:bc,zurueck:zur,akt:"tag",tag:n});
- const frei=uebung?d.frei2:d.frei1;
- const quelle=uebung?(d.uebungen||[]).find(u=>u.nr===nr):(d.quiz?{src:d.quiz}:null);
- kopf+='<h1 class="st">Tag '+n+' · '+name+'</h1><p class="sub">'+E(d.titel)+'</p>';
+ const frei=uebung?d.frei2:morgen?!!d.morgen:d.frei1;
+ const quelle=uebung?(d.uebungen||[]).find(u=>u.nr===nr):morgen?d.morgen:(d.quiz?{src:d.quiz}:null);
+ kopf+='<h1 class="st">Tag '+n+' · '+name+'</h1><p class="sub">'+E(morgen&&d.morgen?d.morgen.info+" · "+d.morgen.anzahl+" Fragen zum Tagesbeginn":d.titel)+'</p>';
  if(!frei||!quelle){H.innerHTML=kopf+'<p>Dieses Quiz ist noch gesperrt.</p>'+fuss();return}
  H.innerHTML=kopf+'<div id="qz"><div class="laden">Fragen werden geladen …</div></div><div class="knoepfe" style="margin-top:8px"><a class="knopf hell" href="'+zur[1]+'">'+I("links")+E(zur[0])+'</a></div>'+fuss();
  try{const r=await fetch(quelle.src);const fr=await r.json(); if(location.hash.slice(1)!=="tag"+n+"-"+s) return;
   QUIZ=quiz($("#qz"),fr,{modus:"sofort"});}catch(e){$("#qz").innerHTML='<p>Die Fragen konnten nicht geladen werden. Bitte Seite neu laden.</p>'}
 }
-async function seiteTrainer(H,klausur){
- const name=klausur?"Probeklausur":"Quiz-Trainer",r0=klausur?"klausur":"trainer";
- let h=rahmen({kurz:name,bc:[["Übersicht","#"],[name,""]],zurueck:["Übersicht","#"],akt:r0});
- h+='<h1 class="st">'+name+'</h1><p class="sub">'+(klausur?"30 zufällige Fragen aus allen freigegebenen Tagen. Die Auswertung kommt am Ende, mit Note nach IHK-Schlüssel.":"Fragen gezielt nach Teil, Tag oder Quizart üben.")+'</p><div id="tr"><div class="laden">Fragen werden geladen …</div></div>'+fuss();
+let LEKPOOL=null;
+async function seiteTrainer(H,klausur,lek){
+ const name=lek?"LEK-Vorbereitung":klausur?"Probeklausur":"Quiz-Trainer",r0=lek?"lek":klausur?"klausur":"trainer";
+ let h=rahmen({kurz:name,bc:[["Übersicht","#"],[name,""]],zurueck:["Übersicht","#"],akt:lek?"trainer":r0});
+ h+='<h1 class="st">'+name+'</h1><p class="sub">'+(lek?"Prüfungsfragen zu den Inhalten von Tag 01 bis 18 im Stil der LEK. Gesetzestexte und alle nötigen Angaben stehen in der Aufgabe.":klausur?"30 zufällige Fragen aus allen freigegebenen Tagen. Die Auswertung kommt am Ende, mit Note nach IHK-Schlüssel.":"Fragen gezielt nach Teil, Tag oder Quizart üben.")+'</p><div id="tr"><div class="laden">Fragen werden geladen …</div></div>'+fuss();
  H.innerHTML=h;
- if(!D.kurs){$("#tr").innerHTML="<p>Noch nicht verfügbar.</p>";return}
- try{if(!POOL){const r=await fetch(D.kurs.pool);POOL=await r.json()}}catch(e){$("#tr").innerHTML='<p>Die Fragen konnten nicht geladen werden. Bitte Seite neu laden.</p>';return}
+ if(!D.kurs||(lek&&!D.kurs.lek)){$("#tr").innerHTML="<p>Noch nicht verfügbar.</p>";return}
+ let PX;
+ try{if(lek){if(!LEKPOOL){const r=await fetch(D.kurs.lek);LEKPOOL=await r.json()}PX=LEKPOOL}else{if(!POOL){const r=await fetch(D.kurs.pool);POOL=await r.json()}PX=POOL}}catch(e){$("#tr").innerHTML='<p>Die Fragen konnten nicht geladen werden. Bitte Seite neu laden.</p>';return}
  if(location.hash.slice(1)!==r0) return;
  const T=$("#tr");
- const teile=[...new Set(POOL.map(q=>q.teil))].sort(),tage=[...new Set(POOL.map(q=>q.tag))].sort();
+ const teile=[...new Set(PX.map(q=>q.teil))].sort(),tage=[...new Set(PX.map(q=>q.tag))].sort();
  const opt=(a,f)=>a.map(x=>'<option value="'+E(x)+'">'+E(f(x))+'</option>').join("");
  let form='<div class="karte"><div class="felder">';
  if(!klausur) form+='<label>Teil<select id="ft"><option value="">Alle Teile</option>'+opt(teile,x=>{const t=D.teile.find(t=>t.kurz==="Teil "+x);return t?t.kurz+" · "+t.lang:"Teil "+x})+'</select></label>'
    +'<label>Tag<select id="fd"><option value="">Alle Tage</option>'+opt(tage,x=>"Tag "+x+(D.tage[x]?" · "+D.tage[x].titel:""))+'</select></label>'
-   +'<label>Quizart<select id="fs"><option value="">Alle</option><option>Tagesquiz</option><option>Übungsquiz 1</option><option>Übungsquiz 2</option></select></label>'
-   +'<label>Anzahl<select id="fn"><option>10</option><option selected>20</option><option>40</option><option value="0">Alle</option></select></label>'
+   +(lek?'':'<label>Quizart<select id="fs"><option value="">Alle</option><option>Tagesquiz</option><option>Übungsquiz 1</option><option>Übungsquiz 2</option></select></label>')
+   +'<label>Anzahl<select id="fn"><option>10</option><option selected>20</option><option>40</option>'+(lek?'<option>60</option>':'')+'<option value="0">Alle</option></select></label>'
    +'<label>Feedback<select id="fm"><option value="sofort">Sofort nach jeder Frage</option><option value="ende">Am Ende</option></select></label>';
  else form+='<label>Zeit<select id="fz"><option value="0">Ohne Zeitlimit</option><option value="30">30 Minuten</option><option value="45">45 Minuten</option><option value="60" selected>60 Minuten</option></select></label>';
  form+='</div><button class="knopf gross" id="los">'+(klausur?"Probeklausur starten":"Training starten")+'</button><div class="fort" id="anz" style="margin-top:8px;text-align:center"></div></div><div id="qz"></div>';
  T.innerHTML=form;
- const filt=()=>klausur?POOL:POOL.filter(q=>(!$("#ft").value||q.teil===$("#ft").value)&&(!$("#fd").value||q.tag===$("#fd").value)&&(!$("#fs").value||q.src===$("#fs").value));
+ const filt=()=>klausur?PX:PX.filter(q=>(!$("#ft").value||q.teil===$("#ft").value)&&(!$("#fd").value||q.tag===$("#fd").value)&&(lek||!$("#fs").value||q.src===$("#fs").value));
  const upd=()=>{$("#anz").textContent=filt().length+" Fragen verfügbar"};
  T.querySelectorAll("select").forEach(s=>s.addEventListener("change",upd));upd();
  $("#los").onclick=()=>{let a=mischen(filt());const k=klausur?30:+$("#fn").value; if(k) a=a.slice(0,k);
@@ -399,7 +417,7 @@ function quiz(el,fragen,o){
  function tick(){const s=Math.max(0,Math.round((ende-Date.now())/1000));const u=$(".uhr",el);if(u)u.textContent="Restzeit "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(!s){clearInterval(timer);auswerten()}}
  function stand(){const b=st.filter(x=>x.sel.size).length,f=st.filter(x=>x.fertig);return {b:b,f:f.length,r:f.filter(x=>x.ok).length}}
  function fHTML(i){const x=st[i],q=x.q;
-  let h='<div class="frage'+(x.fertig?(x.ok?" ok":" bad"):"")+'" id="q'+i+'"><div class="fnr">Frage '+(i+1)+' von '+st.length+(o.meta&&q.tag?' · Tag '+E(q.tag)+' · '+E(q.src):"")+'</div><div class="ft">'+E(q.q)+'</div><div class="hinweis">1 oder 2 Antworten sind richtig</div>';
+  let h='<div class="frage'+(x.fertig?(x.ok?" ok":" bad"):"")+'" id="q'+i+'"><div class="fnr">Frage '+(i+1)+' von '+st.length+(o.meta&&q.tag?' · Tag '+E(q.tag)+' · '+E(q.src):"")+'</div>'+(q.situation?'<div class="sit">'+E(q.situation)+'</div>':"")+((q.gesetz||[]).map(g=>'<div class="gz2"><b>Gesetzesauszug '+E(g.norm)+'</b>\n'+E(g.text)+'</div>').join(""))+'<div class="ft">'+E(q.q)+'</div><div class="hinweis">1 oder 2 Antworten sind richtig</div>';
   x.o.forEach((a,k)=>{const g=x.sel.has(k);let c="opt",m="";
    if(x.fertig){if(a.c&&g){c+=" richtig";m="Richtig"}else if(a.c){c+=" fehlt";m="Wäre richtig"}else if(g){c+=" falsch";m="Falsch"}}else if(g)c+=" gew";
    h+='<label class="'+c+'"><input type="checkbox" data-i="'+i+'" data-k="'+k+'"'+(g?" checked":"")+(x.fertig?" disabled":"")+'><span>'+E(a.t)+'</span>'+(m?'<span class="m">'+m+'</span>':"")+'</label>'});

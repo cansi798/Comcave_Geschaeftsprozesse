@@ -1,0 +1,77 @@
+name: Untertitel
+
+# Erzeugt automatisch deutsche Untertitel fuer jedes neue Video.
+# Startet bei jedem Push mit einem Video und ist auch von Hand startbar
+# (Actions > Untertitel > Run workflow, optional mit "neu" = 01,02 oder alle).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tresor/videos/**"
+      - "videos/**"
+      - "untertitel.py"
+  workflow_dispatch:
+    inputs:
+      neu:
+        description: "Untertitel neu erzeugen fuer (z. B. 01,02 oder alle). Leer = nur fehlende"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: untertitel
+  cancel-in-progress: false
+
+jobs:
+  erzeugen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      MATERIAL_KEY: ${{ secrets.MATERIAL_KEY }}
+      NEU: ${{ github.event.inputs.neu }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Offene Videos ermitteln
+        id: offen
+        run: |
+          if [ -n "$NEU" ]; then python3 untertitel.py --liste --neu "$NEU" >> "$GITHUB_OUTPUT"; else python3 untertitel.py --liste >> "$GITHUB_OUTPUT"; fi
+          cat "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: steps.offen.outputs.anzahl != '0'
+        with:
+          python-version: "3.12"
+
+      - uses: actions/cache@v4
+        if: steps.offen.outputs.anzahl != '0'
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-large-v3-turbo
+
+      - name: Spracherkennung installieren
+        if: steps.offen.outputs.anzahl != '0'
+        run: pip install --quiet faster-whisper==1.2.1
+
+      - name: Untertitel erzeugen
+        if: steps.offen.outputs.anzahl != '0'
+        run: |
+          if [ -n "$NEU" ]; then python3 untertitel.py --neu "$NEU"; else python3 untertitel.py; fi
+
+      - name: Speichern und Website neu bauen
+        if: steps.offen.outputs.anzahl != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tresor/videos videos
+          if git diff --cached --quiet; then echo "Keine Aenderung"; exit 0; fi
+          git commit -m "Untertitel fuer Tag ${{ steps.offen.outputs.tage }}"
+          git pull --rebase -q origin main
+          git push -q origin HEAD:main
+          gh workflow run freigabe.yml --ref main

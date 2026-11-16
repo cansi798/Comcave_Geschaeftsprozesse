@@ -6,3 +6,10 @@ Möglichkeit 1, Datei hochladen: Video hier in den Ordner `videos` legen und so 
 Möglichkeit 2, Link: In `videos.json` (eine Ebene höher) beim Tag den Link eintragen, z. B. `"01": "https://youtu.be/abc123"`. Ein Link hat Vorrang vor einer Datei.
 
 Das Video erscheint auf der Seite zusammen mit dem Vormittagsmaterial des Tages, frühestens zur eingestellten Uhrzeit. Nach dem Hochladen dauert es etwa zwei Minuten.
+
+## Untertitel
+
+Zu jedem Video werden automatisch deutsche Untertitel erzeugt (Workflow "Untertitel",
+Spracherkennung Whisper). Sie liegen verschluesselt als tresor/videos/TagNN_Untertitel.vtt.enc
+und werden im Player standardmaessig eingeblendet. Neu erzeugen: Actions > Untertitel >
+Run workflow, Feld "neu" z. B. 01 oder alle.

@@ -70,15 +70,46 @@ def video_fuer(tag, videos, P, MAT, stand):
     os.makedirs(os.path.join(MAT, "videos"), exist_ok=True)
     for p in sorted(glob.glob(os.path.join(ROOT, "tresor", "videos", f"Tag{tag}*.enc"))):
         name = os.path.basename(p)[:-4]
+        if not name.lower().endswith(VIDEO_EXT):
+            continue
         openssl_dec(p, os.path.join(MAT, "videos", name))
         stand.append(f"{tag}video:{os.path.getsize(p)}")
-        return {"typ": "datei", "src": f"{P}/videos/{name}"}
+        return mit_untertitel({"typ": "datei", "src": f"{P}/videos/{name}"}, tag, P, MAT, stand)
     for p in sorted(glob.glob(os.path.join(ROOT, "videos", f"Tag{tag}*"))):
         if p.lower().endswith(VIDEO_EXT):
             shutil.copy2(p, os.path.join(MAT, "videos", os.path.basename(p)))
             stand.append(f"{tag}video:{os.path.getsize(p)}")
-            return {"typ": "datei", "src": f"{P}/videos/{os.path.basename(p)}"}
+            return mit_untertitel({"typ": "datei", "src": f"{P}/videos/{os.path.basename(p)}"}, tag, P, MAT, stand)
     return None
+
+
+def mit_untertitel(v, tag, P, MAT, stand):
+    """Haengt die Untertitel (WebVTT) an, falls vorhanden. Erzeugt werden sie von untertitel.py."""
+    name = f"Tag{tag}_Untertitel.vtt"
+    ziel = os.path.join(MAT, "videos", name)
+    for p in sorted(glob.glob(os.path.join(ROOT, "tresor", "videos", f"Tag{tag}*.vtt.enc"))):
+        openssl_dec(p, ziel)
+        stand.append(f"{tag}ut:{os.path.getsize(p)}")
+        v["ut"] = f"{P}/videos/{name}"
+        return v
+    for p in sorted(glob.glob(os.path.join(ROOT, "videos", f"Tag{tag}*.vtt"))):
+        shutil.copy2(p, ziel)
+        stand.append(f"{tag}ut:{os.path.getsize(p)}")
+        v["ut"] = f"{P}/videos/{name}"
+        return v
+    return v
+
+
+SKIP = re.compile(r"Kurs Geschäftsprozesse|wie beim P4|Vorfrage|vorigen (Frage|Aufgabe)|vorherigen (Frage|Aufgabe)|Frage davor", re.I)
+
+
+def auswahl(fragen, k):
+    """k Fragen gleichmaessig ueber die Liste verteilt (wie im Offline-Paket), kontextabhaengige Fragen ueberspringen."""
+    ok = [q for q in fragen if not SKIP.search(q.get("q", ""))]
+    if not ok:
+        return []
+    step = len(ok) / k
+    return [ok[int(i * step)] for i in range(min(k, len(ok)))]
 
 
 def main():
@@ -150,6 +181,32 @@ def main():
             teile.append({"kurz": teilkurz, "lang": teillang, "tage": []})
         teile[-1]["tage"].append(n)
 
+    # Morgenstart: Wiederholungsquiz zum Tagesbeginn. Tag 3 mit 60 Fragen aus Tag 1 und 2,
+    # danach je 30 Fragen vom Vortag. Frei ab uhrzeit_morgenstart (Standard 07:00) am Unterrichtstag.
+    um = cfg.get("uhrzeit_morgenstart", "07:00")
+    ordner = {t["tag"]: t["ordner"] for t in cfg["tage"]}
+    for i, n in enumerate(reihenfolge):
+        if i < 2:
+            continue
+        quellen = reihenfolge[:2] if i == 2 else [reihenfolge[i - 1]]
+        t = next(x for x in cfg["tage"] if x["tag"] == n)
+        zm = zeitpunkt(t["datum"], t.get("morgenstart") or um)
+        info = "Wiederholung Tag " + " und ".join(quellen)
+        ok = bool(KEY) and (now >= zm or cfg.get("alles_sofort")) and all(frei[q][0] and frei[q][1] for q in quellen)
+        if not ok:
+            tage[n]["morgen_ab"] = f"ab {tage[n]['datum_de']}, {zm:%H:%M} Uhr"
+            continue
+        fr = []
+        for q in quellen:
+            base = os.path.join(MAT, ordner[q], "quiz")
+            for f in ("tagesquiz.json", "uebung1.json", "uebung2.json"):
+                p = os.path.join(base, f)
+                if os.path.exists(p):
+                    fr += auswahl(json.load(open(p, encoding="utf-8")), 10)
+        schreibe_json(fr, os.path.join(MAT, ordner[n], "quiz", "morgenstart.json"))
+        tage[n]["morgen"] = {"src": f"{P}/{ordner[n]}/quiz/morgenstart.json", "anzahl": len(fr), "info": info}
+        stand.append(f"{n}m")
+
     kurs = None
     if cfg.get("kursdateien_sofort", True) and KEY:
         entpacken(os.path.join(ROOT, "tresor", "Kursdateien.tar.gz.enc"), os.path.join(MAT, "kurs"))
@@ -158,6 +215,13 @@ def main():
         schreibe_json(pool, os.path.join(MAT, "kurs", "pool.json"))
         kurs = {"pool": f"{P}/kurs/pool.json", "gesamtskript": f"{P}/kurs/04_Gesamtskript_alle_Tage.pdf", "anzahl": len(pool)}
         stand.append(f"kurs:{len(pool)}")
+        lek = os.path.join(ROOT, "tresor", "LEK_Pool.json.enc")
+        if os.path.exists(lek):
+            lp = json.loads(openssl_dec(lek).decode("utf-8"))
+            schreibe_json(lp, os.path.join(MAT, "kurs", "lek.json"))
+            kurs["lek"] = f"{P}/kurs/lek.json"
+            kurs["lek_n"] = len(lp)
+            stand.append(f"lek:{len(lp)}")
 
     daten = {"marker": "gp2026", "titel": cfg["kurs"]["titel"], "untertitel": cfg["kurs"]["untertitel"],
              "teile": teile, "reihenfolge": reihenfolge, "tage": tage, "kurs": kurs}
