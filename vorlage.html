@@ -257,6 +257,24 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-si
 .wpruef{margin:0 0 14px;background:var(--gruen);border-color:var(--gruen);font-size:17px}.wpruef:hover:not(:disabled){background:#176b3a;border-color:#176b3a}.wpruef:disabled{background:#eef2f5;border-color:#dde6ec;color:#7b8a96;opacity:1}.wpruef svg{width:20px;height:20px}
 .wlegende{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:14px;font-size:12.5px;color:var(--grau)}
 .wlegende span{display:flex;align-items:center;gap:6px}.wlegende i.wf{width:16px;height:16px;border-radius:4px;animation:none;border:0}
+.wfbox{scroll-margin-top:calc(var(--oben) + 8px);max-width:900px;background:#fff;border:1px solid var(--rand);border-radius:22px;padding:14px;box-shadow:var(--sch1)}
+.wfhud{display:flex;gap:18px;align-items:center;font-size:14px;color:var(--grau);padding:2px 4px 10px}.wfhud b{color:var(--navy);font-size:17px}
+#fleben{margin-left:auto;color:var(--rot);font-size:20px;letter-spacing:2px}#fleben i{font-style:normal;color:#dde4ea}
+.wfdef{background:#f2f8fb;border-left:4px solid var(--lila);border-radius:12px;padding:10px 14px;font-size:15px;line-height:1.45;margin-bottom:10px;min-height:66px}
+.wfdef b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--lila);margin-bottom:2px}
+.wfbuehne{position:relative;border-radius:16px;overflow:hidden;touch-action:none;user-select:none}
+#fc{display:block;width:100%;cursor:crosshair}
+.wfover{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(7,31,56,.72);backdrop-filter:blur(3px);padding:14px;overflow:auto}
+.wfover.an{display:flex}
+.wfkarte{background:#fff;border-radius:18px;padding:20px;max-width:460px;width:100%;text-align:center;box-shadow:var(--sch2);max-height:100%;overflow:auto}
+.wfkarte h3{margin:0 0 6px;color:var(--navy);font-size:22px}.wfkarte p{color:var(--grau);margin:6px 0}
+.wfgross{font-size:34px;font-weight:800;color:var(--lila)!important;margin:4px 0!important}
+.wfnach{text-align:left;background:#f6f8fa;border-radius:12px;padding:10px 12px;margin:10px 0 14px;font-size:13.5px;line-height:1.45;max-height:180px;overflow:auto}
+.wfnach>b{display:block;margin-bottom:6px;color:var(--navy)}.wfnach div{margin:6px 0}.wfnach strong{color:var(--navy)}
+.wfsteuer{display:none;gap:8px;margin-top:10px}.wfsteuer .knopf{flex:1;padding:14px}.wfsteuer #ffeuer{flex:2;background:var(--lila);border-color:var(--lila)}
+.wfhilfe{font-size:12.5px;color:var(--grau);margin:10px 4px 0}
+@media (hover:none),(max-width:920px){.wfsteuer{display:flex}}
+@media (max-width:920px){.wfbox{padding:10px;border-radius:18px}.wfdef{font-size:14px;min-height:80px}}
 @media (min-width:1500px){.kacheln{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:920px){
   :root{--oben:58px;--r:16px}
@@ -353,6 +371,7 @@ const ICO={
  spiel:'<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M18 14h.01"/>',
  galgen:'<path d="M4 21h10M7 21V3h8v3"/><circle cx="15" cy="8.5" r="2.5"/><path d="M15 11v5M13 13.5h4M15 16l-2 3M15 16l2 3"/>',
  raster:'<rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="4" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="10" y="10" width="5" height="5" rx="1"/><rect x="3" y="17" width="5" height="4" rx="1"/>',
+ rakete:'<path d="M12 2c3 2 5 6 5 10l-2 5H9l-2-5c0-4 2-8 5-10z"/><circle cx="12" cy="10" r="2"/><path d="M9 17l-3 3M15 17l3 3M12 17v4"/>',
  leisteauf:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 10l2 2-2 2"/>'
 };
 const I=n=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[n]+'</svg>';
@@ -457,6 +476,7 @@ function route(){
  else if(h==="spiele") H.innerHTML=seiteSpiele();
  else if(/^hangman(-\d\d)?$/.test(h)) seiteHangman(H,h.slice(8));
  else if(/^wordle(-\d\d)?$/.test(h)) seiteWordle(H,h.slice(7));
+ else if(/^fighter(-\d\d)?$/.test(h)) seiteFighter(H,h.slice(8));
  else H.innerHTML=seiteStart();
  window.scrollTo(0,0);
 }
@@ -476,7 +496,8 @@ function seiteStart(){
   +(D.kurs.lek?kachel({href:"#lek",icon:"ziel",titel:"LEK-Vorbereitung",text:D.kurs.lek_n+" Prüfungsfragen zu Tag 01 bis 18",farbe:"rot",badge:"Online"}):"")+'</div>';
  if(D.spiele) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben</h2><div class="kacheln">'
   +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit "+D.spiele.begriffe+" Fachbegriffen",farbe:"gruen",badge:"Spiel"})
-  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle, ein Fachwort in 6 Versuchen",farbe:"orange",badge:"Spiel"})+'</div>';
+  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle, ein Fachwort in 6 Versuchen",farbe:"orange",badge:"Spiel"})
+  +kachel({href:"#fighter",icon:"rakete",titel:"Word-Fighter",text:"Den passenden Begriff abschießen",farbe:"lila",badge:"Spiel"})+'</div>';
  D.teile.forEach(t=>{h+='<h2 class="ab">'+E(t.kurz)+' <small>'+E(t.lang)+'</small></h2><div class="tage">'+t.tage.map(tagKachel).join("")+'</div>'});
  return h+fuss();
 }
@@ -485,7 +506,7 @@ function seiteTag(n){const d=D.tage[n];
  h+='<span class="chip">'+E(d.teilkurz)+'</span>'+(istHeute(n)?' <span class="chip o">Heute</span>':"")+'<h1 class="st">Tag '+n+' · '+E(d.titel)+'</h1><p class="sub">'+E(d.wochentag)+', '+E(d.datum_de)+'</p>';
  if(d.morgen||d.morgen_ab) h+='<h2 class="ab">'+I("sonne")+'Morgenstart <small>Wiederholung</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-morgen",icon:"quiz",titel:"Morgenstart",text:d.morgen?d.morgen.info+", "+d.morgen.anzahl+" Fragen":"Wiederholungsquiz "+d.morgen_ab,farbe:"orange",breit:1,zu:!d.morgen})+'</div>';
  h+='<h2 class="ab">'+I("praes")+'Vormittag</h2><div class="kacheln">'+vormittagKacheln(n)+'</div>';
- if(D.spiele&&d.frei1) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben <small>Fachbegriffe des Tages</small></h2><div class="kacheln">'+kachel({href:"#hangman-"+n,icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Begriffen von Tag "+n,farbe:"gruen",badge:"Spiel"})+kachel({href:"#wordle-"+n,icon:"raster",titel:"Fachwort raten",text:"Wordle mit Fachwörtern von Tag "+n,farbe:"orange",badge:"Spiel"})+'</div>';
+ if(D.spiele&&d.frei1) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben <small>Fachbegriffe des Tages</small></h2><div class="kacheln">'+kachel({href:"#hangman-"+n,icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Begriffen von Tag "+n,farbe:"gruen",badge:"Spiel"})+kachel({href:"#wordle-"+n,icon:"raster",titel:"Fachwort raten",text:"Wordle mit Fachwörtern von Tag "+n,farbe:"orange",badge:"Spiel"})+kachel({href:"#fighter-"+n,icon:"rakete",titel:"Word-Fighter",text:"Begriffe von Tag "+n+" abschießen",farbe:"lila",badge:"Spiel"})+'</div>';
  h+='<h2 class="ab">'+I("sonne")+'Nachmittag <small>freiwillig</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-nachmittag",icon:"sonne",titel:"Nachmittag",text:d.frei2?"2 Übungsquizze und 2 Aufgabenhefte mit Lösungen":"Übungsquizze und Aufgabenhefte "+d.ab2,farbe:"orange",breit:1,zu:!d.frei2})+'</div>';
  const i=D.reihenfolge.indexOf(n),v=D.reihenfolge[i-1],w=D.reihenfolge[i+1];
  h+='<div class="blaettern">'+(v?'<a href="#tag'+v+'">'+I("links")+'<span><small>Vorheriger Tag</small><b>Tag '+v+' · '+E(D.tage[v].titel)+'</b></span></a>':"<span></span>")+(w?'<a class="r" href="#tag'+w+'"><span><small>Nächster Tag</small><b>Tag '+w+' · '+E(D.tage[w].titel)+'</b></span>'+I("rechts")+'</a>':"<span></span>")+'</div>';
@@ -545,9 +566,10 @@ function seiteSpiele(){
  let h=rahmen({kurz:"Lernspiele",bc:[["Übersicht","#"],["Lernspiele",""]],zurueck:["Übersicht","#"],akt:"spiele"});
  h+='<span class="chip">Freiwillig</span><h1 class="st">Lernspiele</h1><p class="sub">Fachbegriffe spielerisch wiederholen, allein oder gegen die Uhr in der Pause.</p><div class="kacheln">'
   +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen. Die Erklärung ist der Hinweis, errate den Fachbegriff Buchstabe für Buchstabe.",farbe:"gruen",badge:D.spiele.begriffe+" Begriffe"})
-  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle. Errate ein Fachwort in 6 Versuchen, die Farben zeigen, welche Buchstaben stimmen.",farbe:"orange",badge:D.spiele.woerter+" Wörter"})+'</div>';
+  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle. Errate ein Fachwort in 6 Versuchen, die Farben zeigen, welche Buchstaben stimmen.",farbe:"orange",badge:D.spiele.woerter+" Wörter"})
+  +kachel({href:"#fighter",icon:"rakete",titel:"Word-Fighter",text:"Oben steht eine Erklärung, unten fliegt dein Raumschiff. Schieß den passenden Fachbegriff ab, bevor er unten ankommt.",farbe:"lila",badge:"Arcade"})+'</div>';
  const st=spStand("hm")||{g:0,v:0},sw=spStand("wl")||{g:0,v:0,serie:0};
- h+='<h2 class="ab">'+I("ziel")+'Dein Stand <small>nur auf diesem Gerät</small></h2><div class="spstat"><div><b>'+st.g+'</b><span>Begriffe erraten</span></div><div><b>'+st.v+'</b><span>Begriffe gespielt</span></div><div><b>'+sw.g+'</b><span>Fachwörter gelöst</span></div><div><b>'+(sw.serie||0)+'</b><span>Fachwörter in Folge</span></div></div>';
+ h+='<h2 class="ab">'+I("ziel")+'Dein Stand <small>nur auf diesem Gerät</small></h2><div class="spstat"><div><b>'+st.g+'</b><span>Begriffe erraten</span></div><div><b>'+st.v+'</b><span>Begriffe gespielt</span></div><div><b>'+sw.g+'</b><span>Fachwörter gelöst</span></div><div><b>'+(sw.serie||0)+'</b><span>Fachwörter in Folge</span></div><div><b>'+((spStand("wf")||{}).best||0)+'</b><span>Word-Fighter Rekord</span></div></div>';
  return h+fuss();
 }
 function maskieren(text,begriff){let t=String(text);const teile=[begriff].concat(begriff.split(/[\s\-]+/).filter(w=>w.length>=4));
@@ -632,6 +654,83 @@ async function seiteWordle(H,n){
   const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
  document.addEventListener("keydown",taste);QUIZ={stop:()=>document.removeEventListener("keydown",taste)};
  start(!n);
+}
+
+async function seiteFighter(H,n){
+ H.innerHTML=spielKopf("Word-Fighter",n?"Begriffe von Tag "+n+" · "+E(D.tage[n].titel):"Begriffe aus allen freigegebenen Tagen",n)+'<div id="sp"><div class="laden">Wird geladen …</div></div>'+fuss();
+ let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ const pool=(n?[n]:Object.keys(S.hangman)).flatMap(t=>S.hangman[t].map(x=>Object.assign({tag:t},x)));
+ $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"fighter",S.hangman)+'<span class="sprunde">Rekord <b id="frek">'+((spStand("wf")||{}).best||0)+'</b> Punkte</span></div>'
+  +'<div class="wfbox"><div class="wfhud"><span>Punkte <b id="fpkt">0</b></span><span>Level <b id="flvl">1</b></span><span id="fleben"></span></div>'
+  +'<div class="wfdef" id="fdef">Drücke Start</div><div class="wfbuehne"><canvas id="fc"></canvas><div class="wfover" id="fover"></div></div>'
+  +'<div class="wfsteuer"><button class="knopf hell" id="fli" aria-label="Links">'+I("links")+'</button><button class="knopf" id="ffeuer">Feuer</button><button class="knopf hell" id="fre" aria-label="Rechts">'+I("rechts")+'</button></div>'
+  +'<p class="wfhilfe">Tippe oder klicke auf einen Begriff, um ihn abzuschießen. Am PC geht es auch mit den Pfeiltasten und der Leertaste.</p></div>';
+ $("#twahl").onchange=e=>{location.hash=e.target.value?"#fighter-"+e.target.value:"#fighter"};
+ const cv=$("#fc"),cx=cv.getContext("2d");let Wd=0,Hd=0,dpr=1;
+ function groesse(){const b=cv.parentElement.getBoundingClientRect();dpr=window.devicePixelRatio||1;Wd=b.width;Hd=Math.max(300,Math.min(560,window.innerHeight-(Wd<700?400:330)));cv.style.height=Hd+"px";cv.width=Wd*dpr;cv.height=Hd*dpr;cx.setTransform(dpr,0,0,dpr,0,0)}
+ groesse();
+ const sterne=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),v:.2+Math.random()*.8,r:Math.random()*1.4+.3}));
+ let lauf=false,raf=0,t0=0,pkt=0,lvl=1,leben=3,treffer=0,schiff={x:.5},woerter=[],schuesse=[],funken=[],ziel=null,verpasst=[],tasten={},stopp=false,meld=null;
+ const FARBEN=["#0a8fc4","#6f4bb2","#E8833A","#1f8a4c","#c84b3c"];
+ function hud(){$("#fpkt").textContent=pkt;$("#flvl").textContent=lvl;$("#fleben").innerHTML="♥".repeat(leben)+'<i>'+"♥".repeat(3-leben)+'</i>'}
+ function welle(){ziel=pool[Math.floor(Math.random()*pool.length)];
+  const andere=mischen(pool.filter(x=>x.b!==ziel.b)).slice(0,Math.min(3,pool.length-1));
+  const alle=mischen([ziel].concat(andere));cx.font="700 15px Inter,Segoe UI,system-ui,sans-serif";
+  const spalte=Wd/alle.length,reihe=mischen(alle.map((_,i)=>i));
+  woerter=alle.map((x,i)=>{const w=Math.min(Wd-16,cx.measureText(x.b).width+26);let xm=spalte*i+spalte/2;xm=Math.max(w/2+8,Math.min(Wd-w/2-8,xm));
+   return {d:x,x:xm,y:-26-reihe[i]*48-Math.random()*10,w:w,h:34,v:(30+lvl*8)*(.85+Math.random()*.3),f:FARBEN[i%FARBEN.length],tot:false,rot:0}});
+  $("#fdef").innerHTML='<b>Welcher Begriff passt?</b>'+E(maskieren(ziel.e,ziel.b))}
+ function start(){try{$(".wfbox").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}pkt=0;lvl=1;leben=3;treffer=0;verpasst=[];schuesse=[];funken=[];stopp=false;$("#fover").innerHTML="";$("#fover").classList.remove("an");hud();welle();lauf=true;t0=performance.now();raf=requestAnimationFrame(schleife)}
+ function ende(){lauf=false;cancelAnimationFrame(raf);const st=spStand("wf")||{best:0,spiele:0};st.spiele=(st.spiele||0)+1;const neu=pkt>(st.best||0);if(neu)st.best=pkt;spStand("wf",st);$("#frek").textContent=st.best;
+  const fehl=verpasst.filter((x,i,a)=>a.findIndex(y=>y.b===x.b)===i);
+  $("#fover").innerHTML='<div class="wfkarte"><h3>'+(neu&&pkt?"Neuer Rekord!":"Spiel vorbei")+'</h3><p class="wfgross">'+pkt+' Punkte</p><p>'+treffer+(treffer===1?' Begriff':' Begriffe')+' richtig abgeschossen, Level '+lvl+'</p>'
+   +(fehl.length?'<div class="wfnach"><b>Diese Begriffe solltest du wiederholen</b>'+fehl.map(x=>'<div><strong>'+E(x.b)+'</strong> '+E(x.e)+'</div>').join("")+'</div>':"")
+   +'<button class="knopf gross" id="fneu">Nochmal spielen</button></div>';$("#fover").classList.add("an");$("#fneu").onclick=start}
+ function meldung(t,ok){meld={t:t,ok:ok,z:1.6}}
+ function explosion(x,y,f){for(let i=0;i<26;i++){const a=Math.random()*Math.PI*2,v=60+Math.random()*180;funken.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:.7+Math.random()*.4,f:f})}}
+ function trifft(w){if(!lauf||w.tot)return;const sx=schiff.x*Wd,sy=Hd-34;schuesse.push({x1:sx,y1:sy,x2:w.x,y2:w.y,l:.18});
+  if(w.d.b===ziel.b){w.tot=true;treffer++;pkt+=10*lvl;explosion(w.x,w.y,w.f);meldung("Richtig! "+w.d.b,true);if(treffer%5===0)lvl++;hud();setTimeout(()=>{if(lauf)welle()},450)}
+  else{w.rot=.6;leben--;verpasst.push(ziel);meldung("Falsch. Das war "+w.d.b,false);hud();if(leben<=0)setTimeout(ende,500)}}
+ function geradeHoch(){const sx=schiff.x*Wd;let best=null;woerter.forEach(w=>{if(!w.tot&&Math.abs(w.x-sx)<w.w/2+6&&w.y>0&&(!best||w.y>best.y))best=w});
+  if(best)trifft(best);else schuesse.push({x1:sx,y1:Hd-34,x2:sx,y2:0,l:.15})}
+ function schleife(t){const dt=Math.min(.05,(t-t0)/1000);t0=t;
+  if(tasten.l)schiff.x=Math.max(.04,schiff.x-dt*.9);if(tasten.r)schiff.x=Math.min(.96,schiff.x+dt*.9);
+  woerter.forEach(w=>{if(!w.tot){w.y+=w.v*dt;if(w.rot>0)w.rot-=dt}});
+  const z=woerter.find(w=>w.d.b===ziel.b&&!w.tot);
+  if(z&&z.y>Hd-60){z.tot=true;leben--;verpasst.push(ziel);meldung("Verpasst. Gesucht war "+ziel.b,false);hud();if(leben<=0){setTimeout(ende,300)}else setTimeout(()=>{if(lauf)welle()},500)}
+  woerter.forEach(w=>{if(!w.tot&&w.d.b!==ziel.b&&w.y>Hd-60)w.y=-40});
+  funken.forEach(f=>{f.x+=f.vx*dt;f.y+=f.vy*dt;f.vy+=120*dt;f.l-=dt});funken=funken.filter(f=>f.l>0);
+  schuesse.forEach(s=>s.l-=dt);schuesse=schuesse.filter(s=>s.l>0);if(meld){meld.z-=dt;if(meld.z<=0)meld=null}
+  zeichnen(dt);if(lauf||funken.length)raf=requestAnimationFrame(schleife)}
+ function rrect(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
+ function zeichnen(dt){const g=cx.createLinearGradient(0,0,0,Hd);g.addColorStop(0,"#071f38");g.addColorStop(1,"#0b3a63");cx.fillStyle=g;cx.fillRect(0,0,Wd,Hd);
+  sterne.forEach(s=>{s.y+=s.v*(dt||0)*.08;if(s.y>1)s.y=0;cx.fillStyle="rgba(255,255,255,"+(.3+s.r/3)+")";cx.fillRect(s.x*Wd,s.y*Hd,s.r,s.r)});
+  cx.fillStyle="rgba(232,131,58,.18)";cx.fillRect(0,Hd-60,Wd,2);
+  cx.font="700 15px Inter,Segoe UI,system-ui,sans-serif";cx.textAlign="center";cx.textBaseline="middle";
+  woerter.forEach(w=>{if(w.tot)return;rrect(w.x-w.w/2,w.y-w.h/2,w.w,w.h,12);cx.fillStyle=w.rot>0?"#c84b3c":"#ffffff";cx.fill();cx.lineWidth=3;cx.strokeStyle=w.rot>0?"#ffb3a8":w.f;cx.stroke();cx.fillStyle=w.rot>0?"#fff":"#0b2e4f";cx.fillText(w.d.b,w.x,w.y+1)});
+  schuesse.forEach(s=>{cx.strokeStyle="rgba(120,230,255,"+Math.min(1,s.l*6)+")";cx.lineWidth=3;cx.beginPath();cx.moveTo(s.x1,s.y1);cx.lineTo(s.x2,s.y2);cx.stroke()});
+  funken.forEach(f=>{cx.fillStyle=f.f;cx.globalAlpha=Math.max(0,f.l);cx.fillRect(f.x-2,f.y-2,4,4);cx.globalAlpha=1});
+  const sx=schiff.x*Wd,sy=Hd-28;cx.fillStyle="#E8833A";cx.beginPath();cx.moveTo(sx,sy-22);cx.lineTo(sx+18,sy+14);cx.lineTo(sx,sy+6);cx.lineTo(sx-18,sy+14);cx.closePath();cx.fill();
+  cx.fillStyle="#fff";cx.beginPath();cx.arc(sx,sy-4,4,0,Math.PI*2);cx.fill();
+  cx.fillStyle="rgba(120,230,255,.7)";cx.fillRect(sx-3,sy+8,6,4+Math.random()*6);
+  if(meld){cx.font="700 16px Inter,Segoe UI,system-ui,sans-serif";cx.globalAlpha=Math.min(1,meld.z*2);cx.fillStyle=meld.ok?"#7ee2a8":"#ffb3a8";cx.fillText(meld.t,Wd/2,Hd-80);cx.globalAlpha=1}}
+ function zeigerPos(e){const b=cv.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top}}
+ cv.addEventListener("pointerdown",e=>{if(!lauf)return;const p=zeigerPos(e);schiff.x=Math.max(.04,Math.min(.96,p.x/Wd));
+  const w=woerter.find(w=>!w.tot&&Math.abs(p.x-w.x)<=w.w/2+8&&Math.abs(p.y-w.y)<=w.h/2+10);if(w)trifft(w);else geradeHoch();e.preventDefault()});
+ const halten=(id,k)=>{const b=$(id);b.addEventListener("pointerdown",e=>{tasten[k]=true;e.preventDefault()});["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>tasten[k]=false))};
+ halten("#fli","l");halten("#fre","r");$("#ffeuer").onclick=()=>{if(lauf)geradeHoch();else if(!$("#fover").classList.contains("an")||$("#fneu"))start()};
+ const taste=e=>{if(!document.body.contains(cv)){aufraeumen();return}if(e.target.tagName==="SELECT")return;
+  if(e.key==="ArrowLeft"||e.key==="a"){tasten.l=e.type==="keydown";e.preventDefault()}
+  else if(e.key==="ArrowRight"||e.key==="d"){tasten.r=e.type==="keydown";e.preventDefault()}
+  else if(e.key===" "&&e.type==="keydown"){if(lauf)geradeHoch();else start();e.preventDefault()}
+  else if(e.key==="Enter"&&e.type==="keydown"&&!lauf){start();e.preventDefault()}};
+ const rs=()=>{groesse();if(!lauf)zeichnen(0)};
+ function aufraeumen(){lauf=false;cancelAnimationFrame(raf);document.removeEventListener("keydown",taste);document.removeEventListener("keyup",taste);window.removeEventListener("resize",rs)}
+ document.addEventListener("keydown",taste);document.addEventListener("keyup",taste);window.addEventListener("resize",rs);
+ QUIZ={stop:aufraeumen};
+ if(pool.length<2){$("#fdef").textContent="Für diese Auswahl gibt es zu wenige Begriffe.";return}
+ zeichnen(0);hud();
+ $("#fover").innerHTML='<div class="wfkarte"><h3>Word-Fighter</h3><p>Oben steht eine Erklärung. Schieß den passenden Fachbegriff ab, bevor er die orange Linie erreicht. Falsche Treffer kosten ein Leben.</p><p>Du hast 3 Leben. Alle 5 Treffer steigt das Level und die Begriffe fallen schneller.</p><button class="knopf gross" id="fneu">Start</button></div>';$("#fover").classList.add("an");$("#fneu").onclick=start;
 }
 let LEKPOOL=null;
 async function seiteTrainer(H,klausur,lek){
