@@ -184,6 +184,13 @@ video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:1.05em;line-height:1.
 .opt.falsch{border-color:var(--rot);background:var(--hrot)}
 .opt.fehlt{border-color:var(--gruen);border-style:dashed}
 .opt.richtig,.opt.falsch,.opt.fehlt{transform:none;cursor:default}
+.opt .ot{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.frage.ok .opt,.frage.bad .opt{cursor:default}.frage.ok .opt:hover,.frage.bad .opt:hover{transform:none;border-color:var(--rand);background:#fff}.frage.ok .opt.richtig:hover,.frage.bad .opt.richtig:hover{border-color:var(--gruen);background:var(--hgruen)}.frage.bad .opt.falsch:hover{border-color:var(--rot);background:var(--hrot)}.frage.ok .opt.fehlt:hover,.frage.bad .opt.fehlt:hover{border-color:var(--gruen)}
+.opt .wg{display:block;font-size:13.5px;line-height:1.45;color:#4d5d6a;margin-top:5px;padding-top:6px;border-top:1px dashed #d5dfe6}
+.opt .wg b{font-weight:700;margin-right:2px}
+.opt.richtig .wg,.opt.fehlt .wg{color:#1c5a37;border-top-color:#a9d8bc}.opt.richtig .wg b,.opt.fehlt .wg b{color:var(--gruen)}
+.opt.falsch .wg{color:#7a2d24;border-top-color:#efbdb6}.opt.falsch .wg b{color:var(--rot)}
+.opt:not(.richtig):not(.falsch):not(.fehlt) .wg b{color:#6b7b88}
 .opt .m{margin-left:auto;font-size:12px;font-weight:700;white-space:nowrap;padding-left:8px}
 .opt.richtig .m,.opt.fehlt .m{color:var(--gruen)}.opt.falsch .m{color:var(--rot)}
 .urteil{font-weight:700;margin:12px 0 6px;font-size:15.5px}.urteil.ok{color:var(--gruen)}.urteil.bad{color:var(--rot)}
@@ -499,7 +506,7 @@ function note(p){return p>=92?"1 (sehr gut)":p>=81?"2 (gut)":p>=67?"3 (befriedig
 function quiz(el,fragen,o){
  let modus=o.modus||"sofort",st=[],timer=null,ende=0,aus=false;
  function neu(){clearInterval(timer);aus=false;el.classList.remove("nurfehler");
-  st=fragen.map(q=>({q:q,o:mischen(q.options.map((x,k)=>({t:x.t,c:!!x.c,k:k}))),sel:new Set(),fertig:false,ok:null}));
+  st=fragen.map(q=>({q:q,o:mischen(q.options.map((x,k)=>({t:x.t,c:!!x.c,w:x.w||"",k:k}))),sel:new Set(),fertig:false,ok:null}));
   zeichnen(); if(o.minuten){ende=Date.now()+o.minuten*60000;timer=setInterval(tick,1000);tick()}}
  function tick(){const s=Math.max(0,Math.round((ende-Date.now())/1000));const u=$(".uhr",el);if(u)u.textContent="Restzeit "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(!s){clearInterval(timer);auswerten()}}
  function stand(){const b=st.filter(x=>x.sel.size).length,f=st.filter(x=>x.fertig);return {b:b,f:f.length,r:f.filter(x=>x.ok).length}}
@@ -507,7 +514,7 @@ function quiz(el,fragen,o){
   let h='<div class="frage'+(x.fertig?(x.ok?" ok":" bad"):"")+'" id="q'+i+'"><div class="fnr">Frage '+(i+1)+' von '+st.length+(o.meta&&q.tag?' · Tag '+E(q.tag)+' · '+E(q.src):"")+'</div>'+(q.situation?'<div class="sit">'+E(q.situation)+'</div>':"")+((q.gesetz||[]).map(g=>'<div class="gz2"><b>Gesetzesauszug '+E(g.norm)+'</b>\n'+E(g.text)+'</div>').join(""))+'<div class="ft">'+E(q.q)+'</div><div class="hinweis">'+(q.src==="LEK"?(q.options.filter(z=>z.c).length===1?"Genau 1 Antwort ist richtig":"Genau 2 Antworten sind richtig"):"1 oder 2 Antworten sind richtig")+'</div>';
   x.o.forEach((a,k)=>{const g=x.sel.has(k);let c="opt",m="";
    if(x.fertig){if(a.c&&g){c+=" richtig";m="Richtig"}else if(a.c){c+=" fehlt";m="Wäre richtig"}else if(g){c+=" falsch";m="Falsch"}}else if(g)c+=" gew";
-   h+='<label class="'+c+'"><input type="checkbox" data-i="'+i+'" data-k="'+k+'"'+(g?" checked":"")+(x.fertig?" disabled":"")+'><span>'+E(a.t)+'</span>'+(m?'<span class="m">'+m+'</span>':"")+'</label>'});
+   h+='<label class="'+c+'"><input type="checkbox" data-i="'+i+'" data-k="'+k+'"'+(g?" checked":"")+(x.fertig?" disabled":"")+'><span class="ot">'+E(a.t)+(x.fertig&&a.w?'<small class="wg"><b>'+(a.c?"Warum richtig?":"Warum falsch?")+'</b> '+E(a.w)+'</small>':"")+'</span>'+(m?'<span class="m">'+m+'</span>':"")+'</label>'});
   if(!x.fertig&&modus==="sofort") h+='<button class="knopf" data-p="'+i+'"'+(x.sel.size?"":" disabled")+'>Antwort prüfen</button>';
   if(x.fertig) h+='<div class="urteil '+(x.ok?"ok":"bad")+'">'+(x.ok?"Richtig.":"Leider falsch.")+'</div>'+(q.expl?'<div class="erkl"><b>Erklärung.</b> '+E(q.expl)+'</div>':"");
   return h+'</div>'}

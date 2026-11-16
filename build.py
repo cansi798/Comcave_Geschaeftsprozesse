@@ -51,7 +51,37 @@ def quizdaten(html_datei):
     return json.loads(m.group(1))
 
 
+BEGR = None
+
+
+def begruendungen():
+    """Begruendung je Antwortmoeglichkeit, verschluesselt in tresor/Begruendungen.json.enc, Schluessel ist die Fragen-id."""
+    global BEGR
+    if BEGR is None:
+        p = os.path.join(ROOT, "tresor", "Begruendungen.json.enc")
+        BEGR = json.loads(openssl_dec(p).decode("utf-8")) if (KEY and os.path.exists(p)) else {}
+    return BEGR
+
+
+def frage_id(q):
+    return hashlib.sha1((q["q"].strip() + "|" + "|".join(o["t"].strip() for o in q["options"])).encode()).hexdigest()[:14]
+
+
+def anreichern(daten):
+    b = begruendungen()
+    if not b or not isinstance(daten, list):
+        return daten
+    for q in daten:
+        if isinstance(q, dict) and q.get("q") and isinstance(q.get("options"), list):
+            w = b.get(frage_id(q))
+            if w and len(w) == len(q["options"]):
+                for o, t in zip(q["options"], w):
+                    o["w"] = t
+    return daten
+
+
 def schreibe_json(daten, pfad):
+    anreichern(daten)
     os.makedirs(os.path.dirname(pfad), exist_ok=True)
     with open(pfad, "w", encoding="utf-8") as f:
         json.dump(daten, f, ensure_ascii=False, separators=(",", ":"))
@@ -223,6 +253,8 @@ def main():
             kurs["lek_n"] = len(lp)
             stand.append(f"lek:{len(lp)}")
 
+    if begruendungen():
+        stand.append(f"begr:{len(begruendungen())}")
     daten = {"marker": "gp2026", "titel": cfg["kurs"]["titel"], "untertitel": cfg["kurs"]["untertitel"],
              "teile": teile, "reihenfolge": reihenfolge, "tage": tage, "kurs": kurs}
     code = str(cfg.get("zugangscode", "KBM")).strip().upper()
