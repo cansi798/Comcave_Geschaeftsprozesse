@@ -55,7 +55,7 @@ jobs:
 
       - name: Spracherkennung installieren
         if: steps.offen.outputs.anzahl != '0'
-        run: pip install --quiet faster-whisper==1.2.1
+        run: pip install --quiet faster-whisper==1.2.1 "av==14.4.0"
 
       - name: Untertitel erzeugen
         if: steps.offen.outputs.anzahl != '0'
