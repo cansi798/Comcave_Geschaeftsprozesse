@@ -253,10 +253,21 @@ def main():
             kurs["lek_n"] = len(lp)
             stand.append(f"lek:{len(lp)}")
 
+    spiele = None
+    sp = os.path.join(ROOT, "tresor", "Spiele.json.enc")
+    if KEY and os.path.exists(sp):
+        sd = json.loads(openssl_dec(sp).decode("utf-8"))
+        h = {n: v for n, v in sd.get("hangman", {}).items() if n in frei and frei[n][0]}
+        w = {n: v for n, v in sd.get("wordle", {}).items() if n in frei and frei[n][0]}
+        if h or w:
+            schreibe_json({"hangman": h, "wordle": w}, os.path.join(MAT, "kurs", "spiele.json"))
+            spiele = {"src": f"{P}/kurs/spiele.json", "begriffe": sum(map(len, h.values())), "woerter": sum(map(len, w.values()))}
+            stand.append(f"spiele:{spiele['begriffe']}/{spiele['woerter']}")
+
     if begruendungen():
         stand.append(f"begr:{len(begruendungen())}")
     daten = {"marker": "gp2026", "titel": cfg["kurs"]["titel"], "untertitel": cfg["kurs"]["untertitel"],
-             "teile": teile, "reihenfolge": reihenfolge, "tage": tage, "kurs": kurs}
+             "teile": teile, "reihenfolge": reihenfolge, "tage": tage, "kurs": kurs, "spiele": spiele}
     code = str(cfg.get("zugangscode", "KBM")).strip().upper()
     fingerprint = hashlib.sha256((json.dumps(daten, sort_keys=True, ensure_ascii=False) + code + P + "|".join(stand)
                                   + open(os.path.join(ROOT, "vorlage.html"), encoding="utf-8").read()).encode()).hexdigest()

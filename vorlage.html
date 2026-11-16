@@ -208,6 +208,54 @@ video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:1.05em;line-height:1.
 .felder select:hover{border-color:var(--blau)}.felder select:focus{outline:none;border-color:var(--blau);box-shadow:0 0 0 4px #0077a622}
 .laden{color:var(--grau);padding:30px 0;text-align:center}
 footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-size:12.5px;color:var(--grau)}
+/* Spiele */
+.spkopf{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.tagwahl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:650;color:var(--grau)}
+.tagwahl select{padding:9px 12px;border:1px solid #c9d7e1;border-radius:12px;background:#fff;font-size:14.5px;max-width:min(420px,72vw);cursor:pointer}
+.sprunde{font-size:13.5px;color:var(--grau)}.sprunde b{color:var(--navy)}
+.hmfeld{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;background:#fff;border:1px solid var(--rand);border-radius:22px;padding:22px;box-shadow:var(--sch1);max-width:1000px}
+.hmlinks{display:flex;flex-direction:column;align-items:center;gap:8px}
+.galgen{width:100%;max-width:230px;height:auto}
+.galgen path,.galgen circle{fill:none;stroke:#dfe7ed;stroke-width:5;stroke-linecap:round;transition:stroke .3s}
+.galgen .an{stroke:var(--navy)}
+.leben{font-weight:700;color:var(--grau);font-size:14px}
+.hinw{background:#f2f8fb;border-left:4px solid var(--blau);border-radius:12px;padding:11px 14px;font-size:14.5px;line-height:1.5;margin-bottom:14px}
+.hinw b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--blau);margin-bottom:3px}
+.hwort{display:flex;flex-wrap:wrap;gap:10px 18px;margin:6px 0 18px}
+.hw{display:flex;gap:5px;flex-wrap:wrap}
+.hb{width:34px;height:42px;border-bottom:3px solid #b9c8d3;display:flex;align-items:flex-end;justify-content:center;font-size:24px;font-weight:800;color:var(--navy);padding-bottom:3px;transition:border-color .2s}
+.hb.auf{border-color:var(--gruen);animation:auf .25s ease}
+.hb.fehlt{color:var(--rot);border-color:var(--rot)}
+.hz{width:14px;display:flex;align-items:flex-end;justify-content:center;font-size:24px;font-weight:800;color:var(--grau);padding-bottom:3px}
+@keyframes auf{from{transform:translateY(-6px);opacity:0}to{transform:none;opacity:1}}
+.tast{display:flex;flex-direction:column;gap:7px;user-select:none}
+.tr{display:flex;gap:6px;justify-content:center}
+.tk{flex:1;max-width:46px;min-width:0;height:48px;border:0;border-radius:10px;background:#e8eef3;color:var(--navy);font-weight:750;font-size:16px;cursor:pointer;transition:background .15s,transform .1s,color .15s}
+.tk.breit{max-width:84px;flex:1.6;font-size:13px}
+.tk:hover:not(:disabled){background:#d4e2ec;transform:translateY(-2px)}
+.tk:active:not(:disabled){transform:scale(.94)}
+.tk.gut{background:var(--gruen);color:#fff}.tk.halb{background:#e0a800;color:#fff}.tk.weg{background:#a9b5be;color:#fff}
+.tk:disabled{cursor:default}.tk.weg:disabled{opacity:.55}
+.spende{border-radius:16px;padding:14px 16px;margin-top:6px;font-size:15px}
+.spende.ok{background:var(--hgruen);border:1px solid #9fd3b4}.spende.bad{background:var(--hrot);border:1px solid #efb1aa}
+.spende .knoepfe{margin-top:10px}
+.spstat{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;max-width:900px}
+.spstat div{background:#fff;border:1px solid var(--rand);border-radius:16px;padding:14px 16px;box-shadow:var(--sch1)}
+.spstat b{display:block;font-size:28px;color:var(--navy);letter-spacing:-.02em}.spstat span{font-size:13px;color:var(--grau)}
+.wfeld{background:#fff;border:1px solid var(--rand);border-radius:22px;padding:20px;box-shadow:var(--sch1);max-width:620px;margin:0 auto 0 0}
+.wlang{margin:0 0 12px;text-align:center;color:var(--grau);font-size:13.5px;font-weight:600}
+.wgitter{display:flex;flex-direction:column;gap:7px;align-items:center;margin-bottom:14px}
+.wz{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:7px;width:min(100%,calc(var(--n)*62px))}
+.wf{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:2px solid #d6e0e7;border-radius:10px;font-size:clamp(18px,5vw,28px);font-weight:800;color:var(--navy);background:#fff;text-transform:none}
+.wf.voll{border-color:#7f97a8;animation:pop .12s ease}
+.wf.g,.wf.y,.wf.a{color:#fff;border-color:transparent;animation:dreh .45s ease both;animation-delay:calc(var(--i)*.08s)}
+.wf.g{background:var(--gruen)}.wf.y{background:#e0a800}.wf.a{background:#8d9aa4}
+@keyframes pop{50%{transform:scale(1.08)}}
+@keyframes dreh{0%{transform:rotateX(90deg)}100%{transform:none}}
+.wmeld{min-height:22px;margin:-4px 0 8px;text-align:center;font-weight:650;font-size:14px;color:var(--rot);opacity:0;transition:opacity .2s}.wmeld.an{opacity:1}
+.wfeld>.knopf.hell{display:flex;margin:0 auto 12px}
+.wlegende{display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;margin-top:14px;font-size:12.5px;color:var(--grau)}
+.wlegende span{display:flex;align-items:center;gap:6px}.wlegende i.wf{width:16px;height:16px;border-radius:4px;animation:none;border:0}
 @media (min-width:1500px){.kacheln{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media (max-width:920px){
   :root{--oben:58px;--r:16px}
@@ -262,6 +310,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-si
   .frage{padding:16px 14px 14px}
   .opt:hover{transform:none}
 }
+@media (max-width:920px){.hmfeld{grid-template-columns:1fr;padding:16px;gap:12px}.galgen{max-width:150px}.hb{width:26px;height:34px;font-size:19px}.hz{font-size:19px;width:10px}.tk{height:46px;font-size:15px;border-radius:8px}.tr{gap:4px}.wfeld{padding:14px}.spkopf{flex-direction:column;align-items:stretch}.tagwahl{width:100%}.tagwahl select{max-width:none;flex:1;min-width:0;width:100%;text-overflow:ellipsis}.hw{gap:3px}.hb{width:clamp(18px,6.4vw,26px)}}
 @media (max-width:380px){.hero .schnell{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (hover:none){a.kachel:hover,.tag:hover,.heft:hover,.blaettern a:hover{transform:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
@@ -300,6 +349,9 @@ const ICO={
  uhr:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
  liste:'<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/>',
  leiste:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 10l-2 2 2 2"/>',
+ spiel:'<rect x="2" y="7" width="20" height="11" rx="4"/><path d="M7 11v3M5.5 12.5h3M15.5 12h.01M18 14h.01"/>',
+ galgen:'<path d="M4 21h10M7 21V3h8v3"/><circle cx="15" cy="8.5" r="2.5"/><path d="M15 11v5M13 13.5h4M15 16l-2 3M15 16l2 3"/>',
+ raster:'<rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="4" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="10" y="10" width="5" height="5" rx="1"/><rect x="3" y="17" width="5" height="4" rx="1"/>',
  leisteauf:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 10l2 2-2 2"/>'
 };
 const I=n=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[n]+'</svg>';
@@ -345,6 +397,7 @@ function navZeichnen(akt,aktTag){
  let h='<a href="#" class="'+(akt==="start"?"aktiv":"")+'">'+I("haus")+'Übersicht</a>';
  if(ht) h+='<a href="#tag'+ht+'" class="'+(akt==="tag"&&aktTag===ht?"aktiv":"")+'">'+I("kal")+'Heute · Tag '+ht+'</a>';
  if(D.kurs) h+='<a href="#trainer" class="'+(akt==="trainer"?"aktiv":"")+'">'+I("ziel")+'Quiz-Trainer</a><a href="#klausur" class="'+(akt==="klausur"?"aktiv":"")+'">'+I("uhr")+'Probeklausur</a><a href="'+E(D.kurs.gesamtskript)+'" target="_blank" rel="noopener">'+I("buch")+'Gesamtskript (PDF)</a>';
+ if(D.spiele) h+='<a href="#spiele" class="'+(akt==="spiele"?"aktiv":"")+'">'+I("spiel")+'Lernspiele</a>';
  h+='<div class="gr">Unterrichtstage</div>';
  D.teile.forEach(t=>{const offen=t.tage.includes(aktTag||ht||"");
   h+='<details'+(offen?" open":"")+'><summary>'+E(t.kurz)+' · '+E(t.lang)+'</summary>'+t.tage.map(n=>'<a href="#tag'+n+'" class="tg'+(aktTag===n?" aktiv":"")+(istHeute(n)?" heute":"")+'"><b>'+n+'</b><em>'+E(D.tage[n].titel)+'</em></a>').join("")+'</details>'});
@@ -400,6 +453,9 @@ function route(){
  } else if(h==="trainer") seiteTrainer(H,false);
  else if(h==="klausur") seiteTrainer(H,true);
  else if(h==="lek") seiteTrainer(H,false,true);
+ else if(h==="spiele") H.innerHTML=seiteSpiele();
+ else if(/^hangman(-\d\d)?$/.test(h)) seiteHangman(H,h.slice(8));
+ else if(/^wordle(-\d\d)?$/.test(h)) seiteWordle(H,h.slice(7));
  else H.innerHTML=seiteStart();
  window.scrollTo(0,0);
 }
@@ -417,6 +473,9 @@ function seiteStart(){
   +kachel({href:"#klausur",icon:"uhr",titel:"Probeklausur",text:"30 Fragen, Auswertung am Ende",farbe:"orange",badge:"Online"})
   +kachel({href:D.kurs.gesamtskript,icon:"buch",titel:"Gesamtskript",text:"Alle Skripte in einer Datei",farbe:"gruen",badge:"PDF",extern:1})
   +(D.kurs.lek?kachel({href:"#lek",icon:"ziel",titel:"LEK-Vorbereitung",text:D.kurs.lek_n+" Prüfungsfragen zu Tag 01 bis 18",farbe:"rot",badge:"Online"}):"")+'</div>';
+ if(D.spiele) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben</h2><div class="kacheln">'
+  +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit "+D.spiele.begriffe+" Fachbegriffen",farbe:"gruen",badge:"Spiel"})
+  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle, ein Fachwort in 6 Versuchen",farbe:"orange",badge:"Spiel"})+'</div>';
  D.teile.forEach(t=>{h+='<h2 class="ab">'+E(t.kurz)+' <small>'+E(t.lang)+'</small></h2><div class="tage">'+t.tage.map(tagKachel).join("")+'</div>'});
  return h+fuss();
 }
@@ -425,6 +484,7 @@ function seiteTag(n){const d=D.tage[n];
  h+='<span class="chip">'+E(d.teilkurz)+'</span>'+(istHeute(n)?' <span class="chip o">Heute</span>':"")+'<h1 class="st">Tag '+n+' · '+E(d.titel)+'</h1><p class="sub">'+E(d.wochentag)+', '+E(d.datum_de)+'</p>';
  if(d.morgen||d.morgen_ab) h+='<h2 class="ab">'+I("sonne")+'Morgenstart <small>Wiederholung</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-morgen",icon:"quiz",titel:"Morgenstart",text:d.morgen?d.morgen.info+", "+d.morgen.anzahl+" Fragen":"Wiederholungsquiz "+d.morgen_ab,farbe:"orange",breit:1,zu:!d.morgen})+'</div>';
  h+='<h2 class="ab">'+I("praes")+'Vormittag</h2><div class="kacheln">'+vormittagKacheln(n)+'</div>';
+ if(D.spiele&&d.frei1) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben <small>Fachbegriffe des Tages</small></h2><div class="kacheln">'+kachel({href:"#hangman-"+n,icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Begriffen von Tag "+n,farbe:"gruen",badge:"Spiel"})+kachel({href:"#wordle-"+n,icon:"raster",titel:"Fachwort raten",text:"Wordle mit Fachwörtern von Tag "+n,farbe:"orange",badge:"Spiel"})+'</div>';
  h+='<h2 class="ab">'+I("sonne")+'Nachmittag <small>freiwillig</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-nachmittag",icon:"sonne",titel:"Nachmittag",text:d.frei2?"2 Übungsquizze und 2 Aufgabenhefte mit Lösungen":"Übungsquizze und Aufgabenhefte "+d.ab2,farbe:"orange",breit:1,zu:!d.frei2})+'</div>';
  const i=D.reihenfolge.indexOf(n),v=D.reihenfolge[i-1],w=D.reihenfolge[i+1];
  h+='<div class="blaettern">'+(v?'<a href="#tag'+v+'">'+I("links")+'<span><small>Vorheriger Tag</small><b>Tag '+v+' · '+E(D.tage[v].titel)+'</b></span></a>':"<span></span>")+(w?'<a class="r" href="#tag'+w+'"><span><small>Nächster Tag</small><b>Tag '+w+' · '+E(D.tage[w].titel)+'</b></span>'+I("rechts")+'</a>':"<span></span>")+'</div>';
@@ -469,6 +529,106 @@ async function seiteQuiz(H,n,s){const d=D.tage[n];
  H.innerHTML=kopf+'<div id="qz"><div class="laden">Fragen werden geladen …</div></div><div class="knoepfe" style="margin-top:8px"><a class="knopf hell" href="'+zur[1]+'">'+I("links")+E(zur[0])+'</a></div>'+fuss();
  try{const r=await fetch(quelle.src);const fr=await r.json(); if(location.hash.slice(1)!=="tag"+n+"-"+s) return;
   QUIZ=quiz($("#qz"),fr,{modus:"sofort"});}catch(e){$("#qz").innerHTML='<p>Die Fragen konnten nicht geladen werden. Bitte Seite neu laden.</p>'}
+}
+
+let SPIELE=null;
+async function spieleLaden(){if(!SPIELE){const r=await fetch(D.spiele.src);SPIELE=await r.json()}return SPIELE}
+function spStand(k,v){let o={};try{o=JSON.parse(localStorage.getItem("gp2026spiele")||"{}")}catch(e){}if(v===undefined)return o[k];o[k]=v;try{localStorage.setItem("gp2026spiele",JSON.stringify(o))}catch(e){}}
+const GROSS=c=>c==="ß"?"ß":c.toLocaleUpperCase("de-DE");
+const TASTEN=["QWERTZUIOPÜ","ASDFGHJKLÖÄ","YXCVBNMß"];
+function tastatur(extra){return '<div class="tast">'+TASTEN.map((r,i)=>'<div class="tr">'+(i===2&&extra?'<button class="tk breit" data-k="ENTER" aria-label="Prüfen">OK</button>':"")+[...r].map(c=>'<button class="tk" data-k="'+c+'">'+c+'</button>').join("")+(i===2&&extra?'<button class="tk breit" data-k="DEL" aria-label="Löschen">⌫</button>':"")+'</div>').join("")+'</div>'}
+function tagWahl(n,ziel,daten){const tage=D.reihenfolge.filter(t=>daten[t]&&daten[t].length);
+ return '<label class="tagwahl">Tag <select id="twahl"><option value="">Alle Tage</option>'+tage.map(t=>'<option value="'+t+'"'+(t===n?" selected":"")+'>Tag '+t+' · '+E(D.tage[t].titel)+'</option>').join("")+'</select></label>'}
+function spielKopf(titel,unter,n){return rahmen({kurz:titel,bc:[["Übersicht","#"],["Lernspiele","#spiele"],[titel,""]],zurueck:n?["Zurück zu Tag "+n,"#tag"+n]:["Lernspiele","#spiele"],akt:"spiele"})+'<span class="chip">Lernspiel</span><h1 class="st">'+titel+'</h1><p class="sub">'+unter+'</p>'}
+function seiteSpiele(){
+ let h=rahmen({kurz:"Lernspiele",bc:[["Übersicht","#"],["Lernspiele",""]],zurueck:["Übersicht","#"],akt:"spiele"});
+ h+='<span class="chip">Freiwillig</span><h1 class="st">Lernspiele</h1><p class="sub">Fachbegriffe spielerisch wiederholen, allein oder gegen die Uhr in der Pause.</p><div class="kacheln">'
+  +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen. Die Erklärung ist der Hinweis, errate den Fachbegriff Buchstabe für Buchstabe.",farbe:"gruen",badge:D.spiele.begriffe+" Begriffe"})
+  +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle. Errate ein Fachwort in 6 Versuchen, die Farben zeigen, welche Buchstaben stimmen.",farbe:"orange",badge:D.spiele.woerter+" Wörter"})+'</div>';
+ const st=spStand("hm")||{g:0,v:0},sw=spStand("wl")||{g:0,v:0,serie:0};
+ h+='<h2 class="ab">'+I("ziel")+'Dein Stand <small>nur auf diesem Gerät</small></h2><div class="spstat"><div><b>'+st.g+'</b><span>Begriffe erraten</span></div><div><b>'+st.v+'</b><span>Begriffe gespielt</span></div><div><b>'+sw.g+'</b><span>Fachwörter gelöst</span></div><div><b>'+(sw.serie||0)+'</b><span>Fachwörter in Folge</span></div></div>';
+ return h+fuss();
+}
+function maskieren(text,begriff){let t=String(text);const teile=[begriff].concat(begriff.split(/[\s\-]+/).filter(w=>w.length>=4));
+ teile.forEach(w=>{const re=new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"[a-zäöüß]*","gi");t=t.replace(re,"…")});return t}
+async function seiteHangman(H,n){
+ H.innerHTML=spielKopf("Begriffe raten",n?"Fachbegriffe von Tag "+n+" · "+E(D.tage[n].titel):"Fachbegriffe aus allen freigegebenen Tagen",n)+'<div id="sp"><div class="laden">Wird geladen …</div></div>'+fuss();
+ let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ const MAX=8;let liste=[],pos=0,akt=null,geraten=new Set(),fehler=0,ende=false,runde={g:0,s:0};
+ function neu(){const tage=n?[n]:Object.keys(S.hangman);liste=mischen(tage.flatMap(t=>S.hangman[t].map(x=>Object.assign({tag:t},x))));pos=0;runde={g:0,s:0};start()}
+ function start(){if(pos>=liste.length)pos=0;akt=liste[pos++];geraten=new Set();fehler=0;ende=false;zeichne()}
+ function buchst(c){return /[A-Za-zÄÖÜäöüß]/.test(c)}
+ function geloest(){return [...akt.b].every(c=>!buchst(c)||geraten.has(GROSS(c)))}
+ function tippen(k){if(ende||geraten.has(k))return;geraten.add(k);
+  if(![...akt.b].some(c=>GROSS(c)===k))fehler++;
+  if(geloest()||fehler>=MAX){ende=true;const ok=fehler<MAX;runde.s++;if(ok)runde.g++;const st=spStand("hm")||{g:0,v:0};st.v++;if(ok)st.g++;spStand("hm",st)}
+  zeichne()}
+ function galgen(){const t=["M20 150h90","M45 150V15","M45 15h70","M115 15v20","circle","M115 70v40","M115 82l-18 16M115 82l18 16","M115 110l-16 26M115 110l16 26"];
+  let g='<svg viewBox="0 0 160 160" class="galgen" aria-label="'+fehler+' von '+MAX+' Fehlern">';
+  t.forEach((d,i)=>{const an=i<fehler;g+=d==="circle"?'<circle cx="115" cy="52" r="17" class="'+(an?"an":"")+'"/>':'<path d="'+d+'" class="'+(an?"an":"")+'"/>'});return g+'</svg>'}
+ function zeichne(){
+  const ok=ende&&fehler<MAX;
+  const wort=akt.b.split(" ").map(w=>'<span class="hw">'+[...w].map(c=>buchst(c)?'<span class="hb'+(geraten.has(GROSS(c))?" auf":"")+(ende&&!geraten.has(GROSS(c))?" fehlt":"")+'">'+(geraten.has(GROSS(c))||ende?E(GROSS(c)):"")+'</span>':'<span class="hz">'+E(c)+'</span>').join("")+'</span>').join("");
+  $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"hangman",S.hangman)+'<span class="sprunde">Diese Runde <b>'+runde.g+' von '+runde.s+'</b> erraten</span></div>'
+   +'<div class="hmfeld"><div class="hmlinks">'+galgen()+'<div class="leben">'+(MAX-fehler)+' Versuche übrig</div></div><div class="hmrechts">'
+   +'<div class="hinw"><b>Hinweis'+(n?"":" · Tag "+akt.tag)+'</b>'+E(ende?akt.e:maskieren(akt.e,akt.b))+'</div><div class="hwort">'+wort+'</div>'
+   +(ende?'<div class="spende '+(ok?"ok":"bad")+'"><b>'+(ok?"Richtig erraten!":"Leider nicht geschafft.")+'</b> Der Begriff ist <b>'+E(akt.b)+'</b>.<div class="knoepfe"><button class="knopf" id="weiter">Nächster Begriff</button></div></div>':tastatur(false))
+   +'</div></div>';
+  document.querySelectorAll("#sp .tk").forEach(b=>{const k=b.dataset.k;if(geraten.has(k)){b.disabled=true;b.classList.add([...akt.b].some(c=>GROSS(c)===k)?"gut":"weg")}b.onclick=()=>tippen(k)});
+  const w=$("#weiter");if(w){w.onclick=start;w.focus()}
+  $("#twahl").onchange=e=>{location.hash=e.target.value?"#hangman-"+e.target.value:"#hangman"};
+ }
+ const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.target.tagName==="SELECT")return;
+  if(ende&&e.key==="Enter"){start();e.preventDefault();return}const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
+ document.addEventListener("keydown",taste);QUIZ={stop:()=>document.removeEventListener("keydown",taste)};
+ neu();
+}
+async function seiteWordle(H,n){
+ H.innerHTML=spielKopf(n?"Fachwort raten":"Fachwort des Tages",n?"Fachwörter von Tag "+n+" · "+E(D.tage[n].titel):"Jeden Tag ein neues Fachwort aus dem Kurs, danach beliebig weiterüben",n)+'<div id="sp"><div class="laden">Wird geladen …</div></div>'+fuss();
+ let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
+ const alle=(n?[n]:Object.keys(S.wordle).sort()).flatMap(t=>(S.wordle[t]||[]).map(x=>Object.assign({tag:t},x)));
+ if(!alle.length){$("#sp").innerHTML="<p>Für diesen Tag gibt es keine passenden Fachwörter.</p>";return}
+ const VERS=6;let akt,zeilen,eingabe,ende,tagesmodus,hinweis;
+ function tagesWort(){const h=heuteISO();let x=0;for(const c of h)x=(x*31+c.charCodeAt(0))>>>0;return alle[x%alle.length]}
+ function start(tm){tagesmodus=tm;akt=tm?tagesWort():alle[Math.floor(Math.random()*alle.length)];zeilen=[];eingabe="";ende=false;hinweis=false;
+  if(tm){const sv=spStand("wltag");if(sv&&sv.d===heuteISO()&&sv.w===akt.w){zeilen=sv.z;ende=sv.e}}zeichne()}
+ const W=()=>[...akt.w];
+ function bewerten(g){const w=W(),r=Array(w.length).fill("a"),rest={};
+  w.forEach((c,i)=>{if(g[i]===c)r[i]="g";else rest[c]=(rest[c]||0)+1});
+  g.forEach((c,i)=>{if(r[i]!=="g"&&rest[c]){r[i]="y";rest[c]--}});return r}
+ function tippen(k){if(ende)return;const L=W().length;
+  if(k==="DEL")eingabe=[...eingabe].slice(0,-1).join("");
+  else if(k==="ENTER"){if([...eingabe].length<L){meldung("Das Wort hat "+L+" Buchstaben.");return}
+   zeilen.push([...eingabe]);eingabe="";const geloest=zeilen[zeilen.length-1].join("")===akt.w;
+   if(geloest||zeilen.length>=VERS){ende=true;const st=spStand("wl")||{g:0,v:0,serie:0};st.v++;if(geloest){st.g++;st.serie=(st.serie||0)+1}else st.serie=0;spStand("wl",st)}
+   if(tagesmodus)spStand("wltag",{d:heuteISO(),w:akt.w,z:zeilen,e:ende})}
+  else if([...eingabe].length<L)eingabe+=k;
+  zeichne()}
+ function meldung(t){const m=$("#wmeld");if(m){m.textContent=t;m.classList.add("an");clearTimeout(meldung.t);meldung.t=setTimeout(()=>m.classList.remove("an"),1800)}}
+ function zeichne(){const L=W().length,farbe={};
+  let g='<div class="wgitter" style="--n:'+L+'">';
+  for(let z=0;z<VERS;z++){const fertig=z<zeilen.length,bu=fertig?zeilen[z]:(z===zeilen.length&&!ende?[...eingabe]:[]),r=fertig?bewerten(zeilen[z]):null;
+   if(r)bu.forEach((c,i)=>{const o={g:3,y:2,a:1}[r[i]];if(!farbe[c]||farbe[c]<o)farbe[c]=o});
+   g+='<div class="wz'+(z===zeilen.length&&!ende?" akt":"")+'">';for(let i=0;i<L;i++)g+='<span class="wf'+(r?" "+r[i]:"")+(bu[i]&&!r?" voll":"")+'" style="--i:'+i+'">'+E(bu[i]||"")+'</span>';g+='</div>'}
+  g+='</div>';
+  const ok=ende&&zeilen.length&&zeilen[zeilen.length-1].join("")===akt.w;
+  $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"wordle",S.wordle)+'<div class="knoepfe">'+(!n?'<button class="knopf '+(tagesmodus?"":"hell")+'" id="wtag">Wort des Tages</button>':"")+'<button class="knopf '+(tagesmodus?"hell":"")+'" id="wneu">Neues Wort</button></div></div>'
+   +'<div class="wfeld"><p class="wlang">'+L+' Buchstaben · '+VERS+' Versuche'+(n?"":" · Tag "+akt.tag)+'</p>'+g+'<div id="wmeld" class="wmeld"></div>'
+   +(ende?'<div class="spende '+(ok?"ok":"bad")+'"><b>'+(ok?"Geschafft in "+zeilen.length+" Versuchen!":"Leider nicht geschafft.")+'</b> Das Wort ist <b>'+E(akt.w)+'</b>.<div class="erkl" style="margin-top:8px">'+E(akt.e)+'</div><div class="knoepfe" style="margin-top:10px"><button class="knopf" id="weiter">Neues Wort</button></div></div>'
+     :(zeilen.length>=2||hinweis?'<div class="hinw"><b>Hinweis</b>'+E(maskieren(akt.e,akt.w))+'</div>':'<button class="knopf hell" id="whinw">Hinweis zeigen</button>')+tastatur(true))
+   +'<div class="wlegende"><span><i class="wf g"></i>richtig an dieser Stelle</span><span><i class="wf y"></i>kommt vor, andere Stelle</span><span><i class="wf a"></i>kommt nicht vor</span></div></div>';
+  document.querySelectorAll("#sp .tk").forEach(b=>{const k=b.dataset.k,f=farbe[k];if(f)b.classList.add(f===3?"gut":f===2?"halb":"weg");b.onclick=()=>tippen(k)});
+  const hb=$("#whinw");if(hb)hb.onclick=()=>{hinweis=true;zeichne()};
+  const wt=$("#wtag");if(wt)wt.onclick=()=>start(true);$("#wneu").onclick=()=>start(false);
+  const w=$("#weiter");if(w){w.onclick=()=>start(false)}
+  $("#twahl").onchange=e=>{location.hash=e.target.value?"#wordle-"+e.target.value:"#wordle"};
+ }
+ const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.target.tagName==="SELECT"||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==="Enter"){if(ende)start(false);else tippen("ENTER");e.preventDefault();return}
+  if(e.key==="Backspace"){tippen("DEL");e.preventDefault();return}
+  const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
+ document.addEventListener("keydown",taste);QUIZ={stop:()=>document.removeEventListener("keydown",taste)};
+ start(!n);
 }
 let LEKPOOL=null;
 async function seiteTrainer(H,klausur,lek){
