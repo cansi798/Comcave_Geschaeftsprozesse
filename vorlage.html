@@ -247,8 +247,8 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--rand);font-si
 .wgitter{display:flex;flex-direction:column;gap:7px;align-items:center;margin-bottom:14px}
 .wz{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:7px;width:min(100%,calc(var(--n)*62px))}
 .wf{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:2px solid #d6e0e7;border-radius:10px;font-size:clamp(18px,5vw,28px);font-weight:800;color:var(--navy);background:#fff;text-transform:none}
-.wf.voll{border-color:#7f97a8;animation:pop .12s ease}
-.wf.g,.wf.y,.wf.a{color:#fff;border-color:transparent;animation:dreh .45s ease both;animation-delay:calc(var(--i)*.08s)}
+.wf.voll{border-color:#7f97a8}.wf.pop{animation:pop .12s ease}
+.wf.g,.wf.y,.wf.a{color:#fff;border-color:transparent}.wz.neu .wf{animation:dreh .45s ease both;animation-delay:calc(var(--i)*.08s)}.wz.wackeln{animation:wackeln .35s ease}@keyframes wackeln{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 .wf.g{background:var(--gruen)}.wf.y{background:#e0a800}.wf.a{background:#8d9aa4}
 @keyframes pop{50%{transform:scale(1.08)}}
 @keyframes dreh{0%{transform:rotateX(90deg)}100%{transform:none}}
@@ -578,7 +578,7 @@ async function seiteHangman(H,n){
   const w=$("#weiter");if(w){w.onclick=start;w.focus()}
   $("#twahl").onchange=e=>{location.hash=e.target.value?"#hangman-"+e.target.value:"#hangman"};
  }
- const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.target.tagName==="SELECT")return;
+ const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.target.tagName==="SELECT"){if(e.key.length===1||e.key==="Enter"||e.key==="Backspace"){if(e.key==="Enter")return;e.target.blur()}else return}
   if(ende&&e.key==="Enter"){start();e.preventDefault();return}const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
  document.addEventListener("keydown",taste);QUIZ={stop:()=>document.removeEventListener("keydown",taste)};
  neu();
@@ -588,7 +588,7 @@ async function seiteWordle(H,n){
  let S;try{S=await spieleLaden()}catch(e){$("#sp").innerHTML="<p>Das Spiel konnte nicht geladen werden.</p>";return}
  const alle=(n?[n]:Object.keys(S.wordle).sort()).flatMap(t=>(S.wordle[t]||[]).map(x=>Object.assign({tag:t},x)));
  if(!alle.length){$("#sp").innerHTML="<p>Für diesen Tag gibt es keine passenden Fachwörter.</p>";return}
- const VERS=6;let akt,zeilen,eingabe,ende,tagesmodus,hinweis;
+ const VERS=6;let akt,zeilen,eingabe,ende,tagesmodus,hinweis,neuZ=-1,neuB=-1;
  function tagesWort(){const h=heuteISO();let x=0;for(const c of h)x=(x*31+c.charCodeAt(0))>>>0;return alle[x%alle.length]}
  function start(tm){tagesmodus=tm;akt=tm?tagesWort():alle[Math.floor(Math.random()*alle.length)];zeilen=[];eingabe="";ende=false;hinweis=false;
   if(tm){const sv=spStand("wltag");if(sv&&sv.d===heuteISO()&&sv.w===akt.w){zeilen=sv.z;ende=sv.e}}zeichne()}
@@ -598,18 +598,19 @@ async function seiteWordle(H,n){
   g.forEach((c,i)=>{if(r[i]!=="g"&&rest[c]){r[i]="y";rest[c]--}});return r}
  function tippen(k){if(ende)return;const L=W().length;
   if(k==="DEL")eingabe=[...eingabe].slice(0,-1).join("");
-  else if(k==="ENTER"){if([...eingabe].length<L){meldung("Das Wort hat "+L+" Buchstaben.");return}
-   zeilen.push([...eingabe]);eingabe="";const geloest=zeilen[zeilen.length-1].join("")===akt.w;
+  else if(k==="ENTER"){if([...eingabe].length<L){meldung("Das Wort hat "+L+" Buchstaben.");const z=document.querySelector(".wz.akt");if(z){z.classList.remove("wackeln");void z.offsetWidth;z.classList.add("wackeln")}return}
+   zeilen.push([...eingabe]);eingabe="";neuZ=zeilen.length-1;const geloest=zeilen[zeilen.length-1].join("")===akt.w;
    if(geloest||zeilen.length>=VERS){ende=true;const st=spStand("wl")||{g:0,v:0,serie:0};st.v++;if(geloest){st.g++;st.serie=(st.serie||0)+1}else st.serie=0;spStand("wl",st)}
    if(tagesmodus)spStand("wltag",{d:heuteISO(),w:akt.w,z:zeilen,e:ende})}
-  else if([...eingabe].length<L)eingabe+=k;
-  zeichne()}
+  else if([...eingabe].length<L){eingabe+=k;neuB=[...eingabe].length-1}
+  else return;
+  zeichne();neuZ=-1;neuB=-1}
  function meldung(t){const m=$("#wmeld");if(m){m.textContent=t;m.classList.add("an");clearTimeout(meldung.t);meldung.t=setTimeout(()=>m.classList.remove("an"),1800)}}
  function zeichne(){const L=W().length,farbe={};
   let g='<div class="wgitter" style="--n:'+L+'">';
   for(let z=0;z<VERS;z++){const fertig=z<zeilen.length,bu=fertig?zeilen[z]:(z===zeilen.length&&!ende?[...eingabe]:[]),r=fertig?bewerten(zeilen[z]):null;
    if(r)bu.forEach((c,i)=>{const o={g:3,y:2,a:1}[r[i]];if(!farbe[c]||farbe[c]<o)farbe[c]=o});
-   g+='<div class="wz'+(z===zeilen.length&&!ende?" akt":"")+'">';for(let i=0;i<L;i++)g+='<span class="wf'+(r?" "+r[i]:"")+(bu[i]&&!r?" voll":"")+'" style="--i:'+i+'">'+E(bu[i]||"")+'</span>';g+='</div>'}
+   g+='<div class="wz'+(z===zeilen.length&&!ende?" akt":"")+(z===neuZ?" neu":"")+'">';for(let i=0;i<L;i++)g+='<span class="wf'+(r?" "+r[i]:"")+(bu[i]&&!r?" voll":"")+(!r&&i===neuB&&z===zeilen.length?" pop":"")+'" style="--i:'+i+'">'+E(bu[i]||"")+'</span>';g+='</div>'}
   g+='</div>';
   const ok=ende&&zeilen.length&&zeilen[zeilen.length-1].join("")===akt.w;
   $("#sp").innerHTML='<div class="spkopf">'+tagWahl(n,"wordle",S.wordle)+'<div class="knoepfe">'+(!n?'<button class="knopf '+(tagesmodus?"":"hell")+'" id="wtag">Wort des Tages</button>':"")+'<button class="knopf '+(tagesmodus?"hell":"")+'" id="wneu">Neues Wort</button></div></div>'
@@ -623,7 +624,7 @@ async function seiteWordle(H,n){
   const w=$("#weiter");if(w){w.onclick=()=>start(false)}
   $("#twahl").onchange=e=>{location.hash=e.target.value?"#wordle-"+e.target.value:"#wordle"};
  }
- const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.target.tagName==="SELECT"||e.ctrlKey||e.metaKey||e.altKey)return;
+ const taste=e=>{if(!$("#sp")||!akt){document.removeEventListener("keydown",taste);return}if(e.ctrlKey||e.metaKey||e.altKey)return;if(e.target.tagName==="SELECT"){if(e.key.length===1||e.key==="Backspace")e.target.blur();else return}
   if(e.key==="Enter"){if(ende)start(false);else tippen("ENTER");e.preventDefault();return}
   if(e.key==="Backspace"){tippen("DEL");e.preventDefault();return}
   const k=e.key.length===1?GROSS(e.key):"";if(/^[A-ZÄÖÜß]$/.test(k)){tippen(k);e.preventDefault()}};
