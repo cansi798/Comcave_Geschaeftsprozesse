@@ -200,6 +200,7 @@ video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:1.05em;line-height:1.
 .ergebnis{background:linear-gradient(160deg,#fff,#f2f8fb);border:2px solid var(--blau);border-radius:22px;padding:22px;margin-bottom:16px;text-align:center;scroll-margin-top:calc(var(--oben) + 110px);box-shadow:var(--sch2);max-width:900px}
 .ergebnis .gz{font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.02em}.ergebnis p{margin:4px 0 14px;color:var(--grau)}
 .ergebnis .knoepfe{justify-content:center}
+.fertigbox{margin-top:14px;padding:14px;border-radius:14px;background:var(--hblau);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;color:var(--navy)}
 .nurfehler .frage.ok{display:none}
 .karte{background:#fff;border:1px solid var(--rand);border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:var(--sch1);max-width:900px}
 .felder{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:16px}
@@ -924,8 +925,8 @@ async function seiteTrainer(H,klausur,lek){
 function mischen(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
 function note(p){return p>=92?"1 (sehr gut)":p>=81?"2 (gut)":p>=67?"3 (befriedigend)":p>=50?"4 (ausreichend)":p>=30?"5 (mangelhaft)":"6 (ungenügend)"}
 function quiz(el,fragen,o){
- let modus=o.modus||"sofort",st=[],timer=null,ende=0,aus=false;
- function neu(){clearInterval(timer);aus=false;el.classList.remove("nurfehler");
+ let modus=o.modus||"sofort",st=[],timer=null,ende=0,aus=false,letzte=-1;
+ function neu(){clearInterval(timer);aus=false;letzte=-1;el.classList.remove("nurfehler");
   st=fragen.map(q=>({q:q,o:mischen(q.options.map((x,k)=>({t:x.t,c:!!x.c,w:x.w||"",k:k}))),sel:new Set(),fertig:false,ok:null}));
   zeichnen(); if(o.minuten){ende=Date.now()+o.minuten*60000;timer=setInterval(tick,1000);tick()}}
  function tick(){const s=Math.max(0,Math.round((ende-Date.now())/1000));const u=$(".uhr",el);if(u)u.textContent="Restzeit "+Math.floor(s/60)+":"+String(s%60).padStart(2,"0");if(!s){clearInterval(timer);auswerten()}}
@@ -937,6 +938,7 @@ function quiz(el,fragen,o){
    h+='<label class="'+c+'"><input type="checkbox" data-i="'+i+'" data-k="'+k+'"'+(g?" checked":"")+(x.fertig?" disabled":"")+'><span class="ot">'+E(a.t)+(x.fertig&&a.w?'<small class="wg"><b>'+(a.c?"Warum richtig?":"Warum falsch?")+'</b> '+E(a.w)+'</small>':"")+'</span>'+(m?'<span class="m">'+m+'</span>':"")+'</label>'});
   if(!x.fertig&&modus==="sofort") h+='<button class="knopf" data-p="'+i+'"'+(x.sel.size?"":" disabled")+'>Antwort prüfen</button>';
   if(x.fertig) h+='<div class="urteil '+(x.ok?"ok":"bad")+'">'+(x.ok?"Richtig.":"Leider falsch.")+'</div>'+(q.expl?'<div class="erkl"><b>Erklärung.</b> '+E(q.expl)+'</div>':"");
+  if(x.fertig&&i===letzte&&!aus&&stand().f===st.length) h+='<div class="fertigbox"><b>Alle '+st.length+' Fragen beantwortet.</b><button class="knopf gross" data-a="zumerg">Auswertung anschauen</button></div>';
   return h+'</div>'}
  function kHTML(){const s=stand();let h='<div class="qkopf"><div class="qzeile">';
   if(!o.fest) h+='<div class="modus"><button data-m="sofort" class="'+(modus==="sofort"?"an":"")+'">Sofort-Feedback</button><button data-m="ende" class="'+(modus==="ende"?"an":"")+'">Auswertung am Ende</button></div>';
@@ -944,14 +946,14 @@ function quiz(el,fragen,o){
  function eHTML(){const s=stand();if(s.f<st.length) return "";const p=Math.round(1000*s.r/st.length)/10;
   return '<div class="ergebnis" id="erg"><div class="gz">'+s.r+' von '+st.length+' richtig</div><p>'+p.toLocaleString("de-DE")+' % · Note nach IHK-Schlüssel '+note(p)+'<br><small>Es zählt nur eine vollständig richtige Antwort.</small></p><div class="knoepfe">'+(s.r<st.length?'<button class="knopf hell" data-a="fehler">'+(el.classList.contains("nurfehler")?"Alle Fragen zeigen":"Nur Fehler zeigen")+'</button>':"")+'<button class="knopf" data-a="neu">Neu starten</button></div></div>'}
  function unten(){const s=stand();
-  if(s.f===st.length) return '<div class="knoepfe" style="justify-content:center;margin:16px 0"><button class="knopf" data-a="neu">Neu starten</button><button class="knopf hell" data-a="zumerg">Zum Ergebnis</button></div>';
+  if(s.f===st.length) return '<div class="knoepfe" style="justify-content:center;margin:16px 0"><button class="knopf" data-a="zumerg">Auswertung anschauen</button><button class="knopf hell" data-a="neu">Neu starten</button></div>';
   if(modus==="ende") return '<div style="margin:16px 0"><button class="knopf gross" data-a="auswerten">Auswerten</button><div class="fort" style="text-align:center;margin-top:6px">'+(st.length-s.b?(st.length-s.b)+" Fragen sind noch offen":"Alle Fragen beantwortet")+'</div></div>';
   return ""}
  function zeichnen(){el.innerHTML=kHTML()+'<div class="ergplatz">'+eHTML()+'</div><div class="fragen">'+st.map((x,i)=>fHTML(i)).join("")+'</div><div class="untenplatz">'+unten()+'</div>'}
  function teil(){el.querySelector(".qkopf").outerHTML=kHTML();$(".ergplatz",el).innerHTML=eHTML();$(".untenplatz",el).innerHTML=unten();if(o.minuten)tick()}
  function frageNeu(i){const q=el.querySelector("#q"+i);if(q)q.outerHTML=fHTML(i)}
  function zumErg(){setTimeout(()=>{const e=$("#erg",el);if(e)e.scrollIntoView({behavior:"smooth",block:"start"})},150)}
- function pruefen(i){const x=st[i];x.fertig=true;x.ok=x.o.every(a=>a.c===x.sel.has(x.o.indexOf(a)));frageNeu(i);teil();if(stand().f===st.length){clearInterval(timer);zumErg()}}
+ function pruefen(i){const x=st[i];x.fertig=true;x.ok=x.o.every(a=>a.c===x.sel.has(x.o.indexOf(a)));letzte=i;frageNeu(i);teil();if(stand().f===st.length)clearInterval(timer)}
  function auswerten(){if(aus)return;aus=true;clearInterval(timer);st.forEach(x=>{if(!x.fertig){x.fertig=true;x.ok=x.o.every((a,k)=>a.c===x.sel.has(k))}});zeichnen();zumErg()}
  el.onchange=e=>{const c=e.target;if(c.dataset.i==null)return;const i=+c.dataset.i,k=+c.dataset.k,x=st[i];if(x.fertig)return;if(c.checked)x.sel.add(k);else x.sel.delete(k);frageNeu(i);teil()};
  el.onclick=e=>{const b=e.target.closest("button");if(!b||!el.contains(b))return;
