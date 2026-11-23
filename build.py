@@ -185,6 +185,15 @@ def main():
             d["quiz_n"] = len(q)
             d["video"] = video_fuer(n, videos, P, MAT, stand)
             stand.append(f"{n}v")
+            # freiwilliges Zusatzmaterial (z. B. Excel- und Word-Aufgaben), Manifest 8_Zusatz/zusatz.json im Archiv
+            zp = os.path.join(ROOT, "tresor", f"Tag{n}_3_Zusatz.tar.gz.enc")
+            if os.path.exists(zp):
+                entpacken(zp, ziel)
+                man = json.load(open(os.path.join(ziel, "8_Zusatz", "zusatz.json"), encoding="utf-8"))
+                for e in man:
+                    e["src"] = f"{P}/{o}/8_Zusatz/{e['datei']}"
+                d["zusatz"] = man
+                stand.append(f"{n}z{len(man)}")
         if frei2:
             entpacken(os.path.join(ROOT, "tresor", f"Tag{n}_2_Nachmittag.tar.gz.enc"), ziel)
             uebungen, hefte = [], {}

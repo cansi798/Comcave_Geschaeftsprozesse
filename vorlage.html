@@ -200,6 +200,7 @@ video::cue{background:rgba(0,0,0,.78);color:#fff;font-size:1.05em;line-height:1.
 .ergebnis{background:linear-gradient(160deg,#fff,#f2f8fb);border:2px solid var(--blau);border-radius:22px;padding:22px;margin-bottom:16px;text-align:center;scroll-margin-top:calc(var(--oben) + 110px);box-shadow:var(--sch2);max-width:900px}
 .ergebnis .gz{font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.02em}.ergebnis p{margin:4px 0 14px;color:var(--grau)}
 .ergebnis .knoepfe{justify-content:center}
+.zgr{font-size:14px;color:var(--grau);margin:14px 0 8px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .fertigbox{margin-top:14px;padding:14px;border-radius:14px;background:var(--hblau);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;color:var(--navy)}
 .nurfehler .frage.ok{display:none}
 .karte{background:#fff;border:1px solid var(--rand);border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:var(--sch1);max-width:900px}
@@ -392,6 +393,8 @@ const ICO={
  galgen:'<path d="M4 21h10M7 21V3h8v3"/><circle cx="15" cy="8.5" r="2.5"/><path d="M15 11v5M13 13.5h4M15 16l-2 3M15 16l2 3"/>',
  raster:'<rect x="3" y="3" width="5" height="5" rx="1"/><rect x="10" y="3" width="5" height="5" rx="1"/><rect x="17" y="3" width="4" height="5" rx="1"/><rect x="3" y="10" width="5" height="5" rx="1"/><rect x="10" y="10" width="5" height="5" rx="1"/><rect x="3" y="17" width="5" height="4" rx="1"/>',
  rakete:'<path d="M12 2c3 2 5 6 5 10l-2 5H9l-2-5c0-4 2-8 5-10z"/><circle cx="12" cy="10" r="2"/><path d="M9 17l-3 3M15 17l3 3M12 17v4"/>',
+ tabelle:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',
+ dok:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h6"/>',
  leisteauf:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M13 10l2 2-2 2"/>'
 };
 const I=n=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICO[n]+'</svg>';
@@ -526,6 +529,9 @@ function seiteTag(n){const d=D.tage[n];
  h+='<span class="chip">'+E(d.teilkurz)+'</span>'+(istHeute(n)?' <span class="chip o">Heute</span>':"")+'<h1 class="st">Tag '+n+' · '+E(d.titel)+'</h1><p class="sub">'+E(d.wochentag)+', '+E(d.datum_de)+'</p>';
  if(d.morgen||d.morgen_ab) h+='<h2 class="ab">'+I("sonne")+'Morgenstart <small>Wiederholung</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-morgen",icon:"quiz",titel:"Morgenstart",text:d.morgen?d.morgen.info+", "+d.morgen.anzahl+" Fragen":"Wiederholungsquiz "+d.morgen_ab,farbe:"orange",breit:1,zu:!d.morgen})+'</div>';
  h+='<h2 class="ab">'+I("praes")+'Vormittag</h2><div class="kacheln">'+vormittagKacheln(n)+'</div>';
+ if(d.zusatz&&d.zusatz.length){h+='<h2 class="ab">'+I("heft")+'Zusatz und Praxisaufgaben <small>freiwillig · zum Herunterladen</small></h2>';
+  const gr=[...new Set(d.zusatz.map(z=>z.gruppe))];
+  gr.forEach(g=>{h+='<h3 class="zgr">'+E(g)+'</h3><div class="kacheln">'+d.zusatz.filter(z=>z.gruppe===g).map(z=>kachel({href:z.src,extern:1,icon:z.art==="xlsx"?"tabelle":z.art==="docx"?"dok":"skript",titel:z.titel,text:z.text,farbe:z.art==="xlsx"?"gruen":z.art==="docx"?"":"orange",badge:z.art.toUpperCase()})).join("")+'</div>'})}
  if(D.spiele&&(D.spiele.tage||[]).includes(n)&&spielSichtbar(n)) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben <small>Fachbegriffe des Tages</small></h2><div class="kacheln">'+kachel({href:"#hangman-"+n,icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Begriffen von Tag "+n,farbe:"gruen",badge:"Spiel"})+kachel({href:"#wordle-"+n,icon:"raster",titel:"Fachwort raten",text:"Wordle mit Fachwörtern von Tag "+n,farbe:"orange",badge:"Spiel"})+kachel({href:"#fighter-"+n,icon:"rakete",titel:"Word-Fighter",text:"Begriffe von Tag "+n+" abschießen",farbe:"lila",badge:"Spiel"})+'</div>';
  h+='<h2 class="ab">'+I("sonne")+'Nachmittag <small>freiwillig</small></h2><div class="kacheln">'+kachel({href:"#tag"+n+"-nachmittag",icon:"sonne",titel:"Nachmittag",text:d.frei2?"2 Übungsquizze und 2 Aufgabenhefte mit Lösungen":"Übungsquizze und Aufgabenhefte "+d.ab2,farbe:"orange",breit:1,zu:!d.frei2})+'</div>';
  const i=D.reihenfolge.indexOf(n),v=D.reihenfolge[i-1],w=D.reihenfolge[i+1];
