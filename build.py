@@ -261,6 +261,12 @@ def main():
             kurs["lek"] = f"{P}/kurs/lek.json"
             kurs["lek_n"] = len(lp)
             stand.append(f"lek:{len(lp)}")
+        lpdf = os.path.join(ROOT, "tresor", "LEK_Pruefungsfragen.pdf.enc")
+        if os.path.exists(lpdf):
+            os.makedirs(os.path.join(MAT, "kurs"), exist_ok=True)
+            open(os.path.join(MAT, "kurs", "LEK_Pruefungsfragen_200_mit_Loesungen.pdf"), "wb").write(openssl_dec(lpdf))
+            kurs["lek_pdf"] = f"{P}/kurs/LEK_Pruefungsfragen_200_mit_Loesungen.pdf"
+            stand.append("lekpdf")
 
     spiele = None
     sp = os.path.join(ROOT, "tresor", "Spiele.json.enc")

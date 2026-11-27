@@ -516,7 +516,7 @@ function seiteStart(){
   +kachel({href:"#trainer",icon:"ziel",titel:"Quiz-Trainer",text:"Fragen nach Tag oder Teil üben",farbe:"lila",badge:"Online"})
   +kachel({href:"#klausur",icon:"uhr",titel:"Probeklausur",text:"30 Fragen, Auswertung am Ende",farbe:"orange",badge:"Online"})
   +kachel({href:D.kurs.gesamtskript,icon:"buch",titel:"Gesamtskript",text:"Alle Skripte in einer Datei",farbe:"gruen",badge:"PDF",extern:1})
-  +(D.kurs.lek?kachel({href:"#lek",icon:"ziel",titel:"LEK-Vorbereitung",text:D.kurs.lek_n+" Prüfungsfragen zu Tag 01 bis 18",farbe:"rot",badge:"Online"}):"")+'</div>';
+  +(D.kurs.lek?kachel({href:"#lek",icon:"ziel",titel:"LEK-Vorbereitung",text:D.kurs.lek_n+" Prüfungsfragen zu Tag 01 bis 18",farbe:"rot",badge:"Online"}):"")+(D.kurs.lek_pdf?kachel({href:D.kurs.lek_pdf,extern:1,icon:"skript",titel:"LEK-Fragen zum Ausdrucken",text:"Alle "+D.kurs.lek_n+" Fragen als PDF, Lösungen am Ende",farbe:"rot",badge:"PDF"}):"")+'</div>';
  if(D.spiele) h+='<h2 class="ab">'+I("spiel")+'Spielerisch üben</h2><div class="kacheln">'
   +kachel({href:"#hangman",icon:"galgen",titel:"Begriffe raten",text:"Galgenmännchen mit den Fachbegriffen des Tages",farbe:"gruen",badge:"Spiel"})
   +kachel({href:"#wordle",icon:"raster",titel:"Fachwort des Tages",text:"Wie Wordle, ein Fachwort in 6 Versuchen",farbe:"orange",badge:"Spiel"})
@@ -901,7 +901,7 @@ let LEKPOOL=null;
 async function seiteTrainer(H,klausur,lek){
  const name=lek?"LEK-Vorbereitung":klausur?"Probeklausur":"Quiz-Trainer",r0=lek?"lek":klausur?"klausur":"trainer";
  let h=rahmen({kurz:name,bc:[["Übersicht","#"],[name,""]],zurueck:["Übersicht","#"],akt:lek?"trainer":r0});
- h+='<h1 class="st">'+name+'</h1><p class="sub">'+(lek?"Prüfungsfragen zu den Inhalten von Tag 01 bis 18 im Stil der LEK. Gesetzestexte und alle nötigen Angaben stehen in der Aufgabe.":klausur?"30 zufällige Fragen aus allen freigegebenen Tagen. Die Auswertung kommt am Ende, mit Note nach IHK-Schlüssel.":"Fragen gezielt nach Teil, Tag oder Quizart üben.")+'</p><div id="tr"><div class="laden">Fragen werden geladen …</div></div>'+fuss();
+ h+='<h1 class="st">'+name+'</h1><p class="sub">'+(lek?"Prüfungsfragen zu den Inhalten von Tag 01 bis 18 im Stil der LEK. Gesetzestexte und alle nötigen Angaben stehen in der Aufgabe.":klausur?"30 zufällige Fragen aus allen freigegebenen Tagen. Die Auswertung kommt am Ende, mit Note nach IHK-Schlüssel.":"Fragen gezielt nach Teil, Tag oder Quizart üben.")+'</p>'+(lek&&D.kurs&&D.kurs.lek_pdf?'<div class="kacheln" style="margin-bottom:16px">'+kachel({href:D.kurs.lek_pdf,extern:1,icon:"skript",titel:"Alle Fragen als PDF zum Ausdrucken",text:"Mit Antwortbogen, Lösungsschlüssel und ausführlichen Lösungen am Ende",farbe:"rot",badge:"PDF",breit:1})+'</div>':"")+'<div id="tr"><div class="laden">Fragen werden geladen …</div></div>'+fuss();
  H.innerHTML=h;
  if(!D.kurs||(lek&&!D.kurs.lek)){$("#tr").innerHTML="<p>Noch nicht verfügbar.</p>";return}
  let PX;
